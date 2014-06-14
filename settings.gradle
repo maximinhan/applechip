@@ -1,1 +1,1 @@
-include "applechip-core", "applechip-web", "applechip-resource"
+include "applechip-core", "applechip-web", "applechip-resource", "applechip-api"

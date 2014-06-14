@@ -1,0 +1,4 @@
+dependencies {
+    compile project(':applechip-resource')
+    compile project(':applechip-core')
+}
