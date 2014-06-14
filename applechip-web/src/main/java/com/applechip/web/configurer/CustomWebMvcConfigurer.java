@@ -14,7 +14,6 @@ import org.springframework.web.servlet.view.InternalResourceViewResolver;
 public class CustomWebMvcConfigurer extends WebMvcConfigurerAdapter {
   @Override
   public void addResourceHandlers(ResourceHandlerRegistry registry) {
-    registry.addResourceHandler("/**").addResourceLocations("/").setCachePeriod(31556926);
     registry.addResourceHandler("/resources/**").addResourceLocations("/resources/").setCachePeriod(31556926);
     registry.addResourceHandler("/version.txt").addResourceLocations("classpath:version.txt");
   }
