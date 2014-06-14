@@ -7,7 +7,6 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-import javax.persistence.CascadeType;
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
@@ -19,8 +18,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
@@ -31,7 +28,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import com.applechip.core.abstact.GenericTraceable;
 import com.applechip.core.constant.ColumnSizeConstant;
-import com.sun.security.ntlm.Client;
 
 @Entity
 @Table(name = "mt_user")
@@ -58,9 +54,9 @@ public class User extends GenericTraceable<String> implements UserDetails {
   // @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, optional =
   // true)
   // @PrimaryKeyJoinColumn
-  @OneToOne(fetch = FetchType.LAZY, mappedBy = "user", cascade = CascadeType.ALL, optional = true)
-  @PrimaryKeyJoinColumn
-  private Client client;
+//  @OneToOne(fetch = FetchType.LAZY, mappedBy = "user", cascade = CascadeType.ALL, optional = true)
+//  @PrimaryKeyJoinColumn
+//  private Client client;
 
 //  @FormParam("device")
   @Column(name = "device", length = 50)
@@ -142,13 +138,13 @@ public class User extends GenericTraceable<String> implements UserDetails {
     this.categories = categories;
   }
 
-  public Client getClient() {
-    return client;
-  }
-
-  public void setClient(Client client) {
-    this.client = client;
-  }
+//  public Client getClient() {
+//    return client;
+//  }
+//
+//  public void setClient(Client client) {
+//    this.client = client;
+//  }
 
   public String getDevice() {
     return device;
