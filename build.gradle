@@ -80,6 +80,7 @@ subprojects {
     }
 }
 
+
 // configure Web Projects
 configure(subprojects.findAll { webProjects.contains(it.name) }) {
     apply plugin: 'war'

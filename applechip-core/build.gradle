@@ -6,4 +6,8 @@ dependencies {
     compile "org.hibernate:hibernate-ehcache:${hibernateVersion}"
     compile "org.springframework:spring-context-support:${springframeworkVersion}"
     compile "org.springframework.security:spring-security-config:${springframeworksecurityVersion}"
+    compile "commons-configuration:commons-configuration:1.10"
+    compile "com.fasterxml.jackson.core:jackson-databind:2.4.0"
+    compile 'commons-dbcp:commons-dbcp:1.4'
+    compile 'javax.servlet:javax.servlet-api:3.0.1'
 }
