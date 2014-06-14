@@ -6,3 +6,7 @@
 /.settings
 /.gradle
 /target
+/.iml
+.idea/
+*.iml
+.metadata
