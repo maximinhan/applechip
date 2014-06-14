@@ -3,7 +3,6 @@ package com.applechip.core.constant;
 public class ReturnCodeConstant {
   public static final String OK = "100";
 
-  // ERROR
   public static final String ERROR_SYSTEM_EXCEPTION = "999";
   public static final String ERROR_BINDING = "900";
   public static final String ERROR_DATA_SAVE_FAIL = "990";
@@ -15,7 +14,6 @@ public class ReturnCodeConstant {
   public static final String ERROR_SESSION_TIMEOUT = "910";
   public static final String ERROR_ENTITY_NOT_EXIST = "993";
 
-  // 로그인 실패 코드
   public static final class LoginFailCodes {
     public static final String BAD_CREDENTIAL = "1";
     public static final String CREDENTIAL_EXPIRED = "2";
