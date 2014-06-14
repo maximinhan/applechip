@@ -1,1 +1,14 @@
-/build/
+/bin
+/build
+/.classpath
+/.project
+/.springBeans
+/.settings
+/.gradle
+/target
+/.iml
+.idea/
+*.iml
+.metadata
+.classes
+out
