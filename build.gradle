@@ -3,6 +3,9 @@ ext {
     javaEncoding = 'UTF-8'
 
     springframeworkVersion = '4.0.3.RELEASE'
+    springframeworkdataVersion = '1.6.0.RELEASE'
+    springframeworksecurityVersion = '3.2.4.RELEASE'
+    hibernateVersion = '4.3.5.Final'
     logbackVersion = '1.1.2'
     slf4jVersion = '1.7.7'
     mysqlJdbcDriverVersion = '5.1.16' // 버전업 주의!! http://wiki.coupang.net:8090/pages/viewpage.action?pageId=18357672

@@ -1,4 +1,9 @@
 dependencies {
 	compile group: 'commons-collections', name: 'commons-collections', version: '3.2'
 	compile "edu.uci.ics:crawler4j:3.5"
+	compile "org.springframework.data:spring-data-jpa:${springframeworkdataVersion}"
+	compile "org.hibernate:hibernate-entitymanager:${hibernateVersion}"
+    compile "org.hibernate:hibernate-ehcache:${hibernateVersion}"
+    compile "org.springframework:spring-context-support:${springframeworkVersion}"
+    compile "org.springframework.security:spring-security-config:${springframeworksecurityVersion}"
 }
