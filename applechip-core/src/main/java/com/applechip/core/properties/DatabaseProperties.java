@@ -2,6 +2,8 @@ package com.applechip.core.properties;
 
 import java.util.Properties;
 
+import com.applechip.core.constant.BaseConstant;
+
 public class DatabaseProperties {
   private String jdbcDriverClassName;
   private String jdbcUrl;
@@ -35,12 +37,12 @@ public class DatabaseProperties {
   private String hibernateCacheProviderConfig;
 
   public DatabaseProperties(Properties properties) {
-
-    this.jdbcDriverClassName = properties.getProperty("jdbc.driverClassName");
-    this.jdbcUrl = properties.getProperty("jdbc.url");
-    this.jdbcUsername = properties.getProperty("jdbc.username");
-    this.jdbcPassword = properties.getProperty("jdbc.password");
-    this.jdbcValidationQuery = properties.getProperty("jdbc.validationQuery");
+    this.init(properties);
+//    this.jdbcDriverClassName = properties.getProperty("jdbc.driverClassName");
+//    this.jdbcUrl = properties.getProperty("jdbc.url");
+//    this.jdbcUsername = properties.getProperty("jdbc.username");
+//    this.jdbcPassword = properties.getProperty("jdbc.password");
+//    this.jdbcValidationQuery = properties.getProperty("jdbc.validationQuery");
     this.jdbcMaxActive = Integer.parseInt(properties.getProperty("jdbc.maxActive"));
     this.jdbcMaxWait = Integer.parseInt(properties.getProperty("jdbc.maxWait"));
     this.jdbcMinIdle = Integer.parseInt(properties.getProperty("jdbc.minIdle"));
@@ -56,7 +58,7 @@ public class DatabaseProperties {
     this.jdbcNumTestsPerEvictionRun = Integer.parseInt(properties.getProperty("jdbc.numTestsPerEvictionRun"));
     this.jdbcMinEvictableIdleTimeMillis = Integer.parseInt(properties.getProperty("jdbc.minEvictableIdleTimeMillis"));
     this.jdbcDefaultTransactionIsolation = Integer.parseInt(properties.getProperty("jdbc.defaultTransactionIsolation"));
-    this.hibernateDialect = properties.getProperty("hibernate.dialect");
+//    this.hibernateDialect = properties.getProperty("hibernate.dialect");
     this.hibernateShowSql = properties.getProperty("hibernate.show_sql");
     this.hibernateFormatSql = properties.getProperty("hibernate.format_sql");
     this.hibernateUseSqlComments = properties.getProperty("hibernate.use_sql_comments");
@@ -66,6 +68,39 @@ public class DatabaseProperties {
     this.hibernateUseSecondLevelCache = properties.getProperty("hibernate.cache.use_second_level_cache");
     this.hibernateCacheRegionFactory = properties.getProperty("hibernate.cache.region.factory_class");
     this.hibernateCacheProviderConfig = properties.getProperty("hibernate.cache.provider_configuration_file_resource_path");
+  }
+
+  private void init(Properties properties) {
+    String jdbcType = properties.getProperty("jdbc.type");
+    String jdbcUsername = properties.getProperty("jdbc.username");
+    String jdbcPassword = properties.getProperty("jdbc.password");
+    switch (jdbcType) {
+      case "MYSQL":
+        this.hibernateDialect = BaseConstant.HIBERNATE_DIALECT_MYSQL;
+        this.jdbcDriverClassName = BaseConstant.JDBC_DRIVERCLASSNAME_MYSQL;
+        this.jdbcValidationQuery = BaseConstant.JDBC_VALIDATIONQUERY_MYSQL;
+        this.jdbcUrl = String.format(BaseConstant.JDBC_URL_MYSQL, jdbcUsername, jdbcPassword);
+        break;
+      case "MYSQL_REPL":
+        this.hibernateDialect = BaseConstant.HIBERNATE_DIALECT_MYSQL;
+        this.jdbcDriverClassName = BaseConstant.JDBC_DRIVERCLASSNAME_MYSQL;
+        this.jdbcValidationQuery = BaseConstant.JDBC_VALIDATIONQUERY_MYSQL;
+        this.jdbcUrl = String.format(BaseConstant.JDBC_URL_MYSQL, jdbcUsername, jdbcPassword);
+        break;
+      case "SQL_SERVER":
+        this.hibernateDialect = BaseConstant.HIBERNATE_DIALECT_SQL_SERVER;
+        this.jdbcDriverClassName = BaseConstant.JDBC_DRIVERCLASSNAME_SQL_SERVER;
+        this.jdbcValidationQuery = BaseConstant.JDBC_VALIDATIONQUERY_SQL_SERVER;
+        this.jdbcUrl = String.format(BaseConstant.JDBC_URL_SQL_SERVER, jdbcUsername, jdbcPassword);
+        break;
+      case "ORACLE":
+        this.hibernateDialect = BaseConstant.HIBERNATE_DIALECT_ORACLE;
+        this.jdbcDriverClassName = BaseConstant.JDBC_DRIVERCLASSNAME_ORACLE;
+        this.jdbcValidationQuery = BaseConstant.JDBC_VALIDATIONQUERY_ORACLE;
+        this.jdbcUrl = String.format(BaseConstant.JDBC_URL_ORACLE, jdbcUsername);
+        break;
+    }
+    
   }
 
   public String getJdbcDriverClassName() {

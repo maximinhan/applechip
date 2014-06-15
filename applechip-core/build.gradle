@@ -1,3 +1,4 @@
+
 dependencies {
 	compile group: 'commons-collections', name: 'commons-collections', version: '3.2'
 	compile "edu.uci.ics:crawler4j:3.5"
@@ -13,3 +14,25 @@ dependencies {
     compile 'org.aspectj:aspectjweaver:1.8.0'
 }
 
+project.ext.set('jdbcType', "${jdbcType}")
+
+
+afterEvaluate {
+    configure(allProcessResourcesTasks()) {
+        filter(org.apache.tools.ant.filters.ReplaceTokens, 
+          tokens: [
+            'jdbcType': "${jdbcType}".toString(),
+            'jdbcUsername': "${jdbcUsername}".toString(),
+            'jdbcPassword': "${jdbcPassword}".toString(),
+            'jdbcAddress': "${jdbcAddress}".toString(),
+            'jdbcName': "${jdbcName}".toString()
+          ]
+        )
+    }
+}
+
+def allProcessResourcesTasks() {
+  sourceSets*.processResourcesTaskName.collect {  
+        tasks[it]  
+    }  
+}

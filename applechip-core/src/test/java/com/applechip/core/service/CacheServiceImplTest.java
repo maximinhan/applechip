@@ -1,26 +1,20 @@
 package com.applechip.core.service;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
 import org.junit.Ignore;
 import org.junit.Test;
 
-import com.applechip.core.AbstractTransactionTest;
-import com.applechip.core.constant.BaseConstant;
-
-public class CacheServiceImplTest extends AbstractTransactionTest {// AbstractTest,
+public class CacheServiceImplTest {// AbstractTest,
                                                                    // AbstractTransactionTest
 
-  @PersistenceContext(unitName = BaseConstant.PERSISTENCE_UNIT_NAME)
-  public EntityManager entityManager;
+//  @PersistenceContext(unitName = BaseConstant.PERSISTENCE_UNIT_NAME)
+//  public EntityManager entityManager;
   
 //  @Autowired
 //  private LookupManager lookupManager;
   
   @Test
   public void testGetRoles() throws Exception {
-    log.debug("ddd");
+    System.out.println("ss");
   }
   
   @Test

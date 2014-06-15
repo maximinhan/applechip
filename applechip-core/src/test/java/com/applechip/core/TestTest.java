@@ -41,7 +41,7 @@ public class TestTest {
 		   * Start the crawl. This is a blocking operation, meaning that your code
 		   * will reach the line after this only when crawling is finished.
 		   */
-		  controller.start(MyCrawler.class, numberOfCrawlers);
+//		  controller.start(MyCrawler.class, numberOfCrawlers);
 	} catch (Exception e) {
 		e.printStackTrace();
 	}  
