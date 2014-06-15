@@ -23,7 +23,8 @@ public class MyCrawler extends WebCrawler {
     @Override
     public boolean shouldVisit(WebURL url) {
             String href = url.getURL().toLowerCase();
-            return !FILTERS.matcher(href).matches() && href.startsWith("http://www.ics.uci.edu/");
+            return !FILTERS.matcher(href).matches()&& href.startsWith("http://www.coupang.com/deal.pang")&& 0>=href.indexOf("areacode=MRC");
+//          return !FILTERS.matcher(href).matches()&& href.startsWith("http://www.coupang.com/alldeal.pang?type=C");
     }
 
     /**
@@ -33,7 +34,7 @@ public class MyCrawler extends WebCrawler {
     @Override
     public void visit(Page page) {          
             String url = page.getWebURL().getURL();
-            System.out.println("URL: " + url);
+            System.out.println(url);
 
             if (page.getParseData() instanceof HtmlParseData) {
                     HtmlParseData htmlParseData = (HtmlParseData) page.getParseData();
@@ -42,15 +43,12 @@ public class MyCrawler extends WebCrawler {
                     List<WebURL> links = htmlParseData.getOutgoingUrls();
                     
                     
-//                    String[] linksArr = links.toString().split(",");
-//                    
-//                    for(String Arr:linksArr){
-//                    	System.out.println(Arr);
-//                    }
-                    System.out.println(text);
-                    System.out.println("Text length: " + text.length());
-//                    System.out.println("Html length: " + html.length());
-//                    System.out.println("Number of outgoing links: " + links.size());
+                  System.out.println(text.substring(text.indexOf("구독신청")+4,text.indexOf("개 구매")-10).trim());
+//                  System.out.println(html);
+//                  System.out.println("Text length: " + text.length());
+//                  System.out.println("Html length: " + html.length());
+//                  System.out.println("Number of outgoing links: " + links.size());
+                  System.out.println("================================다음 페이지===============================");
             }
     }
 }
