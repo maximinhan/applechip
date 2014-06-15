@@ -24,22 +24,22 @@ public class BaseConstant {
   public static final String HIBERNATE_DIALECT_MYSQL = "org.hibernate.dialect.MySQL5InnoDBDialect";
   public static final String JDBC_DRIVERCLASSNAME_MYSQL = "com.mysql.jdbc.Driver";
   public static final String JDBC_VALIDATIONQUERY_MYSQL = "SELECT 1";
-  public static final String JDBC_URL_MYSQL = "jdbc:mysql://%s/%s?createDatabaseIfNotExist=true&useUnicode=true&characterEncoding=utf-8&autoReconnect=true";
+  public static final String JDBC_URL_MYSQL = "jdbc:mysql://%s";
   
   public static final String HIBERNATE_DIALECT_MYSQL_REPL = HIBERNATE_DIALECT_MYSQL;
   public static final String JDBC_DRIVERCLASSNAME_MYSQL_REPL = "com.mysql.jdbc.ReplicationDriver";
   public static final String JDBC_VALIDATIONQUERY_MYSQL_REPL = "/* ping */ SELECT 1";
-  public static final String JDBC_URL_MYSQL_REPL = "jdbc:mysql:replication://%s/%s?createDatabaseIfNotExist=true&roundRobinLoadBalanceuse&Unicode=true&characterEncoding=utf-8&autoReconnect=true";
+  public static final String JDBC_URL_MYSQL_REPL = "jdbc:mysql:replication://%s";
   
   public static final String HIBERNATE_DIALECT_SQL_SERVER = "org.hibernate.dialect.SQLServerDialect";
   public static final String JDBC_DRIVERCLASSNAME_SQL_SERVER = "com.microsoft.sqlserver.jdbc.SQLServerDriver";
   public static final String JDBC_VALIDATIONQUERY_SQL_SERVER = "SELECT 1";
-  public static final String JDBC_URL_SQL_SERVER = "jdbc:sqlserver://%s;DatabaseName=%s;AutoReconnect=true;UseUnicode=true;CreateDatabaseIfNotExist=true;CharacterEncoding=utf-8";
+  public static final String JDBC_URL_SQL_SERVER = "jdbc:sqlserver://%s";
   
   public static final String HIBERNATE_DIALECT_ORACLE = "org.hibernate.dialect.Oracle10gDialect";
   public static final String JDBC_DRIVERCLASSNAME_ORACLE = "oracle.jdbc.OracleDriver";
   public static final String JDBC_VALIDATIONQUERY_ORACLE = "SELECT 1 FROM DUAL";
-  public static final String JDBC_URL_ORACLE = "jdbc:oracle:thin:@%s:1521:ORCL";
+  public static final String JDBC_URL_ORACLE = "jdbc:oracle:thin:@%s";
   
   
 

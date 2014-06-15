@@ -13,7 +13,7 @@ import org.springframework.core.io.support.PropertiesLoaderSupport;
 
 import com.applechip.core.exception.SystemException;
 import com.applechip.core.properties.BaseProperties;
-import com.applechip.core.properties.DatabaseProperties;
+import com.applechip.core.properties.HibernateProperties;
 import com.applechip.core.properties.RuntimeProperties;
 import com.applechip.core.util.PropertiesLoaderUtils;
 
@@ -28,8 +28,8 @@ public class CoreConfig extends PropertiesLoaderSupport {
   @Value("${baseProperties}")
   private Resource baseProperties;
 
-  @Value("${databaseProperties}")
-  private Resource databaseProperties;
+  @Value("${hibernateProperties}")
+  private Resource hibernateProperties;
 
   @PostConstruct
   @Bean
@@ -39,8 +39,8 @@ public class CoreConfig extends PropertiesLoaderSupport {
 
   @PostConstruct
   @Bean
-  public DatabaseProperties databaseProperties() {
-    return new DatabaseProperties(PropertiesLoaderUtils.loadProperties(databaseProperties));
+  public HibernateProperties databaseProperties() {
+    return new HibernateProperties(PropertiesLoaderUtils.loadProperties(hibernateProperties));
   }
 
   @PostConstruct

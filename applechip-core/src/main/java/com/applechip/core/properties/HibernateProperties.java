@@ -4,7 +4,7 @@ import java.util.Properties;
 
 import com.applechip.core.constant.BaseConstant;
 
-public class DatabaseProperties {
+public class HibernateProperties {
   private String jdbcDriverClassName;
   private String jdbcUrl;
   private String jdbcUsername;
@@ -36,7 +36,7 @@ public class DatabaseProperties {
   private String hibernateCacheRegionFactory;
   private String hibernateCacheProviderConfig;
 
-  public DatabaseProperties(Properties properties) {
+  public HibernateProperties(Properties properties) {
     this.init(properties);
 //    this.jdbcDriverClassName = properties.getProperty("jdbc.driverClassName");
 //    this.jdbcUrl = properties.getProperty("jdbc.url");
@@ -72,32 +72,31 @@ public class DatabaseProperties {
 
   private void init(Properties properties) {
     String jdbcType = properties.getProperty("jdbc.type");
-    String jdbcUsername = properties.getProperty("jdbc.username");
-    String jdbcPassword = properties.getProperty("jdbc.password");
+    String jdbcUrl = properties.getProperty("jdbc.url");
     switch (jdbcType) {
       case "MYSQL":
         this.hibernateDialect = BaseConstant.HIBERNATE_DIALECT_MYSQL;
         this.jdbcDriverClassName = BaseConstant.JDBC_DRIVERCLASSNAME_MYSQL;
         this.jdbcValidationQuery = BaseConstant.JDBC_VALIDATIONQUERY_MYSQL;
-        this.jdbcUrl = String.format(BaseConstant.JDBC_URL_MYSQL, jdbcUsername, jdbcPassword);
+        this.jdbcUrl = String.format(BaseConstant.JDBC_URL_MYSQL, jdbcUrl);
         break;
       case "MYSQL_REPL":
-        this.hibernateDialect = BaseConstant.HIBERNATE_DIALECT_MYSQL;
-        this.jdbcDriverClassName = BaseConstant.JDBC_DRIVERCLASSNAME_MYSQL;
-        this.jdbcValidationQuery = BaseConstant.JDBC_VALIDATIONQUERY_MYSQL;
-        this.jdbcUrl = String.format(BaseConstant.JDBC_URL_MYSQL, jdbcUsername, jdbcPassword);
+        this.hibernateDialect = BaseConstant.HIBERNATE_DIALECT_MYSQL_REPL;
+        this.jdbcDriverClassName = BaseConstant.JDBC_DRIVERCLASSNAME_MYSQL_REPL;
+        this.jdbcValidationQuery = BaseConstant.JDBC_VALIDATIONQUERY_MYSQL_REPL;
+        this.jdbcUrl = String.format(BaseConstant.JDBC_URL_MYSQL_REPL, jdbcUrl);
         break;
       case "SQL_SERVER":
         this.hibernateDialect = BaseConstant.HIBERNATE_DIALECT_SQL_SERVER;
         this.jdbcDriverClassName = BaseConstant.JDBC_DRIVERCLASSNAME_SQL_SERVER;
         this.jdbcValidationQuery = BaseConstant.JDBC_VALIDATIONQUERY_SQL_SERVER;
-        this.jdbcUrl = String.format(BaseConstant.JDBC_URL_SQL_SERVER, jdbcUsername, jdbcPassword);
+        this.jdbcUrl = String.format(BaseConstant.JDBC_URL_SQL_SERVER, jdbcUrl);
         break;
       case "ORACLE":
         this.hibernateDialect = BaseConstant.HIBERNATE_DIALECT_ORACLE;
         this.jdbcDriverClassName = BaseConstant.JDBC_DRIVERCLASSNAME_ORACLE;
         this.jdbcValidationQuery = BaseConstant.JDBC_VALIDATIONQUERY_ORACLE;
-        this.jdbcUrl = String.format(BaseConstant.JDBC_URL_ORACLE, jdbcUsername);
+        this.jdbcUrl = String.format(BaseConstant.JDBC_URL_ORACLE, jdbcUrl);
         break;
     }
     
