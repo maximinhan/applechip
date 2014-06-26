@@ -28,12 +28,18 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import com.applechip.core.abstact.GenericTraceable;
 import com.applechip.core.constant.ColumnSizeConstant;
+import com.applechip.core.util.BitwisePermissions;
 
 @Entity
 @Table(name = "mt_user")
 public class User extends GenericTraceable<String> implements UserDetails {
 
   private static final long serialVersionUID = 1920694340054206260L;
+
+  public static final long ACCOUNT_NON_EXPIRED = 1 << 0;
+  public static final long ACCOUNT_NON_LOCKED = 1 << 1;
+  public static final long CREDENTIALS_NON_EXPIRED = 1 << 2;
+  public static final long ENABLED = 1 << 3;
 
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO, generator = "system-uuid")
@@ -47,44 +53,36 @@ public class User extends GenericTraceable<String> implements UserDetails {
 
   @ElementCollection(fetch = FetchType.EAGER)
   @CollectionTable(name = "mt_user_category", joinColumns = @JoinColumn(name = "user_id"), uniqueConstraints = @UniqueConstraint(columnNames = {
-      "user_id", "category" }))
+      "user_id", "category"}))
   @Column(name = "category", length = ColumnSizeConstant.UUID)
   private Set<String> categories;
 
   // @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, optional =
   // true)
   // @PrimaryKeyJoinColumn
-//  @OneToOne(fetch = FetchType.LAZY, mappedBy = "user", cascade = CascadeType.ALL, optional = true)
-//  @PrimaryKeyJoinColumn
-//  private Client client;
+  // @OneToOne(fetch = FetchType.LAZY, mappedBy = "user", cascade = CascadeType.ALL, optional =
+  // true)
+  // @PrimaryKeyJoinColumn
+  // private Client client;
 
-//  @FormParam("device")
+  // @FormParam("device")
   @Column(name = "device", length = 50)
   private String device;
 
-//  @FormParam("token")
+  // @FormParam("token")
   @Column(name = "token", length = 255)
   private String token;
 
-//  @FormParam("username")
+  // @FormParam("username")
   @Column(name = "username", length = 50, nullable = false, unique = true)
   private String username;
 
-//  @FormParam("password")
+  // @FormParam("password")
   @Column(name = "password", length = 50, nullable = false)
   private String password;
 
-  @Column(name = "account_non_expired", nullable = false)
-  private boolean accountNonExpired;
-
-  @Column(name = "account_non_locked", nullable = false)
-  private boolean accountNonLocked;
-
-  @Column(name = "credentials_non_expired", nullable = false)
-  private boolean credentialsNonExpired;
-
-  @Column(name = "enabled", nullable = false)
-  private boolean enabled;
+  @Column(name = "status")
+  private long status;
 
   // public List<String> getRoleAuthorityList() {
   // List<String> list = new ArrayList<String>();
@@ -138,13 +136,13 @@ public class User extends GenericTraceable<String> implements UserDetails {
     this.categories = categories;
   }
 
-//  public Client getClient() {
-//    return client;
-//  }
-//
-//  public void setClient(Client client) {
-//    this.client = client;
-//  }
+  // public Client getClient() {
+  // return client;
+  // }
+  //
+  // public void setClient(Client client) {
+  // this.client = client;
+  // }
 
   public String getDevice() {
     return device;
@@ -178,42 +176,32 @@ public class User extends GenericTraceable<String> implements UserDetails {
     this.password = password;
   }
 
-  public boolean isAccountNonExpired() {
-    return accountNonExpired;
+  public long getStatus() {
+    return status;
   }
 
-  public void setAccountNonExpired(boolean accountNonExpired) {
-    this.accountNonExpired = accountNonExpired;
+  public void setStatus(long status) {
+    this.status = status;
+  }
+
+  public boolean isAccountNonExpired() {
+    return BitwisePermissions.isPermitted(this.status, ACCOUNT_NON_EXPIRED);
   }
 
   public boolean isAccountNonLocked() {
-    return accountNonLocked;
-  }
-
-  public void setAccountNonLocked(boolean accountNonLocked) {
-    this.accountNonLocked = accountNonLocked;
+    return BitwisePermissions.isPermitted(this.status, ACCOUNT_NON_LOCKED);
   }
 
   public boolean isCredentialsNonExpired() {
-    return credentialsNonExpired;
-  }
-
-  public void setCredentialsNonExpired(boolean credentialsNonExpired) {
-    this.credentialsNonExpired = credentialsNonExpired;
+    return BitwisePermissions.isPermitted(this.status, CREDENTIALS_NON_EXPIRED);
   }
 
   public boolean isEnabled() {
-    return enabled;
-  }
-
-  public void setEnabled(boolean enabled) {
-    this.enabled = enabled;
+    return BitwisePermissions.isPermitted(this.status, ENABLED);
   }
 
   @Override
   public String toString() {
-    return "User [id=" + id + ", device=" + device + ", token=" + token + ", username=" + username + ", password=" + password
-        + ", accountNonExpired=" + accountNonExpired + ", accountNonLocked=" + accountNonLocked + ", credentialsNonExpired=" + credentialsNonExpired
-        + ", enabled=" + enabled + "]";
+    return "User [id=" + id + ", device=" + device + ", token=" + token + ", username=" + username + ", password=" + password + "]";
   }
 }
