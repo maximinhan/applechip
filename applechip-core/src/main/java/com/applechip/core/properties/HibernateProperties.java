@@ -5,6 +5,7 @@ import java.util.Properties;
 import com.applechip.core.constant.BaseConstant;
 
 public class HibernateProperties {
+  private String jdbcType;
   private String jdbcDriverClassName;
   private String jdbcUrl;
   private String jdbcUsername;
@@ -36,13 +37,29 @@ public class HibernateProperties {
   private String hibernateCacheRegionFactory;
   private String hibernateCacheProviderConfig;
 
-  public HibernateProperties(Properties properties) {
+  public static HibernateProperties getProperties(Properties properties) {
+    return new HibernateProperties(properties);
+  }
+
+  private HibernateProperties(Properties properties) {
     this.init(properties);
-//    this.jdbcDriverClassName = properties.getProperty("jdbc.driverClassName");
-//    this.jdbcUrl = properties.getProperty("jdbc.url");
-//    this.jdbcUsername = properties.getProperty("jdbc.username");
-//    this.jdbcPassword = properties.getProperty("jdbc.password");
-//    this.jdbcValidationQuery = properties.getProperty("jdbc.validationQuery");
+    this.initJdbc(properties);
+    this.initHibernate(properties);
+  }
+
+  private void initHibernate(Properties properties) {
+    this.hibernateShowSql = properties.getProperty("hibernate.show_sql");
+    this.hibernateFormatSql = properties.getProperty("hibernate.format_sql");
+    this.hibernateUseSqlComments = properties.getProperty("hibernate.use_sql_comments");
+    this.hibernateQuerySubstitutions = properties.getProperty("hibernate.query.substitutions");
+    this.hibernateHbm2ddlAuto = properties.getProperty("hibernate.hbm2ddl.auto");
+    this.hibernateUseQueryCache = properties.getProperty("hibernate.cache.use_query_cache");
+    this.hibernateUseSecondLevelCache = properties.getProperty("hibernate.cache.use_second_level_cache");
+    this.hibernateCacheRegionFactory = properties.getProperty("hibernate.cache.region.factory_class");
+    this.hibernateCacheProviderConfig = properties.getProperty("hibernate.cache.provider_configuration_file_resource_path");
+  }
+
+  private void initJdbc(Properties properties) {
     this.jdbcMaxActive = Integer.parseInt(properties.getProperty("jdbc.maxActive"));
     this.jdbcMaxWait = Integer.parseInt(properties.getProperty("jdbc.maxWait"));
     this.jdbcMinIdle = Integer.parseInt(properties.getProperty("jdbc.minIdle"));
@@ -58,48 +75,41 @@ public class HibernateProperties {
     this.jdbcNumTestsPerEvictionRun = Integer.parseInt(properties.getProperty("jdbc.numTestsPerEvictionRun"));
     this.jdbcMinEvictableIdleTimeMillis = Integer.parseInt(properties.getProperty("jdbc.minEvictableIdleTimeMillis"));
     this.jdbcDefaultTransactionIsolation = Integer.parseInt(properties.getProperty("jdbc.defaultTransactionIsolation"));
-//    this.hibernateDialect = properties.getProperty("hibernate.dialect");
-    this.hibernateShowSql = properties.getProperty("hibernate.show_sql");
-    this.hibernateFormatSql = properties.getProperty("hibernate.format_sql");
-    this.hibernateUseSqlComments = properties.getProperty("hibernate.use_sql_comments");
-    this.hibernateQuerySubstitutions = properties.getProperty("hibernate.query.substitutions");
-    this.hibernateHbm2ddlAuto = properties.getProperty("hibernate.hbm2ddl.auto");
-    this.hibernateUseQueryCache = properties.getProperty("hibernate.cache.use_query_cache");
-    this.hibernateUseSecondLevelCache = properties.getProperty("hibernate.cache.use_second_level_cache");
-    this.hibernateCacheRegionFactory = properties.getProperty("hibernate.cache.region.factory_class");
-    this.hibernateCacheProviderConfig = properties.getProperty("hibernate.cache.provider_configuration_file_resource_path");
   }
 
   private void init(Properties properties) {
-    String jdbcType = properties.getProperty("jdbc.type");
-    String jdbcUrl = properties.getProperty("jdbc.url");
-    switch (jdbcType) {
+    this.jdbcType = properties.getProperty("jdbc.type");
+    String jdbcAddress = properties.getProperty("jdbc.address");
+    switch (this.jdbcType) {
       case "MYSQL":
         this.hibernateDialect = BaseConstant.HIBERNATE_DIALECT_MYSQL;
         this.jdbcDriverClassName = BaseConstant.JDBC_DRIVERCLASSNAME_MYSQL;
         this.jdbcValidationQuery = BaseConstant.JDBC_VALIDATIONQUERY_MYSQL;
-        this.jdbcUrl = String.format(BaseConstant.JDBC_URL_MYSQL, jdbcUrl);
+        this.jdbcUrl = String.format(BaseConstant.JDBC_URL_MYSQL, jdbcAddress);
         break;
       case "MYSQL_REPL":
         this.hibernateDialect = BaseConstant.HIBERNATE_DIALECT_MYSQL_REPL;
         this.jdbcDriverClassName = BaseConstant.JDBC_DRIVERCLASSNAME_MYSQL_REPL;
         this.jdbcValidationQuery = BaseConstant.JDBC_VALIDATIONQUERY_MYSQL_REPL;
-        this.jdbcUrl = String.format(BaseConstant.JDBC_URL_MYSQL_REPL, jdbcUrl);
+        this.jdbcUrl = String.format(BaseConstant.JDBC_URL_MYSQL_REPL, jdbcAddress);
         break;
       case "SQL_SERVER":
         this.hibernateDialect = BaseConstant.HIBERNATE_DIALECT_SQL_SERVER;
         this.jdbcDriverClassName = BaseConstant.JDBC_DRIVERCLASSNAME_SQL_SERVER;
         this.jdbcValidationQuery = BaseConstant.JDBC_VALIDATIONQUERY_SQL_SERVER;
-        this.jdbcUrl = String.format(BaseConstant.JDBC_URL_SQL_SERVER, jdbcUrl);
+        this.jdbcUrl = String.format(BaseConstant.JDBC_URL_SQL_SERVER, jdbcAddress);
         break;
       case "ORACLE":
         this.hibernateDialect = BaseConstant.HIBERNATE_DIALECT_ORACLE;
         this.jdbcDriverClassName = BaseConstant.JDBC_DRIVERCLASSNAME_ORACLE;
         this.jdbcValidationQuery = BaseConstant.JDBC_VALIDATIONQUERY_ORACLE;
-        this.jdbcUrl = String.format(BaseConstant.JDBC_URL_ORACLE, jdbcUrl);
+        this.jdbcUrl = String.format(BaseConstant.JDBC_URL_ORACLE, jdbcAddress);
         break;
     }
-    
+  }
+
+  public String getJdbcType() {
+    return jdbcType;
   }
 
   public String getJdbcDriverClassName() {

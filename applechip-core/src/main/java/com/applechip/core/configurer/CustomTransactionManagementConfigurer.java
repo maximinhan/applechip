@@ -31,7 +31,7 @@ import org.springframework.transaction.interceptor.TransactionInterceptor;
 
 import com.applechip.core.constant.BaseConstant;
 import com.applechip.core.entity.User;
-import com.applechip.core.properties.DatabaseProperties;
+import com.applechip.core.properties.HibernateProperties;
 import com.applechip.core.repository.CustomHibernateJpaVendorAdapter;
 import com.applechip.core.util.CryptoUtil;
 
@@ -43,7 +43,7 @@ public class CustomTransactionManagementConfigurer implements TransactionManagem
   private final static Log log = LogFactory.getLog(CustomTransactionManagementConfigurer.class);
 
   @Autowired
-  private DatabaseProperties databaseProperties;
+  private HibernateProperties hibernateProperties;
 
   @Autowired
   private CryptoUtil cryptUtil;
@@ -71,26 +71,26 @@ public class CustomTransactionManagementConfigurer implements TransactionManagem
   @Bean(destroyMethod = "close")
   public DataSource dataSource() {
     BasicDataSource bean = new BasicDataSource();
-    bean.setDriverClassName(databaseProperties.getJdbcDriverClassName());
-    bean.setUrl(databaseProperties.getJdbcUrl());
-    bean.setUsername(databaseProperties.getJdbcUsername());
-    bean.setPassword(this.decrypt(databaseProperties.getJdbcPassword()));
-    bean.setValidationQuery(databaseProperties.getJdbcValidationQuery());
-    bean.setMaxActive(databaseProperties.getJdbcMaxActive());
-    bean.setMaxWait(databaseProperties.getJdbcMaxWait());
-    bean.setMinIdle(databaseProperties.getJdbcMinIdle());
-    bean.setInitialSize(databaseProperties.getJdbcInitialSize());
-    bean.setTestOnBorrow(databaseProperties.isJdbcTestOnBorrow());
-    bean.setPoolPreparedStatements(databaseProperties.isJdbcPoolingStatements());
-    bean.setDefaultAutoCommit(databaseProperties.isJdbcDefaultAutoCommit());
-    bean.setRemoveAbandoned(databaseProperties.isJdbcRemoveAbandoned());
-    bean.setRemoveAbandonedTimeout(databaseProperties.getJdbcRemoveAbandonedTimeout());
-    bean.setTestOnReturn(databaseProperties.isJdbcTestOnReturn());
-    bean.setTestWhileIdle(databaseProperties.isJdbcTestWhileIdle());
-    bean.setTimeBetweenEvictionRunsMillis(databaseProperties.getJdbcTimeBetweenEvictionRunsMillis());
-    bean.setNumTestsPerEvictionRun(databaseProperties.getJdbcNumTestsPerEvictionRun());
-    bean.setMinEvictableIdleTimeMillis(databaseProperties.getJdbcMinEvictableIdleTimeMillis());
-    bean.setDefaultTransactionIsolation(databaseProperties.getJdbcDefaultTransactionIsolation());
+    bean.setDriverClassName(hibernateProperties.getJdbcDriverClassName());
+    bean.setUrl(hibernateProperties.getJdbcUrl());
+    bean.setUsername(hibernateProperties.getJdbcUsername());
+    bean.setPassword(this.decrypt(hibernateProperties.getJdbcPassword()));
+    bean.setValidationQuery(hibernateProperties.getJdbcValidationQuery());
+    bean.setMaxActive(hibernateProperties.getJdbcMaxActive());
+    bean.setMaxWait(hibernateProperties.getJdbcMaxWait());
+    bean.setMinIdle(hibernateProperties.getJdbcMinIdle());
+    bean.setInitialSize(hibernateProperties.getJdbcInitialSize());
+    bean.setTestOnBorrow(hibernateProperties.isJdbcTestOnBorrow());
+    bean.setPoolPreparedStatements(hibernateProperties.isJdbcPoolingStatements());
+    bean.setDefaultAutoCommit(hibernateProperties.isJdbcDefaultAutoCommit());
+    bean.setRemoveAbandoned(hibernateProperties.isJdbcRemoveAbandoned());
+    bean.setRemoveAbandonedTimeout(hibernateProperties.getJdbcRemoveAbandonedTimeout());
+    bean.setTestOnReturn(hibernateProperties.isJdbcTestOnReturn());
+    bean.setTestWhileIdle(hibernateProperties.isJdbcTestWhileIdle());
+    bean.setTimeBetweenEvictionRunsMillis(hibernateProperties.getJdbcTimeBetweenEvictionRunsMillis());
+    bean.setNumTestsPerEvictionRun(hibernateProperties.getJdbcNumTestsPerEvictionRun());
+    bean.setMinEvictableIdleTimeMillis(hibernateProperties.getJdbcMinEvictableIdleTimeMillis());
+    bean.setDefaultTransactionIsolation(hibernateProperties.getJdbcDefaultTransactionIsolation());
     log.debug("dataSource create...");
     return bean;
   }
@@ -106,16 +106,16 @@ public class CustomTransactionManagementConfigurer implements TransactionManagem
 
   private Properties jpaProperties() {
     Properties bean = new Properties();
-    bean.put(Environment.DIALECT, databaseProperties.getHibernateDialect());
-    bean.put(Environment.SHOW_SQL, databaseProperties.getHibernateShowSql());
-    bean.put(Environment.FORMAT_SQL, databaseProperties.getHibernateFormatSql());
-    bean.put(Environment.USE_SQL_COMMENTS, databaseProperties.getHibernateUseSqlComments());
-    bean.put(Environment.QUERY_SUBSTITUTIONS, databaseProperties.getHibernateQuerySubstitutions());
-    bean.put(Environment.HBM2DDL_AUTO, databaseProperties.getHibernateHbm2ddlAuto());
-    bean.put(Environment.USE_QUERY_CACHE, databaseProperties.getHibernateUseQueryCache());
-    bean.put(Environment.USE_SECOND_LEVEL_CACHE, databaseProperties.getHibernateUseSecondLevelCache());
-    bean.put(Environment.CACHE_REGION_FACTORY, databaseProperties.getHibernateCacheRegionFactory());
-    bean.put(Environment.CACHE_PROVIDER_CONFIG, databaseProperties.getHibernateCacheProviderConfig());
+    bean.put(Environment.DIALECT, hibernateProperties.getHibernateDialect());
+    bean.put(Environment.SHOW_SQL, hibernateProperties.getHibernateShowSql());
+    bean.put(Environment.FORMAT_SQL, hibernateProperties.getHibernateFormatSql());
+    bean.put(Environment.USE_SQL_COMMENTS, hibernateProperties.getHibernateUseSqlComments());
+    bean.put(Environment.QUERY_SUBSTITUTIONS, hibernateProperties.getHibernateQuerySubstitutions());
+    bean.put(Environment.HBM2DDL_AUTO, hibernateProperties.getHibernateHbm2ddlAuto());
+    bean.put(Environment.USE_QUERY_CACHE, hibernateProperties.getHibernateUseQueryCache());
+    bean.put(Environment.USE_SECOND_LEVEL_CACHE, hibernateProperties.getHibernateUseSecondLevelCache());
+    bean.put(Environment.CACHE_REGION_FACTORY, hibernateProperties.getHibernateCacheRegionFactory());
+    bean.put(Environment.CACHE_PROVIDER_CONFIG, hibernateProperties.getHibernateCacheProviderConfig());
     return bean;
   }
 
@@ -132,8 +132,8 @@ public class CustomTransactionManagementConfigurer implements TransactionManagem
     NameMatchTransactionAttributeSource nameMatchTransactionAttributeSource = new NameMatchTransactionAttributeSource();
     nameMatchTransactionAttributeSource.setProperties(this.transactionAttributes());
     AnnotationTransactionAttributeSource annotationTransactionAttributeSource = new AnnotationTransactionAttributeSource();
-    TransactionAttributeSource transactionAttributeSource = new CompositeTransactionAttributeSource(new TransactionAttributeSource[] {
-        annotationTransactionAttributeSource, nameMatchTransactionAttributeSource });
+    TransactionAttributeSource transactionAttributeSource =
+        new CompositeTransactionAttributeSource(new TransactionAttributeSource[] {annotationTransactionAttributeSource, nameMatchTransactionAttributeSource});
     log.debug("transactionAttributeSource create...");
     return transactionAttributeSource;
   }

@@ -14,9 +14,6 @@ dependencies {
     compile 'org.aspectj:aspectjweaver:1.8.0'
 }
 
-project.ext.set('jdbcType', "${jdbcType}")
-
-
 afterEvaluate {
     configure(allProcessResourcesTasks()) {
         filter(org.apache.tools.ant.filters.ReplaceTokens, 
@@ -24,8 +21,7 @@ afterEvaluate {
             'jdbcType': "${jdbcType}".toString(),
             'jdbcUsername': "${jdbcUsername}".toString(),
             'jdbcPassword': "${jdbcPassword}".toString(),
-            'jdbcAddress': "${jdbcAddress}".toString(),
-            'jdbcName': "${jdbcName}".toString()
+            'jdbcAddress': "${jdbcAddress}".toString()
           ]
         )
     }

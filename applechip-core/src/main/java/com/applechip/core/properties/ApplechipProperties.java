@@ -4,7 +4,7 @@ import java.util.Properties;
 
 import com.applechip.core.constant.BaseConstant;
 
-public class BaseProperties {
+public class ApplechipProperties {
   private int executorCorePoolSize;
   private int executorMaxPoolSize;
   private int executorQueueCapacity;
@@ -20,7 +20,15 @@ public class BaseProperties {
   private int clearClientBeforeMinute;
   private String pushParamWp;
 
-  public BaseProperties(Properties properties) {
+  public static ApplechipProperties getProperties(Properties properties) {
+    return new ApplechipProperties(properties);
+  }
+
+  private ApplechipProperties(Properties properties) {
+    this.init(properties);
+  }
+
+  private void init(Properties properties) {
     this.executorCorePoolSize = Integer.parseInt(properties.getProperty("executor.corePoolSize"));
     this.executorMaxPoolSize = Integer.parseInt(properties.getProperty("executor.maxPoolSize"));
     this.executorQueueCapacity = Integer.parseInt(properties.getProperty("executor.queueCapacity"));

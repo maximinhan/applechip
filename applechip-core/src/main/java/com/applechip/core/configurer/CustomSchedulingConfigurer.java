@@ -12,14 +12,14 @@ import org.springframework.scheduling.config.CronTask;
 import org.springframework.scheduling.config.ScheduledTaskRegistrar;
 import org.springframework.scheduling.support.CronTrigger;
 
-import com.applechip.core.properties.BaseProperties;
+import com.applechip.core.properties.ApplechipProperties;
 
 @Configuration
 @EnableScheduling
 public class CustomSchedulingConfigurer implements SchedulingConfigurer {
 
   @Autowired
-  private BaseProperties baseProperties;
+  private ApplechipProperties baseProperties;
 
 //  @Autowired
 //  private ClearData clearData;
