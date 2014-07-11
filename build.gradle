@@ -45,10 +45,10 @@ List jdbcDrivers = [
 
 buildDir = 'target'
 
-sourceCompatibility = "${javaVersion}"
-targetCompatibility = "${javaVersion}"
+project.sourceCompatibility = "${javaVersion}"
+project.targetCompatibility = "${javaVersion}"
 
-version = '0.1'
+project.version = '0.1'
 
 subprojects {
     apply plugin: 'java'
