@@ -12,6 +12,7 @@ dependencies {
     compile 'commons-dbcp:commons-dbcp:1.4'
     compile 'javax.servlet:javax.servlet-api:3.0.1'
     compile 'org.aspectj:aspectjweaver:1.8.0'
+    compile 'org.projectlombok:lombok:1.14.4'
 }
 
 afterEvaluate {

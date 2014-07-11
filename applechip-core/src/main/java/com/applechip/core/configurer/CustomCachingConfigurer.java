@@ -16,7 +16,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 
-import com.applechip.core.properties.ApplechipProperties;
+import com.applechip.core.properties.CoreProperties;
 
 
 @Configuration
@@ -24,7 +24,7 @@ import com.applechip.core.properties.ApplechipProperties;
 public class CustomCachingConfigurer implements CachingConfigurer {
 
   @Autowired
-  private ApplechipProperties baseProperties;
+  private CoreProperties baseProperties;
 
   @Override
   @Bean

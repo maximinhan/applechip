@@ -12,7 +12,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PropertiesLoaderSupport;
 
 import com.applechip.core.exception.SystemException;
-import com.applechip.core.properties.ApplechipProperties;
+import com.applechip.core.properties.CoreProperties;
 import com.applechip.core.properties.HibernateProperties;
 import com.applechip.core.properties.RuntimeProperties;
 import com.applechip.core.util.PropertiesLoaderUtils;
@@ -25,16 +25,16 @@ public class CoreConfig extends PropertiesLoaderSupport {
   @Value("${runtimeProperties}")
   private Resource runtimeProperties;
 
-  @Value("${applechipProperties}")
-  private Resource applechipProperties;
+  @Value("${coreProperties}")
+  private Resource coreProperties;
 
   @Value("${hibernateProperties}")
   private Resource hibernateProperties;
 
   @PostConstruct
   @Bean
-  public ApplechipProperties baseProperties() {
-    return ApplechipProperties.getProperties(PropertiesLoaderUtils.loadProperties(applechipProperties));
+  public CoreProperties baseProperties() {
+    return CoreProperties.getProperties(PropertiesLoaderUtils.loadProperties(coreProperties));
   }
 
   @PostConstruct
@@ -53,6 +53,6 @@ public class CoreConfig extends PropertiesLoaderSupport {
       throw new SystemException(e);
     }
     bean.setReloadingStrategy(new FileChangedReloadingStrategy());
-    return new RuntimeProperties(bean);
+    return RuntimeProperties.getProperties(bean);
   }
 }

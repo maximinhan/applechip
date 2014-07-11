@@ -12,14 +12,14 @@ import org.springframework.scheduling.annotation.AsyncConfigurer;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
-import com.applechip.core.properties.ApplechipProperties;
+import com.applechip.core.properties.CoreProperties;
 
 @Configuration
 @EnableAsync(proxyTargetClass = true, mode = AdviceMode.PROXY, order = Ordered.LOWEST_PRECEDENCE, annotation = Async.class)
 public class CustomAsyncConfigurer implements AsyncConfigurer {
 
   @Autowired
-  private ApplechipProperties baseProperties;
+  private CoreProperties baseProperties;
 
   @Override
   @Bean

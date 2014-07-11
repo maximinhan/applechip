@@ -45,8 +45,8 @@ List jdbcDrivers = [
 
 buildDir = 'target'
 
-sourceCompatibility = javaVersion
-targetCompatibility = javaVersion
+sourceCompatibility = "${javaVersion}"
+targetCompatibility = "${javaVersion}"
 
 version = '0.1'
 

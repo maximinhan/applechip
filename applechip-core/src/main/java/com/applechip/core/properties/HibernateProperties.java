@@ -2,8 +2,13 @@ package com.applechip.core.properties;
 
 import java.util.Properties;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import com.applechip.core.constant.BaseConstant;
 
+@Getter
+@Setter
 public class HibernateProperties {
   private String jdbcType;
   private String jdbcDriverClassName;
@@ -43,11 +48,11 @@ public class HibernateProperties {
 
   private HibernateProperties(Properties properties) {
     this.init(properties);
-    this.initJdbc(properties);
-    this.initHibernate(properties);
+    this.setJdbcProperties(properties);
+    this.setHibernateProperties(properties);
   }
 
-  private void initHibernate(Properties properties) {
+  private void setHibernateProperties(Properties properties) {
     this.hibernateShowSql = properties.getProperty("hibernate.show_sql");
     this.hibernateFormatSql = properties.getProperty("hibernate.format_sql");
     this.hibernateUseSqlComments = properties.getProperty("hibernate.use_sql_comments");
@@ -59,7 +64,7 @@ public class HibernateProperties {
     this.hibernateCacheProviderConfig = properties.getProperty("hibernate.cache.provider_configuration_file_resource_path");
   }
 
-  private void initJdbc(Properties properties) {
+  private void setJdbcProperties(Properties properties) {
     this.jdbcMaxActive = Integer.parseInt(properties.getProperty("jdbc.maxActive"));
     this.jdbcMaxWait = Integer.parseInt(properties.getProperty("jdbc.maxWait"));
     this.jdbcMinIdle = Integer.parseInt(properties.getProperty("jdbc.minIdle"));
@@ -107,129 +112,4 @@ public class HibernateProperties {
         break;
     }
   }
-
-  public String getJdbcType() {
-    return jdbcType;
-  }
-
-  public String getJdbcDriverClassName() {
-    return jdbcDriverClassName;
-  }
-
-  public String getJdbcUrl() {
-    return jdbcUrl;
-  }
-
-  public String getJdbcUsername() {
-    return jdbcUsername;
-  }
-
-  public String getJdbcPassword() {
-    return jdbcPassword;
-  }
-
-  public String getJdbcValidationQuery() {
-    return jdbcValidationQuery;
-  }
-
-  public int getJdbcMaxActive() {
-    return jdbcMaxActive;
-  }
-
-  public int getJdbcMaxWait() {
-    return jdbcMaxWait;
-  }
-
-  public int getJdbcMinIdle() {
-    return jdbcMinIdle;
-  }
-
-  public int getJdbcInitialSize() {
-    return jdbcInitialSize;
-  }
-
-  public boolean isJdbcTestOnBorrow() {
-    return jdbcTestOnBorrow;
-  }
-
-  public boolean isJdbcPoolingStatements() {
-    return jdbcPoolingStatements;
-  }
-
-  public boolean isJdbcDefaultAutoCommit() {
-    return jdbcDefaultAutoCommit;
-  }
-
-  public boolean isJdbcRemoveAbandoned() {
-    return jdbcRemoveAbandoned;
-  }
-
-  public int getJdbcRemoveAbandonedTimeout() {
-    return jdbcRemoveAbandonedTimeout;
-  }
-
-  public boolean isJdbcTestOnReturn() {
-    return jdbcTestOnReturn;
-  }
-
-  public boolean isJdbcTestWhileIdle() {
-    return jdbcTestWhileIdle;
-  }
-
-  public int getJdbcTimeBetweenEvictionRunsMillis() {
-    return jdbcTimeBetweenEvictionRunsMillis;
-  }
-
-  public int getJdbcNumTestsPerEvictionRun() {
-    return jdbcNumTestsPerEvictionRun;
-  }
-
-  public int getJdbcMinEvictableIdleTimeMillis() {
-    return jdbcMinEvictableIdleTimeMillis;
-  }
-
-  public int getJdbcDefaultTransactionIsolation() {
-    return jdbcDefaultTransactionIsolation;
-  }
-
-  public String getHibernateDialect() {
-    return hibernateDialect;
-  }
-
-  public String getHibernateShowSql() {
-    return hibernateShowSql;
-  }
-
-  public String getHibernateFormatSql() {
-    return hibernateFormatSql;
-  }
-
-  public String getHibernateUseSqlComments() {
-    return hibernateUseSqlComments;
-  }
-
-  public String getHibernateQuerySubstitutions() {
-    return hibernateQuerySubstitutions;
-  }
-
-  public String getHibernateHbm2ddlAuto() {
-    return hibernateHbm2ddlAuto;
-  }
-
-  public String getHibernateUseQueryCache() {
-    return hibernateUseQueryCache;
-  }
-
-  public String getHibernateUseSecondLevelCache() {
-    return hibernateUseSecondLevelCache;
-  }
-
-  public String getHibernateCacheRegionFactory() {
-    return hibernateCacheRegionFactory;
-  }
-
-  public String getHibernateCacheProviderConfig() {
-    return hibernateCacheProviderConfig;
-  }
-
 }
