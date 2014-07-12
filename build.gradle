@@ -8,7 +8,7 @@ ext {
     hibernateVersion = '4.3.5.Final'
     logbackVersion = '1.1.2'
     slf4jVersion = '1.7.7'
-    mysqlJdbcDriverVersion = '5.1.16' // 버전업 주의!! http://wiki.coupang.net:8090/pages/viewpage.action?pageId=18357672
+    mysqlJdbcDriverVersion = '5.1.16' // 버전??주의!! http://wiki.coupang.net:8090/pages/viewpage.action?pageId=18357672
 
     webProjects = ['applechip-api', 'applechip-web']
 }
@@ -44,11 +44,6 @@ List jdbcDrivers = [
 ]
 
 buildDir = 'target'
-
-project.sourceCompatibility = "${javaVersion}"
-project.targetCompatibility = "${javaVersion}"
-
-project.version = '0.1'
 
 subprojects {
     apply plugin: 'java'
@@ -94,13 +89,12 @@ configure(subprojects.findAll { webProjects.contains(it.name) }) {
     eclipse {
         wtp {
             facet {
-                facet name: 'jst.web', version: '3.0' // Servlet Spec Version 지정
-                facet name: 'jst.java', version: '1.7' // Java Version 지정, 1.7 ...
+                facet name: 'jst.web', version: '3.0' // Servlet Spec Version 지??                facet name: 'jst.java', version: '1.7' // Java Version 지?? 1.7 ...
                 facet name: 'wst.jsdt.web', version: '1.0'
             }
         }
     }
-    // Clean시에 /src/main/webapp/WEB-INF/classes|lib 삭제
+    // Clean?�에 /src/main/webapp/WEB-INF/classes|lib ??��
     clean {
         delete project.file('/src/main/webapp/WEB-INF/classes'), project.file('/src/main/webapp/WEB-INF/lib')
     }
