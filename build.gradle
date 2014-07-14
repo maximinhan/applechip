@@ -52,6 +52,9 @@ subprojects {
 
     repositories {
         mavenCentral()
+        maven {
+            url 'http://nexus.bywook.com/content/repositories/releases'
+        }
     }
 
     dependencies() {
@@ -94,7 +97,7 @@ configure(subprojects.findAll { webProjects.contains(it.name) }) {
             }
         }
     }
-    // Clean?œì— /src/main/webapp/WEB-INF/classes|lib ?? œ
+    // Clean?ï¿½ì— /src/main/webapp/WEB-INF/classes|lib ??ï¿½ï¿½
     clean {
         delete project.file('/src/main/webapp/WEB-INF/classes'), project.file('/src/main/webapp/WEB-INF/lib')
     }

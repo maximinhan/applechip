@@ -4,6 +4,8 @@ import javax.annotation.PostConstruct;
 
 import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.commons.configuration.reloading.FileChangedReloadingStrategy;
+import org.hibernate.tool.hbm2ddl.SchemaExport;
+import org.hibernate.tool.hbm2ddl.SchemaExportTask;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -34,6 +36,8 @@ public class CoreConfig extends PropertiesLoaderSupport {
   @PostConstruct
   @Bean
   public CoreProperties baseProperties() {
+//    SchemaExportTask
+//    org.hibernate.cfg.Configuration
     return CoreProperties.getProperties(PropertiesLoaderUtils.loadProperties(coreProperties));
   }
 
@@ -49,10 +53,10 @@ public class CoreConfig extends PropertiesLoaderSupport {
     PropertiesConfiguration bean = null;
     try {
       bean = new PropertiesConfiguration(runtimeProperties.getFile());
+      bean.setReloadingStrategy(new FileChangedReloadingStrategy());
     } catch (Exception e) {
       throw new SystemException(e);
     }
-    bean.setReloadingStrategy(new FileChangedReloadingStrategy());
     return RuntimeProperties.getProperties(bean);
   }
 }

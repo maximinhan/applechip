@@ -3,6 +3,7 @@ package com.applechip.core.configurer;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.hibernate.tool.hbm2ddl.SchemaExport;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -22,6 +23,9 @@ public class CustomConfigurer {
     List<MediaType> list = new ArrayList<MediaType>();
     list.add(MediaType.APPLICATION_JSON);
     bean.setSupportedMediaTypes(list);
+//    org.hibernate.cfg.Configuration
+//    SchemaExport
+//    Class.forName(className)
     return bean;
   }
 
