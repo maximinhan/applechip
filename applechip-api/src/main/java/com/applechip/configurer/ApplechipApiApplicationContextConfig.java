@@ -18,7 +18,7 @@ import org.springframework.web.servlet.view.InternalResourceViewResolver;
 @Configuration
 @EnableWebMvc
 @ComponentScan(basePackages = {"com.applechip.api"})
-public class AppleChipApiApplicationContextConfig extends WebMvcConfigurationSupport{
+public class ApplechipApiApplicationContextConfig extends WebMvcConfigurationSupport{
     @Autowired
     PageableHandlerMethodArgumentResolver pageableResolver;
 

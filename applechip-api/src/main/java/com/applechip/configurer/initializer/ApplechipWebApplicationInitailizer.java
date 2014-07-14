@@ -1,17 +1,11 @@
 package com.applechip.configurer.initializer;
 
-import com.applechip.configurer.AppleChipApiApplicationContextConfig;
-import org.springframework.web.WebApplicationInitializer;
-import org.springframework.web.context.ContextLoaderListener;
-import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
+import javax.servlet.Filter;
+
 import org.springframework.web.filter.CharacterEncodingFilter;
-import org.springframework.web.filter.HiddenHttpMethodFilter;
 import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;
 
-import javax.servlet.Filter;
-import javax.servlet.FilterRegistration;
-import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
+import com.applechip.configurer.ApplechipApiApplicationContextConfig;
 
 /**
  * Created with IntelliJ IDEA.
@@ -59,7 +53,7 @@ public class ApplechipWebApplicationInitailizer extends AbstractAnnotationConfig
 
     @Override
     protected Class<?>[] getServletConfigClasses() {
-        return new Class[] {AppleChipApiApplicationContextConfig.class};
+        return new Class[] {ApplechipApiApplicationContextConfig.class};
     }
 
     @Override
