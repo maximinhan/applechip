@@ -1,3 +1,5 @@
+apply plugin: 'maven'
+
 ext {
     javaVersion = '1.7'
     javaEncoding = 'UTF-8'
@@ -102,4 +104,44 @@ configure(subprojects.findAll { webProjects.contains(it.name) }) {
         delete project.file('/src/main/webapp/WEB-INF/classes'), project.file('/src/main/webapp/WEB-INF/lib')
     }
 
+}
+      
+
+buildscript {
+    repositories {
+        mavenCentral()
+        maven {
+          url "http://nexus.bywook.com/nexus/content/groups/public"
+        }
+    }
+}
+repositories {
+    mavenCentral()
+    maven {
+      url "http://nexus.bywook.com/nexus/content/groups/public"
+    }
+}
+
+
+uploadArchives {
+    repositories {
+    mavenDeployer {
+    /**
+        pom.version = '1.0-SNAPSHOT'
+        pom.groupId = 'com.applechip'
+        addFilter('api') {artifact, file ->
+            artifact.name == 'applechip-api'
+        }
+        addFilter('web') {artifact, file ->
+            artifact.name == 'applechip-web'
+        }
+        **/
+        repository(url: "http://nexus.bywook.com/content/repositories/releases/") {
+            authentication(userName: "me", password: "myPassword")
+        }
+        snapshotRepository(url: "http://nexus.bywook.com/content/repositories/snapshots/") {
+            authentication(userName: "me", password: "myPassword")
+        }
+    }
+    }
 }

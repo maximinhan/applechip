@@ -1,4 +1,4 @@
-apply plugin: 'maven'
+
 
 dependencies {
 	compile group: 'commons-collections', name: 'commons-collections', version: '3.2'
@@ -58,7 +58,7 @@ sourceSets {
 **/
     generated {
         java {
-            srcDirs = ['src/main/generated']
+            srcDirs = ['/build/querydsl']
         }
     }
 }
@@ -241,7 +241,7 @@ class HibernateJpaSchemaGenerationTask extends DefaultTask {
 				export.delimiter = ';'
 				export.outputFile = file.absolutePath
 				//export.drop true true
-				export.execute true, true, false, false
+				export.execute true, false, false, false
 			}
 		} finally {
 			Thread.currentThread().setContextClassLoader(prev)
