@@ -6,8 +6,10 @@ import java.util.Locale;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.extern.apachecommons.CommonsLog;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -25,21 +27,21 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.validation.Validator;
 import org.springframework.web.context.ServletContextAware;
+import org.springframework.web.context.request.RequestAttributes;
+import org.springframework.web.context.request.RequestContextHolder;
 
 import com.applechip.core.entity.User;
 import com.applechip.core.exception.SystemException;
 
+@Getter
+@Setter
+@CommonsLog
 public abstract class AbstractController implements ServletContextAware {
-
-  protected final transient Log log = LogFactory.getLog(getClass());
 
   private ServletContext servletContext;
 
   @Autowired(required = false)
   public Validator validator;
-
-//  @Autowired
-//  protected LookupManager lookupManager;
 
   @Autowired
   private MappingJackson2HttpMessageConverter mappingJackson2HttpMessageConverter;
@@ -54,27 +56,19 @@ public abstract class AbstractController implements ServletContextAware {
     messageSourceAccessor = new MessageSourceAccessor(messageSource);
   }
 
-  public String getText(String msgKey, Locale locale) {
+  protected String getText(String msgKey, Locale locale) {
     return messageSourceAccessor.getMessage(msgKey, locale);
   }
 
-  public String getText(String msgKey, Object[] args, Locale locale) {
+  protected String getText(String msgKey, Object[] args, Locale locale) {
     return messageSourceAccessor.getMessage(msgKey, args, locale);
   }
 
-  public void setServletContext(ServletContext servletContext) {
-    this.servletContext = servletContext;
-  }
-
-  public ServletContext getServletContext() {
-    return servletContext;
-  }
-
-  public String getLanguage() {
+  protected String getLanguage() {
     return LocaleContextHolder.getLocale().getLanguage();
   }
 
-  public Locale getLocale() {
+  protected Locale getLocale() {
     return LocaleContextHolder.getLocale();
   }
 
@@ -90,6 +84,7 @@ public abstract class AbstractController implements ServletContextAware {
       }
       mappingJackson2HttpMessageConverter.write(obj, mediaType, new ServletServerHttpResponse(response));
     } catch (IOException e) {
+      log.error("mappingJackson2HttpMessageConverter error");
       throw new RuntimeException("mappingJackson2HttpMessageConverter error");
     }
   }
@@ -106,11 +101,16 @@ public abstract class AbstractController implements ServletContextAware {
       }
       jaxb2RootElementHttpMessageConverter.write(obj, mediaType, new ServletServerHttpResponse(response));
     } catch (IOException e) {
+      log.error("jaxb2RootElementHttpMessageConverter error");
       throw new RuntimeException("jaxb2RootElementHttpMessageConverter error");
     }
   }
 
-  public User getCurrentUser() {
+  protected RequestAttributes getRequestAttributes() {
+    return RequestContextHolder.currentRequestAttributes();
+  }
+
+  protected User getCurrentUser() {
     SecurityContext ctx = SecurityContextHolder.getContext();
     User currentUser = null;
     if (ctx.getAuthentication() != null) {
