@@ -1,20 +1,3 @@
-apply plugin: 'maven'
-apply plugin: 'pmd'
-
-
-task release(dependsOn: assemble) << {
-	println "We release now"
-}
-gradle.taskGraph.whenReady {
-	taskGraph ->
-		if (taskGraph.hasTask(':release')) {
-			version = '1.0'
-		} else {
-			version = '1.0-SNAPSHOT'
-		}
-}
-
-
 gradle.taskGraph.beforeTask {
 	Task task ->
 		println "excuting $task ..."
@@ -23,12 +6,12 @@ gradle.taskGraph.beforeTask {
 gradle.taskGraph.afterTask {
 	Task task, TaskState state ->
 		if (state.failure) {
-			println "failure"
+			println "Failure"
 		} else {
-			println "done"
+			println "Done"
 		}
 }
-archivesBaseName = "applechip"
+//archivesBaseName = "applechip"
 
 task configure << {
     def pos = new java.text.FieldPosition(10)
@@ -36,15 +19,6 @@ task configure << {
     println pos.versionInfo
 }
 
-/**
-configure (install.repositories.mavenInstaller) {
-	pom.project {
-		version '1.0-Maven'
-		groupId 'applechip'
-		artifactId 'applechip'
-	}
-}
-**/
 ext {
     javaVersion = '1.7'
     javaEncoding = 'UTF-8'
@@ -93,15 +67,16 @@ List jdbcDrivers = [
 buildDir = 'target'
 
 allprojects{
-apply plugin: 'pmd'
+	apply plugin: 'pmd'
+	apply plugin: 'maven'
+    project.group = 'com.applechip'
 	buildscript {
 	    repositories {
 	        mavenLocal()
 	        mavenCentral()
-	        //mavenRepo urls: 'http://nexus.bywook.com/nexus/content/groups/public' flatDir name: 'localRepository', dirs: 'lib'
-	        //maven {
-	        //  url "http://nexus.bywook.com/nexus/content/groups/public"
-	        //}
+	        maven {
+	          url "http://nexus.bywook.com/nexus/content/groups/public"
+	        }
 	    }
 	}
 	repositories {
@@ -110,12 +85,6 @@ apply plugin: 'pmd'
 	    maven {
 	      url "http://nexus.bywook.com/nexus/content/groups/public"
 	    }
-	}
-	configurations {
-		deployerJars
-	}
-	dependencies {
-		deployerJars "org.apache.maven.wagon:wagon-ssh:1.0-beta-2"
 	}
 	pmd {
 		ignoreFailures = true
@@ -126,6 +95,18 @@ apply plugin: 'pmd'
 			html.enabled = true
 		}
 	}
+	task release(dependsOn: assemble) << {
+	println "We release now"
+}
+gradle.taskGraph.whenReady {
+	taskGraph ->
+		if (taskGraph.hasTask(':release')) {
+			project.version = '1.0'
+		} else {
+			project.version = '1.0-SNAPSHOT'
+		}
+}
+	
 		/**
 	task integrationTest(type: Test) {
 		description = 'Run'
@@ -169,7 +150,6 @@ subprojects {
 
         testCompile group: 'junit', name: 'junit', version: '4.+'
         testCompile 'org.mockito:mockito-all:1.9.5'
-
     }
 
     eclipse {
@@ -178,15 +158,32 @@ subprojects {
             defaultOutputDir = file("${buildDir}/classes/main")
         }
     }
+    apply plugin: 'maven'
+    uploadArchives {
+    	repositories {
+       		mavenDeployer {
+        	repository(url: "http://nexus.bywook.com/content/repositories/releases/") {
+    	        authentication(userName: "me", password: "myPassword")
+	        	}
+        	snapshotRepository(url: "http://nexus.bywook.com/content/repositories/snapshots/") {
+            	authentication(userName: "me", password: "myPassword")
+        		}
+        	}
+    	}
+	}
+	task sourcesJar(type: Jar, dependsOn: classes) {
+	    classifier = 'sources'
+	    from sourceSets.main.allSource
+	}
+	artifacts {
+	    archives sourcesJar
+	}
 }
 
 
-// configure Web Projects
 configure(subprojects.findAll { webProjects.contains(it.name) }) {
     apply plugin: 'war'
-
     webAppDirName = 'src/main/webapp'
-
     dependencies {
         providedCompile 'javax.servlet:javax.servlet-api:3.0.1'
     }
@@ -194,16 +191,15 @@ configure(subprojects.findAll { webProjects.contains(it.name) }) {
     eclipse {
         wtp {
             facet {
-                facet name: 'jst.web', version: '3.0' // Servlet Spec Version 지??                facet name: 'jst.java', version: '1.7' // Java Version 지?? 1.7 ...
+                facet name: 'jst.web', version: '3.0'
+                facet name: 'jst.java', version: '1.7'
                 facet name: 'wst.jsdt.web', version: '1.0'
             }
         }
     }
-    // Clean?�에 /src/main/webapp/WEB-INF/classes|lib ??��
     clean {
         delete project.file('/src/main/webapp/WEB-INF/classes'), project.file('/src/main/webapp/WEB-INF/lib')
     }
-    
     task createBuildInfoFile << {
     	def buildInfoFile = new File("$buildDir/build-info.properties")
     	Properties properties = new Properties()
@@ -211,7 +207,6 @@ configure(subprojects.findAll { webProjects.contains(it.name) }) {
     	properties.setProperty('timestamp', '111')
     	properties.store(buildInfoFile.newWriter(), null)
     }
-    
     war {
     	dependsOn createBuildInfoFile
     	baseName = 'applechip'
@@ -219,39 +214,5 @@ configure(subprojects.findAll { webProjects.contains(it.name) }) {
     		include 'build-info.properties'
     		into('WEB-INF/classes')
     	}
-    }
-
-}
-
-uploadArchives { 
-    repositories.mavenDeployer {
-    /**
-        pom.version = '1.0-SNAPSHOT'
-        pom.groupId = 'com.applechip'
-        addFilter('api') {artifact, file ->
-            artifact.name == 'applechip-api'
-        }
-        addFilter('web') {artifact, file ->
-            artifact.name == 'applechip-web'
-        }
-        **/
-        configuration = configurations.deployerJars
-        pom.project {
-               groupId 'com.companyname'
-               artifactId 'mylib'
-                packaging 'war'
-               version  '1.0.0'
-        }
-        repository(url: "scp://nexus.bywook.com/content/repositories/releases/") {
-            authentication(userName: "me", password: "myPassword")
-        }
-        /**
-        repository(url: "http://nexus.bywook.com/content/repositories/releases/") {
-            authentication(userName: "me", password: "myPassword")
-        }
-        **/
-        snapshotRepository(url: "http://nexus.bywook.com/content/repositories/snapshots/") {
-            authentication(userName: "me", password: "myPassword")
-        }
     }
 }
