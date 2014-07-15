@@ -23,8 +23,7 @@ public class ResponseVO extends AbstractObject {
   @JsonProperty("debugMessage")
   private String debugMessage;
 
-  public ResponseVO() {
-  }
+  public ResponseVO() {}
 
   public ResponseVO(String returnCode) {
     this.returnCode = returnCode;
@@ -76,4 +75,5 @@ public class ResponseVO extends AbstractObject {
   public String getMessage() {
     return message;
   }
+  
 }

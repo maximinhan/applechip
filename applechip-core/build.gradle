@@ -130,7 +130,7 @@ scanTestClasses=true
         }
     }
 }
-
+//apply from: "hibernateTask.gradle"
 task ddl(type: HibernateJpaSchemaGenerationTask, dependsOn: [compileJava, processResources])
 jar.dependsOn << ddl
 
@@ -188,8 +188,9 @@ class HibernateJpaSchemaGenerationTask extends DefaultTask {
     }
 }
 
-
 **/
+
+
 class HibernateJpaSchemaGenerationTask extends DefaultTask {
 	def Map<String, String> dialects = [ORACLE: "org.hibernate.dialect.Oracle10gDialect", MYSQL: "org.hibernate.dialect.MySQLDialect", MYSQL5: "org.hibernate.dialect.MySQL5Dialect", MYSQL5INNODB: "org.hibernate.dialect.MySQL5InnoDBDialect", HSQL: "org.hibernate.dialect.HSQLDialect", H2: "org.hibernate.dialect.H2Dialect"]
 	def source = project.sourceSets.main.output.classesDir
@@ -248,7 +249,6 @@ class HibernateJpaSchemaGenerationTask extends DefaultTask {
 		}
 	}
 }
-
 
 
 

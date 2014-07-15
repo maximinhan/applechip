@@ -1,5 +1,50 @@
 apply plugin: 'maven'
+apply plugin: 'pmd'
 
+
+task release(dependsOn: assemble) << {
+	println "We release now"
+}
+gradle.taskGraph.whenReady {
+	taskGraph ->
+		if (taskGraph.hasTask(':release')) {
+			version = '1.0'
+		} else {
+			version = '1.0-SNAPSHOT'
+		}
+}
+
+
+gradle.taskGraph.beforeTask {
+	Task task ->
+		println "excuting $task ..."
+}
+
+gradle.taskGraph.afterTask {
+	Task task, TaskState state ->
+		if (state.failure) {
+			println "failure"
+		} else {
+			println "done"
+		}
+}
+archivesBaseName = "applechip"
+
+task configure << {
+    def pos = new java.text.FieldPosition(10)
+    apply from: 'applechip.gradle', to: pos
+    println pos.versionInfo
+}
+
+/**
+configure (install.repositories.mavenInstaller) {
+	pom.project {
+		version '1.0-Maven'
+		groupId 'applechip'
+		artifactId 'applechip'
+	}
+}
+**/
 ext {
     javaVersion = '1.7'
     javaEncoding = 'UTF-8'
@@ -47,17 +92,72 @@ List jdbcDrivers = [
 
 buildDir = 'target'
 
+allprojects{
+apply plugin: 'pmd'
+	buildscript {
+	    repositories {
+	        mavenLocal()
+	        mavenCentral()
+	        //mavenRepo urls: 'http://nexus.bywook.com/nexus/content/groups/public' flatDir name: 'localRepository', dirs: 'lib'
+	        //maven {
+	        //  url "http://nexus.bywook.com/nexus/content/groups/public"
+	        //}
+	    }
+	}
+	repositories {
+	    mavenLocal()
+	    mavenCentral()
+	    maven {
+	      url "http://nexus.bywook.com/nexus/content/groups/public"
+	    }
+	}
+	configurations {
+		deployerJars
+	}
+	dependencies {
+		deployerJars "org.apache.maven.wagon:wagon-ssh:1.0-beta-2"
+	}
+	pmd {
+		ignoreFailures = true
+	}
+	tasks.withType(Pmd) {
+		reports {
+			xml.enabled = false
+			html.enabled = true
+		}
+	}
+		/**
+	task integrationTest(type: Test) {
+		description = 'Run'
+		group = 'ver'
+		testClassesDir = sourceSets.integrationTest.output.classesDir
+		testResultsDir = file("$testResultsDir/integration")
+	}
+	sourceSets {
+		integrationTest {
+			java.srcDir file('src/integTest/java')
+			resources.srcDir file('src/integTest/resources')
+			compileClasspath = sourceSets.main.output + configurations.testRuntime
+			runtimeClasspath = out + compileClasspath
+		}
+		main {
+			java {
+				srcDir 'src'
+			}
+		}
+		test {
+			java {
+				srcDir 'test'
+			}
+		}
+	}
+**/
+}
+
 subprojects {
     apply plugin: 'java'
     apply plugin: 'eclipse'
     apply plugin: 'eclipse-wtp'
-
-    repositories {
-        mavenCentral()
-        maven {
-            url 'http://nexus.bywook.com/content/repositories/releases'
-        }
-    }
 
     dependencies() {
         compile springframeworks
@@ -103,29 +203,28 @@ configure(subprojects.findAll { webProjects.contains(it.name) }) {
     clean {
         delete project.file('/src/main/webapp/WEB-INF/classes'), project.file('/src/main/webapp/WEB-INF/lib')
     }
-
-}
-      
-
-buildscript {
-    repositories {
-        mavenCentral()
-        maven {
-          url "http://nexus.bywook.com/nexus/content/groups/public"
-        }
+    
+    task createBuildInfoFile << {
+    	def buildInfoFile = new File("$buildDir/build-info.properties")
+    	Properties properties = new Properties()
+    	properties.setProperty('version', project.version.toString())
+    	properties.setProperty('timestamp', '111')
+    	properties.store(buildInfoFile.newWriter(), null)
     }
-}
-repositories {
-    mavenCentral()
-    maven {
-      url "http://nexus.bywook.com/nexus/content/groups/public"
+    
+    war {
+    	dependsOn createBuildInfoFile
+    	baseName = 'applechip'
+    	from(buildDir) {
+    		include 'build-info.properties'
+    		into('WEB-INF/classes')
+    	}
     }
+
 }
 
-
-uploadArchives {
-    repositories {
-    mavenDeployer {
+uploadArchives { 
+    repositories.mavenDeployer {
     /**
         pom.version = '1.0-SNAPSHOT'
         pom.groupId = 'com.applechip'
@@ -136,12 +235,23 @@ uploadArchives {
             artifact.name == 'applechip-web'
         }
         **/
+        configuration = configurations.deployerJars
+        pom.project {
+               groupId 'com.companyname'
+               artifactId 'mylib'
+                packaging 'war'
+               version  '1.0.0'
+        }
+        repository(url: "scp://nexus.bywook.com/content/repositories/releases/") {
+            authentication(userName: "me", password: "myPassword")
+        }
+        /**
         repository(url: "http://nexus.bywook.com/content/repositories/releases/") {
             authentication(userName: "me", password: "myPassword")
         }
+        **/
         snapshotRepository(url: "http://nexus.bywook.com/content/repositories/snapshots/") {
             authentication(userName: "me", password: "myPassword")
         }
-    }
     }
 }

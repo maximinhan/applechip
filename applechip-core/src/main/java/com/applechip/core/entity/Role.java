@@ -7,6 +7,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import lombok.EqualsAndHashCode;
+
 import org.hibernate.annotations.GenericGenerator;
 import org.springframework.security.core.GrantedAuthority;
 
@@ -15,6 +17,7 @@ import com.applechip.core.constant.ColumnSizeConstant;
 
 @Entity
 @Table(name = "mt_role")
+@EqualsAndHashCode(callSuper = false, of = {"id"})
 public class Role extends GenericEntity<String> implements GrantedAuthority {
 
   private static final long serialVersionUID = -5866977626393453234L;
@@ -50,4 +53,6 @@ public class Role extends GenericEntity<String> implements GrantedAuthority {
   public String toString() {
     return "Role [id=" + id + ", authority=" + authority + "]";
   }
+  
+  
 }
