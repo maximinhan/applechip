@@ -1,0 +1,34 @@
+repositories {
+	maven {
+	          url "http://nexus.bywook.com/nexus/content/groups/public"
+	}
+}
+confiruations {
+	war
+}
+dependencies {
+	war "$project.group:$project.name:$project.version"
+}
+task downloadBinaryArchive(type: Copy) {
+	from conrigurations.war
+	into "$buildDir/download"
+}
+
+cargoDeployRemote.dependsOn downloadBinaryArchive, cargoUndeployRemote
+cargoUndeployRemote {
+	onlyIf appContextStatus
+}
+cargo {
+	containerId = 'tomcat7x'
+	port = config.server.port
+	deployable {
+		file = DownloadArtifact
+		context = config.server.context
+	}
+	remote {
+		hostname = config.server.hostname
+		username = config.server.username
+		password = config.server.password
+	}
+}
+	

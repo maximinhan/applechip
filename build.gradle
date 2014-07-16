@@ -73,18 +73,18 @@ allprojects{
 	buildscript {
 	    repositories {
 	        mavenLocal()
-	        mavenCentral()
 	        maven {
 	          url "http://nexus.bywook.com/nexus/content/groups/public"
 	        }
+	        mavenCentral()
 	    }
 	}
 	repositories {
 	    mavenLocal()
-	    mavenCentral()
 	    maven {
 	      url "http://nexus.bywook.com/nexus/content/groups/public"
 	    }
+	    mavenCentral()
 	}
 	pmd {
 		ignoreFailures = true
