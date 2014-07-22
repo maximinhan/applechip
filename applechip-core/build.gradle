@@ -1,11 +1,11 @@
-
+ext {
+    hibernateTask = 'hibernateTask.gradle'
+}
 
 dependencies {
 	compile group: 'commons-collections', name: 'commons-collections', version: '3.2'
 	compile "edu.uci.ics:crawler4j:3.5"
 	compile "org.springframework.data:spring-data-jpa:${springframeworkdataVersion}"
-	compile "org.hibernate:hibernate-entitymanager:${hibernateVersion}"
-    compile "org.hibernate:hibernate-ehcache:${hibernateVersion}"
     compile "org.springframework:spring-context-support:${springframeworkVersion}"
     compile "org.springframework.security:spring-security-config:${springframeworksecurityVersion}"
     compile "commons-configuration:commons-configuration:1.10"
@@ -15,8 +15,9 @@ dependencies {
     compile 'org.aspectj:aspectjweaver:1.8.0'
     compile 'org.projectlombok:lombok:1.14.4'
     compile 'com.mysema.querydsl:querydsl-core:3.4.0'
-    compile gradleApi()
 }
+
+apply from: hibernateTask
 
 buildscript {
     repositories {
@@ -58,7 +59,7 @@ sourceSets {
 **/
     generated {
         java {
-            srcDirs = ['/build/querydsl']
+            srcDirs = ['build/querydsl']
         }
     }
 }
@@ -131,130 +132,6 @@ scanTestClasses=true
     }
 }
 //apply from: "hibernateTask.gradle"
-task ddl(type: HibernateJpaSchemaGenerationTask, dependsOn: [compileJava, processResources])
-jar.dependsOn << ddl
-
-/**
-class HibernateJpaSchemaGenerationTask extends DefaultTask {
-
-    def Map<String, String> dialects = [ORACLE: "org.hibernate.dialect.Oracle10gDialect", MYSQL: "org.hibernate.dialect.MySQLDialect", MYSQL5: "org.hibernate.dialect.MySQL5Dialect", MYSQL5INNODB: "org.hibernate.dialect.MySQL5InnoDBDialect", HSQL: "org.hibernate.dialect.HSQLDialect", H2: "org.hibernate.dialect.H2Dialect"]
-    def source = project.sourceSets.main.output.classesDir
-    def target = project.sourceSets.main.output.resourcesDir
-
-    @TaskAction
-    def performSchemaGeneration() {
-        assert source.isDirectory()
-        assert target.isDirectory()
-        URLClassLoader loader = new URLClassLoader(source.toURI().toURL() as URL[], getClass().getClassLoader())
-        def clazzez = []
-        source.eachFileRecurse { file ->
-            if (file.name.endsWith('.class') && file.absolutePath.contains('core\\entity') && !file.absolutePath.contains('core\\entity\\Q')) {
-            	println file.absolutePath
-				def classRelPath = file.absolutePath - source.absolutePath
-				clazzez << classRelPath[1..-7].replace(System.properties['file.separator'], '.')
-            }
-        }
-        org.hibernate.cfg.Configuration cfg = new org.hibernate.cfg.Configuration()
-        cfg.properties['hibernate.hbm2ddl.auto'] = 'create'
-        clazzez.each { clazz ->
-            try {
-                println "Trying to load class ${clazz}"
-                Class possibleJpaEntity = Class.forName(clazz, true, loader)
-                println "Class ${clazz} sucessfully loaded"
-                if(possibleJpaEntity.isAnnotationPresent(javax.persistence.Entity.class)) {
-                    cfg.addAnnotatedClass(possibleJpaEntity)
-                } else {
-                    println("Ignoring class ${possibleJpaEntity.getCanonicalName()} since it has no javax.persistence.Entity annotation present")
-                }
-            } catch (Exception e) {
-                println e
-            }
-        }
-        ClassLoader prev = Thread.currentThread().getContextClassLoader()
-        try {
-            Thread.currentThread().setContextClassLoader(loader)
-            dialects.each { key, value ->
-                final file = new File(target, "ddl_${key.toLowerCase()}.sql")
-                println "Writing to ${file.absolutePath}"
-                cfg.setProperty("hibernate.dialect", value)
-                org.hibernate.tool.hbm2ddl.SchemaExport export = new org.hibernate.tool.hbm2ddl.SchemaExport(cfg)
-                export.delimiter = ';'
-                export.outputFile = file.absolutePath
-                export.execute true, false, false, false
-            }
-        } finally {
-            Thread.currentThread().setContextClassLoader(prev)
-        }
-    }
-}
-
-**/
-
-
-class HibernateJpaSchemaGenerationTask extends DefaultTask {
-	def Map<String, String> dialects = [ORACLE: "org.hibernate.dialect.Oracle10gDialect", MYSQL: "org.hibernate.dialect.MySQLDialect", MYSQL5: "org.hibernate.dialect.MySQL5Dialect", MYSQL5INNODB: "org.hibernate.dialect.MySQL5InnoDBDialect", HSQL: "org.hibernate.dialect.HSQLDialect", H2: "org.hibernate.dialect.H2Dialect"]
-	def source = project.sourceSets.main.output.classesDir
-	def target = new File('build/output')
-
-	@TaskAction
-	def performSchemaGeneration() {
-		target.mkdirs()
-		assert source.isDirectory()
-		assert target.isDirectory()
-		def urls = []
-		urls.add(source.toURI().toURL())
-		project.configurations.compile.each { File file -> urls.add(file.toURI().toURL()) }
-
-		URLClassLoader loader = new URLClassLoader(urls as URL[], getClass().getClassLoader())
-		def clazzez = []
-		source.eachFileRecurse { file ->
-			if (file.name.endsWith('.class') && file.absolutePath.contains('core\\entity') && !file.absolutePath.contains('core\\entity\\Q')) {
-				println file.absolutePath
-				def classRelPath = file.absolutePath - source.absolutePath
-				clazzez << classRelPath[1..-7].replace(System.properties['file.separator'], '.')
-			}
-		}
-
-		ClassLoader prev = Thread.currentThread().getContextClassLoader()
-		try {
-			Thread.currentThread().setContextClassLoader(loader)
-			org.hibernate.cfg.Configuration cfg = new org.hibernate.cfg.Configuration()
-			cfg.properties['hibernate.hbm2ddl.auto'] = 'create'
-			clazzez.each { clazz ->
-				try {
-					println "Trying to load class ${clazz}"
-					Class possibleJpaEntity = Class.forName(clazz, true, loader)
-					println "Class ${clazz} sucessfully loaded"
-					if(possibleJpaEntity.isAnnotationPresent(javax.persistence.Entity.class)) {
-						cfg.addAnnotatedClass(possibleJpaEntity)
-					} else {
-						println("Ignoring class ${possibleJpaEntity.getCanonicalName()} since it has no javax.persistence.Entity annotation present")
-					}
-				} catch (Exception e) {
-					println e
-				}
-			}
-			dialects.each { key, value ->
-				final file = new File(target,"ddl_${key.toLowerCase()}.sql")
-				println "Writing to ${file.absolutePath}"
-				cfg.setProperty("hibernate.dialect", value)
-				org.hibernate.tool.hbm2ddl.SchemaExport export = new org.hibernate.tool.hbm2ddl.SchemaExport(cfg)
-				export.delimiter = ';'
-				export.outputFile = file.absolutePath
-				//export.drop true true
-				export.execute true, false, false, false
-			}
-		} finally {
-			Thread.currentThread().setContextClassLoader(prev)
-		}
-	}
-}
-
-
-
-
-
-
 
 
 
