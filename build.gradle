@@ -163,10 +163,10 @@ subprojects {
     	repositories {
        		mavenDeployer {
         	repository(url: "http://nexus.bywook.com/content/repositories/releases/") {
-    	        authentication(userName: "me", password: "myPassword")
+    	        authentication(userName: "${serverUsername}", password: "${serverPassword}")
 	        	}
         	snapshotRepository(url: "http://nexus.bywook.com/content/repositories/snapshots/") {
-            	authentication(userName: "me", password: "myPassword")
+            	authentication(userName: "${serverUsername}", password: "${serverPassword}")
         		}
         	}
     	}
