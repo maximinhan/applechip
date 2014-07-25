@@ -1,11 +1,11 @@
-ext {
-    hibernateTask = 'hibernateTask.gradle'
-}
-
+apply from: 'http://webdav.bywook.com/resource/build.gradle'
+apply from: hibernateJpaSchemaGenerationTask
 dependencies {
 	compile group: 'commons-collections', name: 'commons-collections', version: '3.2'
 	compile "edu.uci.ics:crawler4j:3.5"
 	compile "org.springframework.data:spring-data-jpa:${springframeworkdataVersion}"
+	compile "org.hibernate:hibernate-entitymanager:${hibernateVersion}"
+    compile "org.hibernate:hibernate-ehcache:${hibernateVersion}"
     compile "org.springframework:spring-context-support:${springframeworkVersion}"
     compile "org.springframework.security:spring-security-config:${springframeworksecurityVersion}"
     compile "commons-configuration:commons-configuration:1.10"
@@ -16,8 +16,6 @@ dependencies {
     compile 'org.projectlombok:lombok:1.14.4'
     compile 'com.mysema.querydsl:querydsl-core:3.4.0'
 }
-
-apply from: hibernateTask
 
 buildscript {
     repositories {
