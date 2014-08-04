@@ -31,4 +31,27 @@ cargo {
 		password = config.server.password
 	}
 }
+
+/*
+    apply plugin: 'maven'
+    uploadArchives {
+    	repositories {
+       		mavenDeployer {
+        		repository(url: "http://nexus.bywook.com/content/repositories/releases/") {
+    	        	authentication(userName: "${serverUsername}", password: "${serverPassword}")
+	        	}
+        		snapshotRepository(url: "http://nexus.bywook.com/content/repositories/snapshots/") {
+            		authentication(userName: "${serverUsername}", password: "${serverPassword}")
+        		}
+        	}
+    	}
+	}
+	task sourcesJar(type: Jar, dependsOn: classes) {
+	    classifier = 'sources'
+	    from sourceSets.main.allSource
+	}
+	artifacts {
+	    archives sourcesJar
+	}
+	*/
 	
