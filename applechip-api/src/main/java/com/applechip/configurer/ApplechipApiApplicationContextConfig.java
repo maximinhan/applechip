@@ -10,32 +10,29 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupp
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 
 /**
- * Created with IntelliJ IDEA.
- * User: Yawn
- * Date: 2014. 7. 8.
- * Time: 오후 7:
+ * Created with IntelliJ IDEA. User: Yawn Date: 2014. 7. 8. Time: 오후 7:
  */
 @Configuration
 @EnableWebMvc
 @ComponentScan(basePackages = {"com.applechip.api"})
-public class ApplechipApiApplicationContextConfig extends WebMvcConfigurationSupport{
-    @Autowired
-    PageableHandlerMethodArgumentResolver pageableResolver;
+public class ApplechipApiApplicationContextConfig extends WebMvcConfigurationSupport {
+  @Autowired
+  PageableHandlerMethodArgumentResolver pageableResolver;
 
-    @Bean
-    public InternalResourceViewResolver jspViewResolver() {
-        InternalResourceViewResolver bean = new InternalResourceViewResolver();
-        bean.setPrefix("/WEB-INF/views/");
-        bean.setSuffix(".jsp");
-        bean.setOrder(0);
-        return bean;
-    }
+  @Bean
+  public InternalResourceViewResolver jspViewResolver() {
+    InternalResourceViewResolver bean = new InternalResourceViewResolver();
+    bean.setPrefix("/WEB-INF/views/");
+    bean.setSuffix(".jsp");
+    bean.setOrder(0);
+    return bean;
+  }
 
-    @Bean
-    public PageableHandlerMethodArgumentResolver pageableResolver() {
-        PageableHandlerMethodArgumentResolver pageableHandlerMethodArgumentResolver = new PageableHandlerMethodArgumentResolver();
-        pageableHandlerMethodArgumentResolver.setOneIndexedParameters(true);
+  @Bean
+  public PageableHandlerMethodArgumentResolver pageableResolver() {
+    PageableHandlerMethodArgumentResolver pageableHandlerMethodArgumentResolver = new PageableHandlerMethodArgumentResolver();
+    pageableHandlerMethodArgumentResolver.setOneIndexedParameters(true);
 
-        return pageableHandlerMethodArgumentResolver;
-    }
+    return pageableHandlerMethodArgumentResolver;
+  }
 }

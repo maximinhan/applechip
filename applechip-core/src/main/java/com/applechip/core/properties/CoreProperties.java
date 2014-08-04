@@ -1,5 +1,7 @@
 package com.applechip.core.properties;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 
 import lombok.Getter;
@@ -36,6 +38,9 @@ public class CoreProperties {
 
   private void setProperties(Properties properties) {
     this.storagePath = properties.getProperty("storage.path");
+    Map<String, String> map = new HashMap<String, String>();
+//    map.
+//    new File("").
     this.pushSignKeyIos = properties.getProperty("push.signKey.ios");
     this.clearClientBeforeMinute = Integer.parseInt(properties.getProperty("clear.client.beforeMinute"));
     this.pushParamWp = properties.getProperty("push.param.wp");

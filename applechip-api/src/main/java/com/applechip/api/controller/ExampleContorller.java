@@ -10,21 +10,18 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Created with IntelliJ IDEA.
- * User: Yawn
- * Date: 2014. 6. 14.
- * Time: 오후 11:15
+ * Created with IntelliJ IDEA. User: Yawn Date: 2014. 6. 14. Time: 오후 11:15
  */
 @Controller
 public class ExampleContorller {
-    @RequestMapping(value = "/hello/{userName}", method = RequestMethod.GET)
-    @ResponseBody
-    public Map<String, String> helloApi(@PathVariable String userName) {
-        Map<String, String> helloMap = new HashMap<>();
+  @RequestMapping(value = "/hello/{userName}", method = RequestMethod.GET)
+  @ResponseBody
+  public Map<String, String> helloApi(@PathVariable String userName) {
+    Map<String, String> helloMap = new HashMap<>();
 
-        helloMap.put("ProjectName", "AppleChip");
-        helloMap.put("User", userName);
+    helloMap.put("ProjectName", "AppleChip");
+    helloMap.put("User", userName);
 
-        return helloMap;
-    }
+    return helloMap;
+  }
 }

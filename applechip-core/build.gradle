@@ -1,34 +1,28 @@
 apply from: 'http://webdav.bywook.com/resource/build.gradle'
 apply from: hibernateJpaSchemaGenerationTask
+apply from: '../gradle/version/generateQueryDSLTask.gradle'
+
 dependencies {
-	compile group: 'commons-collections', name: 'commons-collections', version: '3.2'
 	compile "edu.uci.ics:crawler4j:3.5"
-	compile "org.springframework.data:spring-data-jpa:${springframeworkdataVersion}"
-	compile "org.hibernate:hibernate-entitymanager:${hibernateVersion}"
-    compile "org.hibernate:hibernate-ehcache:${hibernateVersion}"
-    compile "org.springframework:spring-context-support:${springframeworkVersion}"
-    compile "org.springframework.security:spring-security-config:${springframeworksecurityVersion}"
-    compile "commons-configuration:commons-configuration:1.10"
     compile "com.fasterxml.jackson.core:jackson-databind:2.4.0"
-    compile 'commons-dbcp:commons-dbcp:1.4'
-    compile 'javax.servlet:javax.servlet-api:3.0.1'
-    compile 'org.aspectj:aspectjweaver:1.8.0'
-    compile 'org.projectlombok:lombok:1.14.4'
     compile 'com.mysema.querydsl:querydsl-core:3.4.0'
 }
 
-buildscript {
-    repositories {
-        mavenCentral()
-    }
-    dependencies {
-    	classpath "io.github.divinespear:jpa-schema-gradle-plugin:0.1.10"
-    	classpath "org.springframework:spring-webmvc:${springframeworkVersion}"
-    	classpath "org.springframework.security:spring-security-config:${springframeworksecurityVersion}"
-    }
+/*
+apply plugin: 'applechip-plugin'
+jar.dependsOn << javaTask
+hibernateTools {
+format = false
+dialects = 'false'
 }
+*/
+/*
+task checkitout(type: com.applechip.plugin.MyJavaTask) {
+    println("running consumer task!")
+}
+*/
 
-apply plugin: "jpa-schema-generate"
+//task schemaExport(type: SchemaExportTask)
 
 afterEvaluate {
     configure(allProcessResourcesTasks()) {
@@ -42,56 +36,10 @@ afterEvaluate {
         )
     }
 }
-
 def allProcessResourcesTasks() {
   sourceSets*.processResourcesTaskName.collect {  
         tasks[it]  
     }  
-}
-
-sourceSets {
-/**
-	main {
-        output.resourcesDir = output.classesDir
-    }
-**/
-    generated {
-        java {
-            srcDirs = ['build/querydsl']
-        }
-    }
-}
-
-configurations {
-    querydslapt
-    hibernateplugin
-}
-
-dependencies {
-    compile 'org.hibernate.javax.persistence:hibernate-jpa-2.0-api:1.0.1.Final'
-    compile "com.mysema.querydsl:querydsl-jpa:3.4.0"
-    querydslapt "com.mysema.querydsl:querydsl-apt:3.4.0"
-    hibernateplugin "de.juplo:hibernate4-maven-plugin:1.0.4"
-}
-/**
-task generateSchema(type: JavaCompile, group: 'build', description: 'Generates') {
-    source = sourceSets.main.java
-    classpath = configurations.compile + configurations.hibernateplugin
-    options.compilerArgs = [
-            "-proc:only",
-            "-processor", "com.mysema.query.apt.jpa.JPAAnnotationProcessor"
-    ]
-    destinationDir = sourceSets.generated.java.srcDirs.iterator().next()
-}
-**/
-task generateQueryDSL(type: JavaCompile, group: 'build', description: 'Generates the QueryDSL query types') {
-    source = sourceSets.main.java
-    classpath = configurations.compile + configurations.querydslapt
-    options.compilerArgs = [
-            "-proc:only",
-            "-processor", "com.mysema.query.apt.jpa.JPAAnnotationProcessor"
-    ]
-    destinationDir = sourceSets.generated.java.srcDirs.iterator().next()
 }
 
 compileJava {
@@ -111,28 +59,5 @@ clean {
 
 tasks.withType(JavaCompile){
 	def warnLogFile = file("$buildDir/${name}Warnings.log")
-	logging.addStandardErrorListener(new StandardOutputListener(){
-		void onOutput(CharSequence output){
-			warnLogFile << output
-		}
-	})
+	logging.addStandardErrorListener(new StandardOutputListener(){ void onOutput(CharSequence output){ warnLogFile << output }})
 }
-
-
-generateSchema {
-dialect="org.hibernate.dialect.MySQL5InnoDBDialect"
-
-scanTestClasses=true
-    targets {
-        targetName {
-            // same as default options
-        }
-    }
-}
-//apply from: "hibernateTask.gradle"
-
-
-
-
-
-
