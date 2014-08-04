@@ -1,0 +1,13 @@
+apply plugin: 'maven'
+uploadArchives {
+	repositories {
+   		mavenDeployer {
+    		repository(url: "http://nexus.bywook.com/content/repositories/releases/") {
+	        	authentication(userName: "${serverUsername}", password: "${serverPassword}")
+        	}
+    		snapshotRepository(url: "http://nexus.bywook.com/content/repositories/snapshots/") {
+        		authentication(userName: "${serverUsername}", password: "${serverPassword}")
+    		}
+    	}
+	}
+}

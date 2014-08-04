@@ -1,0 +1,31 @@
+configurations {
+    querydslapt
+}
+
+
+sourceSets {
+	main {
+        output.resourcesDir = output.classesDir
+    }
+    generated {
+        java {
+            srcDirs = ['build/generated']
+        }
+    }
+}
+
+	
+dependencies {
+    compile "com.mysema.querydsl:querydsl-jpa:3.4.0"
+    querydslapt "com.mysema.querydsl:querydsl-apt:3.4.0"
+}
+
+task generateQueryDSL(type: JavaCompile, group: 'build', description: 'Generates the QueryDSL query types') {
+    source = sourceSets.main.java
+    classpath = configurations.compile + configurations.querydslapt
+    options.compilerArgs = [
+            "-proc:only",
+            "-processor", "com.mysema.query.apt.jpa.JPAAnnotationProcessor"
+    ]
+    destinationDir = sourceSets.generated.java.srcDirs.iterator().next()
+}
