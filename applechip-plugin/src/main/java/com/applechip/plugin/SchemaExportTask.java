@@ -12,7 +12,7 @@ import java.util.StringTokenizer;
 
 import lombok.Getter;
 import lombok.Setter;
-import lombok.extern.apachecommons.CommonsLog;
+import lombok.extern.slf4j.Slf4j;
 
 import org.gradle.api.DefaultTask;
 import org.gradle.api.file.FileCollection;
@@ -21,7 +21,7 @@ import org.hibernate.cfg.Configuration;
 import org.hibernate.mapping.PersistentClass;
 import org.hibernate.tool.hbm2ddl.SchemaExport;
 
-@CommonsLog
+@Slf4j
 @Setter
 @Getter
 public class SchemaExportTask extends DefaultTask {

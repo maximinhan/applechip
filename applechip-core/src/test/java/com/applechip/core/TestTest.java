@@ -1,5 +1,6 @@
 package com.applechip.core;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import edu.uci.ics.crawler4j.crawler.CrawlConfig;
@@ -11,6 +12,7 @@ import edu.uci.ics.crawler4j.robotstxt.RobotstxtServer;
 public class TestTest {
 
   @Test
+  @Ignore
   public void test() {
 	  try {
 		String crawlStorageFolder = "/data/crawl/root";

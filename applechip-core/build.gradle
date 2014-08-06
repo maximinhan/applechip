@@ -1,12 +1,4 @@
-apply from: 'http://webdav.bywook.com/resource/build.gradle'
-apply from: hibernateJpaSchemaGenerationTask
-apply from: '../gradle/version/generateQueryDSLTask.gradle'
 
-dependencies {
-	compile "edu.uci.ics:crawler4j:3.5"
-    compile "com.fasterxml.jackson.core:jackson-databind:2.4.0"
-    compile 'com.mysema.querydsl:querydsl-core:3.4.0'
-}
 
 /*
 apply plugin: 'applechip-plugin'
@@ -23,41 +15,3 @@ task checkitout(type: com.applechip.plugin.MyJavaTask) {
 */
 
 //task schemaExport(type: SchemaExportTask)
-
-afterEvaluate {
-    configure(allProcessResourcesTasks()) {
-        filter(org.apache.tools.ant.filters.ReplaceTokens, 
-          tokens: [
-            'jdbcType': "${jdbcType}".toString(),
-            'jdbcUsername': "${jdbcUsername}".toString(),
-            'jdbcPassword': "${jdbcPassword}".toString(),
-            'jdbcAddress': "${jdbcAddress}".toString()
-          ]
-        )
-    }
-}
-def allProcessResourcesTasks() {
-  sourceSets*.processResourcesTaskName.collect {  
-        tasks[it]  
-    }  
-}
-
-compileJava {
-    dependsOn generateQueryDSL
-    source generateQueryDSL.destinationDir
-}
-
-compileGeneratedJava {
-    dependsOn generateQueryDSL
-    options.warnings = false
-    classpath += sourceSets.main.runtimeClasspath
-}
-
-clean {
-    delete sourceSets.generated.java.srcDirs
-}
-
-tasks.withType(JavaCompile){
-	def warnLogFile = file("$buildDir/${name}Warnings.log")
-	logging.addStandardErrorListener(new StandardOutputListener(){ void onOutput(CharSequence output){ warnLogFile << output }})
-}

@@ -2,7 +2,6 @@ configurations {
     querydslapt
 }
 
-
 sourceSets {
 	main {
         output.resourcesDir = output.classesDir
@@ -14,7 +13,6 @@ sourceSets {
     }
 }
 
-	
 dependencies {
     compile "com.mysema.querydsl:querydsl-jpa:3.4.0"
     querydslapt "com.mysema.querydsl:querydsl-apt:3.4.0"

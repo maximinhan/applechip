@@ -1,60 +1,22 @@
 gradle.taskGraph.beforeTask {Task task -> println "excuting $task ..."}
 gradle.taskGraph.afterTask {Task task, TaskState state -> if (state.failure) { println "Failure" } else { println "Done" }}
-
 ext {
     javaVersion = '1.6'
     javaEncoding = 'UTF-8'
     springframeworkVersion = '4.0.3.RELEASE'
-    springframeworkdataVersion = '1.6.0.RELEASE'
+    springframeworkdataVersion = '1.8.0.RELEASE'
     springframeworksecurityVersion = '3.2.4.RELEASE'
     hibernateVersion = '4.3.5.Final'
+    slf4jVersion = '1.7.7'
     webProjects = ['applechip-api', 'applechip-web']
 }
-
-List springframeworks = [
-	"org.springframework:spring-context:${springframeworkVersion}",
-	"org.springframework:spring-context-support:${springframeworkVersion}",
-	"org.springframework:spring-webmvc:${springframeworkVersion}",
-	"org.springframework:spring-orm:${springframeworkVersion}",
-	"org.springframework:spring-oxm:${springframeworkVersion}",
-	"org.springframework.data:spring-data-jpa:${springframeworkdataVersion}",
-	"org.springframework.security:spring-security-config:${springframeworksecurityVersion}"
-]
-
-List hibernates = [
-	"org.hibernate:hibernate-entitymanager:${hibernateVersion}",
-	"org.hibernate:hibernate-ehcache:${hibernateVersion}"
-]
-
-List testCommons = [
-	"org.springframework:spring-test:${springframeworkVersion}",
-	"junit:junit:4.11",
-	"org.mockito:mockito-all:1.9.5"
-]
-
-List javaCommons = [
-	"org.projectlombok:lombok:1.14.4",
-	"commons-configuration:commons-configuration:1.10",
-	"commons-lang:commons-lang:2.6",
-	"commons-io:commons-io:2.4",
-	"commons-collections:commons-collections:3.2.1",
-	"commons-dbcp:commons-dbcp:1.4",
-	"commons-codec:commons-codec:1.9"
-]
 
 List jdbcDrivers = [
 	"mysql:mysql-connector-java:5.1.31",
 	"com.microsoft.sqlserver:sqljdbc4:4.0",
 	"com.github.ferstl:spring-jdbc-oracle-ojdbc:1.0.0"
 ]
-/*
-List loggers = [
-        "org.slf4j:slf4j-api:${slf4jVersion}",
-        "org.slf4j:jcl-over-slf4j:${slf4jVersion}",
-        "org.slf4j:log4j-over-slf4j:${slf4jVersion}",
-        "org.slf4j:jul-to-slf4j:${slf4jVersion}",
-]
-*/
+
 buildscript {
     repositories {
         maven { url "http://nexus.bywook.com/content/groups/public" }
@@ -74,77 +36,53 @@ configure(allprojects) { project ->
 		maven { url "http://nexus.bywook.com/content/groups/public" }
 		mavenCentral()
 	}
-	gradle.taskGraph.whenReady { taskGraph -> if (taskGraph.hasTask(':release')) { project.version = "${version}".replace("-SNAPSHOT", "") }}
-}
-
-subprojects {
-    apply plugin: 'java'
-    
-     /*   
-	compileJava.options*.compilerArgs = [
-		"-Xlint:serial", "-Xlint:varargs", "-Xlint:cast", "-Xlint:classfile",
-		"-Xlint:dep-ann", "-Xlint:divzero", "-Xlint:empty", "-Xlint:finally",
-		"-Xlint:overrides", "-Xlint:path", "-Xlint:processing", "-Xlint:static",
-		"-Xlint:try", "-Xlint:fallthrough", "-Xlint:rawtypes", "-Xlint:deprecation",
-		"-Xlint:unchecked", "-Xlint:-options", "-Werror"
-	]
-
-	compileTestJava.options*.compilerArgs = [
-		"-Xlint:serial", "-Xlint:varargs", "-Xlint:cast", "-Xlint:classfile",
-		"-Xlint:dep-ann", "-Xlint:divzero", "-Xlint:empty", "-Xlint:finally",
-		"-Xlint:overrides", "-Xlint:path", "-Xlint:processing", "-Xlint:static",
-		"-Xlint:try", "-Xlint:-fallthrough", "-Xlint:-rawtypes", "-Xlint:-deprecation",
-		"-Xlint:-unchecked", "-Xlint:-options"]
-
-	compileJava {
-		sourceCompatibility="$javaVersion"
-		targetCompatibility="$javaVersion"
+	gradle.taskGraph.whenReady { taskGraph -> if (taskGraph.hasTask('build')) { version = "${version}".replace("-SNAPSHOT", "") }}
+	configurations {
+		all {
+			transitive = false
+		}
+	    provided {
+		    dependencies.all { dep ->
+	            exclude group: "*", module: "*"
+	            //configurations.default.exclude group: dep.group, module: dep.name
+	        }
+        }
+	    compile.extendsFrom provided
 	}
-
-	compileTestJava {
-		sourceCompatibility="$javaVersion"
-		targetCompatibility="$javaVersion"
-		options.compilerArgs += "-parameters"
-	}
-
-	sourceSets.test.resources.srcDirs = ["src/test/resources", "src/test/java"]
-
-	test {
-		scanForTestClasses = false
-	}
-	*/
-	
 }
 
 configure(subprojects.findAll { webProjects.contains(it.name) }) {
     apply plugin: 'war'
-    apply plugin: 'eclipse'
     apply plugin: 'eclipse-wtp'
     apply from: '../gradle/version/versioning.gradle'
     webAppDirName = 'src/main/webapp'
     dependencies {
         providedCompile 'javax.servlet:javax.servlet-api:3.0.1'
         providedCompile 'jstl:jstl:1.2'
+	    //compile(project(":applechip-core"))
+	    		provided("org.springframework.security:spring-security-core:$springframeworksecurityVersion")
+		provided("org.springframework.data:spring-data-commons:${springframeworkdataVersion}")
+		provided("org.springframework:spring-orm:$springframeworkVersion")
+		provided("org.springframework:spring-tx:$springframeworkVersion")
+		provided("org.springframework:spring-jdbc:$springframeworkVersion")
+		provided("org.springframework:spring-context-support:$springframeworkVersion")
+		provided("org.springframework:spring-context:$springframeworkVersion")
+		provided("org.hibernate:hibernate-entitymanager:$hibernateVersion")
+		provided("org.hibernate:hibernate-core:$hibernateVersion")
+		provided("net.sf.ehcache:ehcache:2.8.3")
+		provided("org.springframework:spring-webmvc:$springframeworkVersion")
+		provided("org.springframework:spring-web:$springframeworkVersion")
+		provided("org.springframework:spring-beans:$springframeworkVersion")
+		provided("org.springframework:spring-core:$springframeworkVersion")
+		provided("org.springframework:spring-aop:$springframeworkVersion")
+		provided("aopalliance:aopalliance:1.0")
+		provided jdbcDrivers
+		provided("edu.uci.ics:crawler4j:3.5")
+	    provided("com.fasterxml.jackson.core:jackson-databind:2.4.1")
+	    provided("com.fasterxml.jackson.core:jackson-annotations:2.4.1")
+	    provided("com.mysema.querydsl:querydsl-jpa:3.4.0")
+	    provided("org.eclipse.persistence:javax.persistence:2.1.0")
     }
-    
-    dependencies() {
-        compile springframeworks        
-        compile jdbcDrivers
-        compile hibernates
-        compile javaCommons
-        testCompile testCommons
-        compile gradleApi()
-    }
-	eclipse.classpath.file {
-	    beforeMerged { classpath -> 
-	        classpath.entries.clear()
-	    }
-	    whenMerged {  cp -> 
-	        cp.entries.findAll { it instanceof org.gradle.plugins.ide.eclipse.model.SourceFolder  && it.path.startsWith("src/main/") }*.output = "bin/main" 
-	        cp.entries.findAll { it instanceof org.gradle.plugins.ide.eclipse.model.SourceFolder  && it.path.startsWith("src/test/") }*.output = "bin/test" 
-	        cp.entries.removeAll { it.kind == "output" }
-	    }
-	}
     eclipse {
         wtp {
             facet {
@@ -166,79 +104,121 @@ configure(subprojects.findAll { webProjects.contains(it.name) }) {
     }
 }
 
+configure(rootProject) {
+	tasks.withType(JavaCompile){
+		def warnLogFile = file("$buildDir/${name}Warnings.log")
+		logging.addStandardErrorListener(new StandardOutputListener(){ void onOutput(CharSequence output){ warnLogFile << output }})
+	}
+}
+
 configure(subprojects) { project ->
+    apply plugin: 'java'
+    apply plugin: 'eclipse'
 	dependencies {
-		compile("org.projectlombok:lombok:1.14.4")
+		provided("org.projectlombok:lombok:1.14.4")
+		provided("commons-configuration:commons-configuration:1.10")
+		provided("commons-lang:commons-lang:2.6")
+		provided("commons-io:commons-io:2.4")
+		provided("commons-collections:commons-collections:3.2.1")
+		provided("commons-dbcp:commons-dbcp:1.4")
+		provided("commons-codec:commons-codec:1.9")
+	    provided("org.slf4j:slf4j-api:${slf4jVersion}")
+	    provided("org.slf4j:jcl-over-slf4j:${slf4jVersion}")
+	    provided("org.slf4j:log4j-over-slf4j:${slf4jVersion}")
+	    provided("org.slf4j:jul-to-slf4j:${slf4jVersion}")
+		testCompile("org.springframework:spring-test:${springframeworkVersion}")
+		testCompile("junit:junit:4.11")
+		testCompile("org.mockito:mockito-all:1.9.5")
+	}
+	
+	processResources {
+		filter(org.apache.tools.ant.filters.ReplaceTokens, 
+	          tokens: [
+	            'jdbcType': "${jdbcType}".toString(),
+	            'jdbcUsername': "${jdbcUsername}".toString(),
+	            'jdbcPassword': "${jdbcPassword}".toString(),
+	            'jdbcAddress': "${jdbcAddress}".toString()
+	          ]
+	        )
+	}
+		eclipse.classpath.file {
+	    beforeMerged { classpath -> 
+	        classpath.entries.clear()
+	    }
+	    whenMerged {  cp -> 
+	        cp.entries.findAll { it instanceof org.gradle.plugins.ide.eclipse.model.SourceFolder  && it.path.startsWith("src/main/") }*.output = "bin/main" 
+	        cp.entries.findAll { it instanceof org.gradle.plugins.ide.eclipse.model.SourceFolder  && it.path.startsWith("src/test/") }*.output = "bin/test" 
+	        cp.entries.removeAll { it.kind == "output" }
+	    }
 	}
 }
 
 project(":applechip-core") {
-
-	configurations {
-	    provided {
-		    dependencies.all { dep ->
-	            exclude group: "*", module: "*"
-	            //configurations.default.exclude group: dep.group, module: dep.name
-	        }
-        }
-	    compile.extendsFrom provided
-	}
-
+//apply from: 'http://webdav.bywook.com/resource/build.gradle'
+//apply from: hibernateJpaSchemaGenerationTask
+//apply from: '../gradle/version/generateQueryDSLTask.gradle'
 	dependencies {
-	    //compile gradleApi()
-        provided javaCommons
-        testCompile testCommons
-		//provided("org.springframework.security:spring-security-config:$springframeworksecurityVersion")
 		provided("org.springframework.security:spring-security-core:$springframeworksecurityVersion")
-		//provided("org.springframework.data:spring-data-jpa:$springframeworkdataVersion")
+		provided("org.springframework.data:spring-data-commons:${springframeworkdataVersion}")
 		provided("org.springframework:spring-orm:$springframeworkVersion")
 		provided("org.springframework:spring-tx:$springframeworkVersion")
 		provided("org.springframework:spring-jdbc:$springframeworkVersion")
 		provided("org.springframework:spring-context-support:$springframeworkVersion")
 		provided("org.springframework:spring-context:$springframeworkVersion")
 		provided("org.hibernate:hibernate-entitymanager:$hibernateVersion")
+		provided("org.hibernate:hibernate-core:$hibernateVersion")
 		provided("net.sf.ehcache:ehcache:2.8.3")
-		//provided("org.springframework:spring-webmvc:$springframeworkVersion")
+		provided("org.springframework:spring-webmvc:$springframeworkVersion")
 		provided("org.springframework:spring-web:$springframeworkVersion")
 		provided("org.springframework:spring-beans:$springframeworkVersion")
 		provided("org.springframework:spring-core:$springframeworkVersion")
 		provided("org.springframework:spring-aop:$springframeworkVersion")
 		provided("aopalliance:aopalliance:1.0")
-		/*
-		 {
-			exclude group: "*", module: "*"
-		}
-			//exclude group: "*", module: "*"
-		}
-		*/
+		provided jdbcDrivers
+		provided("edu.uci.ics:crawler4j:3.5")
+	    provided("com.fasterxml.jackson.core:jackson-databind:2.4.1")
+	    provided("com.fasterxml.jackson.core:jackson-annotations:2.4.1")
+	    provided("com.mysema.querydsl:querydsl-jpa:3.4.0")
+	    provided("org.eclipse.persistence:javax.persistence:2.1.0")
+	    provided 'javax.servlet:javax.servlet-api:3.0.1'
+        provided 'jstl:jstl:1.2'
+	    //provided("com.mysema.querydsl:querydsl-core:3.4.0")
 	}
-	sourceSets.main.resources.srcDirs += "src/main/java"
 	/*
-sourceSets {
-    main {
-        compileClasspath += configurations.provided
-        runtimeClasspath += configurations.provided
-    }
-    test {
-        compileClasspath += configurations.provided
-        runtimeClasspath += configurations.provided
-    }
-}
+	compileJava {
+	    dependsOn generateQueryDSL
+	    source generateQueryDSL.destinationDir
+	}
+	
+	compileGeneratedJava {
+	    dependsOn generateQueryDSL
+	    options.warnings = false
+	    classpath += sourceSets.main.runtimeClasspath
+	}
+	clean {
+	    delete sourceSets.generated.java.srcDirs
+	}
 */
-}
 
+}
 
 project(":applechip-plugin") {
-	configurations {
-	    provided {
-		    dependencies.all { dep ->
-	            configurations.default.exclude group: dep.group, module: dep.name
-	        }
-        }
-	    compile.extendsFrom provided
-	}
+	apply from: "$project.rootProject.projectDir/gradle/version/uploadArchives.gradle"
 	dependencies {
 	    compile gradleApi()
-	    compile("org.hibernate:hibernate-entitymanager:4.3.5.Final")
+	    provided("org.hibernate:hibernate-core:$hibernateVersion")
 	}
+/*
+sourceSets.main.resources.srcDirs += "src/main/java"
+sourceSets {
+main {
+compileClasspath += configurations.provided
+runtimeClasspath += configurations.provided
+}
+test {
+compileClasspath += configurations.provided
+runtimeClasspath += configurations.provided
+}
+}
+*/
 }
