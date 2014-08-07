@@ -1,29 +1,53 @@
-configurations {
-    querydslapt
-}
-
 sourceSets {
-	main {
-        output.resourcesDir = output.classesDir
-    }
-    generated {
-        java {
-            srcDirs = ['build/generated']
-        }
-    }
+     generated
 }
 
+sourceSets.generated.java.srcDirs = ['src/main/generated']
+
+configurations {
+     querydslapt
+}
 dependencies {
-    compile "com.mysema.querydsl:querydsl-jpa:3.4.0"
-    querydslapt "com.mysema.querydsl:querydsl-apt:3.4.0"
+
+	def queryDSL = '3.4.2'
+        compile("com.mysema.querydsl:querydsl-core:$queryDSL")
+        compile("com.mysema.querydsl:querydsl-jpa:$queryDSL")
+        compile("com.mysema.querydsl:querydsl-sql:$queryDSL")
+        compile("com.mysema.codegen:codegen:0.6.2")
+        compile("com.mysema.querydsl:querydsl-codegen:3.4.2")
+        compile("com.google.guava:guava-collections:r03")
+        compile("com.google.guava:guava-base:r03")
+        //compile("com.google.collections:google-collections:1.0")
+        compile("com.mysema.querydsl:querydsl-apt:$queryDSL")
+        compile("javax.inject:javax.inject:1")
+        //provided("com.mysema.querydsl:querydsl-apt:$queryDSL") {
+        //    exclude group: 'com.google.guava'
+        //}
 }
 
 task generateQueryDSL(type: JavaCompile, group: 'build', description: 'Generates the QueryDSL query types') {
-    source = sourceSets.main.java
-    classpath = configurations.compile + configurations.querydslapt
-    options.compilerArgs = [
-            "-proc:only",
-            "-processor", "com.mysema.query.apt.jpa.JPAAnnotationProcessor"
-    ]
-    destinationDir = sourceSets.generated.java.srcDirs.iterator().next()
+        source = sourceSets.main.java
+        classpath = configurations.compile + configurations.provided
+        options.compilerArgs = [
+                "-proc:only",
+                "-processor", "com.mysema.query.apt.jpa.JPAAnnotationProcessor"
+        ]
+        destinationDir = sourceSets.generated.java.srcDirs.iterator().next()
+    }
+    /*
+    compileJava {
+    dependsOn generateQueryDSL
+    source generateQueryDSL.destinationDir
 }
+
+compileGeneratedJava {
+    dependsOn generateQueryDSL
+    options.warnings = false
+    classpath += sourceSets.main.runtimeClasspath
+}
+
+
+clean {
+    delete sourceSets.generated.java.srcDirs
+}
+*/

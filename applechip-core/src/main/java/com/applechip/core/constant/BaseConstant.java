@@ -3,7 +3,9 @@ package com.applechip.core.constant;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.codec.CharEncoding;
 
@@ -50,6 +52,37 @@ public class BaseConstant {
   public static final String TYPE_DONE = "done";
   public static final String TYPE_CHAT = "chat";
   public static final String TYPE_HELP = "help";
+
+  static class Hibernate {
+
+  }
+
+  public static enum Dialect {
+    MYSQL("org.hibernate.dialect.MySQL5InnoDBDialect"), ORACLE("org.hibernate.dialect.Oracle10gDialect");
+    private Dialect(String dialect) {}
+  }
+//MySQL5InnoDB
+  public static Map<String, String> hibernateDialectMap = Collections.unmodifiableMap(new HashMap<String, String>() {
+    private static final long serialVersionUID = -5418896212085484154L;
+    {
+      put("MYSQL", "org.hibernate.dialect.MySQL5InnoDBDialect");
+      put("Oracle", "org.hibernate.dialect.Oracle10gDialect");
+    }
+  });
+  public static Map<String, String> jdbcDriverClassMap = Collections.unmodifiableMap(new HashMap<String, String>() {
+    private static final long serialVersionUID = -5418896212085484154L;
+    {
+      put("MYSQL", "com.mysql.jdbc.Driver");
+      put("Oracle", "oracle.jdbc.OracleDriver");
+    }
+  });
+  public static Map<String, String> jdbcValidationQueryMap = Collections.unmodifiableMap(new HashMap<String, String>() {
+    private static final long serialVersionUID = -5418896212085484154L;
+    {
+      put("MYSQL", "SELECT 1");
+      put("Oracle", "SELECT 1 FROM DUAL");
+    }
+  });
 
   public static final List<String> bankNames = Collections.unmodifiableList(new ArrayList<String>() {
     private static final long serialVersionUID = 8692172397880388698L;

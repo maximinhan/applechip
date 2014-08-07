@@ -5,8 +5,11 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.StringTokenizer;
 
@@ -31,6 +34,12 @@ public class SchemaExportTask extends DefaultTask {
   private String persistenceUnitName = "default";
   private String delimiter = ";";
   private String targetDirectory = "build/ddl";
+  private Map<String, String> dialectMap = Collections.unmodifiableMap(new HashMap<String, String>() {
+    {
+      put("MYSQL", "org.hibernate.dialect.MySQL5InnoDBDialect");
+      put("ORACLE", "org.hibernate.dialect.Oracle10gDialect");
+    }
+  });
 
   private FileCollection classpath;
 

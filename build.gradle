@@ -24,7 +24,7 @@ buildscript {
 	}
 	dependencies {
 	//println "$project.rootProject.projectDir/applechip-plugin/build/libs/applechip-plugin-${version}.jar"
-		//classpath files("D:/dev/workspace-applechip/applechip-plugin-${version}.jar")
+		classpath files("D:/dev/workspace-applechip/applechip-plugin-${version}.jar")
 		//classpath("com.applechip:applechip-plugin:1.0-SNAPSHOT")
 	}
 }
@@ -32,6 +32,7 @@ buildscript {
 configure(allprojects) { project ->
     ext.javaVersion = "1.7"
     ext.javaEncoding = "UTF-8"
+    ext.jdbcPassword = System.properties['jdbcPassword']
 	repositories {
 		maven { url "http://nexus.bywook.com/content/groups/public" }
 		mavenCentral()
@@ -103,6 +104,11 @@ configure(subprojects.findAll { webProjects.contains(it.name) }) {
     	}
     }
 }
+/*
+task wrapper(type: Wrapper) {
+    gradleVersion = '1.8'
+}
+*/
 
 configure(rootProject) {
 	tasks.withType(JavaCompile){
@@ -134,13 +140,14 @@ configure(subprojects) { project ->
 	processResources {
 		filter(org.apache.tools.ant.filters.ReplaceTokens, 
 	          tokens: [
-	            'jdbcType': "${jdbcType}".toString(),
-	            'jdbcUsername': "${jdbcUsername}".toString(),
-	            'jdbcPassword': "${jdbcPassword}".toString(),
-	            'jdbcAddress': "${jdbcAddress}".toString()
+	            'environment': System.properties['environment'],
+	            'jdbcType': System.properties['jdbcType'],
+	            'jdbcUrl': System.properties['jdbcUrl'],
+	            'jdbcUsername': System.properties['jdbcUsername'],
+	            'jdbcPassword': System.properties['jdbcPassword']
 	          ]
 	        )
-	}
+		}
 		eclipse.classpath.file {
 	    beforeMerged { classpath -> 
 	        classpath.entries.clear()
@@ -156,7 +163,9 @@ configure(subprojects) { project ->
 project(":applechip-core") {
 //apply from: 'http://webdav.bywook.com/resource/build.gradle'
 //apply from: hibernateJpaSchemaGenerationTask
-//apply from: '../gradle/version/generateQueryDSLTask.gradle'
+
+apply from: '../gradle/version/generateSchemaTask.gradle'
+apply from: '../gradle/version/generateQueryDSLTask.gradle'
 	dependencies {
 		provided("org.springframework.security:spring-security-core:$springframeworksecurityVersion")
 		provided("org.springframework.data:spring-data-commons:${springframeworkdataVersion}")
@@ -178,13 +187,15 @@ project(":applechip-core") {
 		provided("edu.uci.ics:crawler4j:3.5")
 	    provided("com.fasterxml.jackson.core:jackson-databind:2.4.1")
 	    provided("com.fasterxml.jackson.core:jackson-annotations:2.4.1")
-	    provided("com.mysema.querydsl:querydsl-jpa:3.4.0")
 	    provided("org.eclipse.persistence:javax.persistence:2.1.0")
 	    provided 'javax.servlet:javax.servlet-api:3.0.1'
         provided 'jstl:jstl:1.2'
-	    //provided("com.mysema.querydsl:querydsl-core:3.4.0")
+            //compile gradleApi()
+	    //provided("com.mysema.querydsl:querydsl-core:3.4.2")
+	    //provided("com.mysema.querydsl:querydsl-apt:3.4.2")
+	    //provided("com.mysema.querydsl:querydsl-jpa:3.4.2")
 	}
-	/*
+	
 	compileJava {
 	    dependsOn generateQueryDSL
 	    source generateQueryDSL.destinationDir
@@ -198,15 +209,24 @@ project(":applechip-core") {
 	clean {
 	    delete sourceSets.generated.java.srcDirs
 	}
+jar.dependsOn << generateSchemaTask
+	/*
+apply plugin: 'applechip-plugin'
+jar.dependsOn << hibernateTask
+applechipSetting {
+jdbcType = "${jdbcType}".toString()
+jdbcUrl = "${jdbcUrl}".toString()
+jdbcUsername = "${jdbcUsername}".toString()
+jdbcPassword = System.properties['jdbcPassword']
+}
 */
-
 }
 
 project(":applechip-plugin") {
 	apply from: "$project.rootProject.projectDir/gradle/version/uploadArchives.gradle"
 	dependencies {
 	    compile gradleApi()
-	    provided("org.hibernate:hibernate-core:$hibernateVersion")
+	    compile("org.hibernate:hibernate-core:$hibernateVersion")
 	}
 /*
 sourceSets.main.resources.srcDirs += "src/main/java"

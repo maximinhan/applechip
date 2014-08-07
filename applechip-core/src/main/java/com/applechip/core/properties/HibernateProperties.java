@@ -47,12 +47,13 @@ public class HibernateProperties {
   }
 
   private HibernateProperties(Properties properties) {
-    this.init(properties);
+    this.jdbcType = properties.getProperty("jdbc.type");
     this.setJdbcProperties(properties);
     this.setHibernateProperties(properties);
   }
 
   private void setHibernateProperties(Properties properties) {
+    this.hibernateDialect = BaseConstant.hibernateDialectMap.get(this.jdbcType);
     this.hibernateShowSql = properties.getProperty("hibernate.show_sql");
     this.hibernateFormatSql = properties.getProperty("hibernate.format_sql");
     this.hibernateUseSqlComments = properties.getProperty("hibernate.use_sql_comments");
@@ -65,6 +66,9 @@ public class HibernateProperties {
   }
 
   private void setJdbcProperties(Properties properties) {
+    this.jdbcDriverClassName = BaseConstant.jdbcDriverClassMap.get(this.jdbcType);
+    this.jdbcValidationQuery = BaseConstant.jdbcValidationQueryMap.get(this.jdbcType);
+    this.jdbcUrl = properties.getProperty("jdbc.url");
     this.jdbcMaxActive = Integer.parseInt(properties.getProperty("jdbc.maxActive"));
     this.jdbcMaxWait = Integer.parseInt(properties.getProperty("jdbc.maxWait"));
     this.jdbcMinIdle = Integer.parseInt(properties.getProperty("jdbc.minIdle"));
@@ -80,36 +84,5 @@ public class HibernateProperties {
     this.jdbcNumTestsPerEvictionRun = Integer.parseInt(properties.getProperty("jdbc.numTestsPerEvictionRun"));
     this.jdbcMinEvictableIdleTimeMillis = Integer.parseInt(properties.getProperty("jdbc.minEvictableIdleTimeMillis"));
     this.jdbcDefaultTransactionIsolation = Integer.parseInt(properties.getProperty("jdbc.defaultTransactionIsolation"));
-  }
-
-  private void init(Properties properties) {
-    this.jdbcType = properties.getProperty("jdbc.type");
-    String jdbcAddress = properties.getProperty("jdbc.address");
-    switch (this.jdbcType) {
-      case "MYSQL":
-        this.hibernateDialect = BaseConstant.HIBERNATE_DIALECT_MYSQL;
-        this.jdbcDriverClassName = BaseConstant.JDBC_DRIVERCLASSNAME_MYSQL;
-        this.jdbcValidationQuery = BaseConstant.JDBC_VALIDATIONQUERY_MYSQL;
-        this.jdbcUrl = String.format(BaseConstant.JDBC_URL_MYSQL, jdbcAddress);
-        break;
-      case "MYSQL_REPL":
-        this.hibernateDialect = BaseConstant.HIBERNATE_DIALECT_MYSQL_REPL;
-        this.jdbcDriverClassName = BaseConstant.JDBC_DRIVERCLASSNAME_MYSQL_REPL;
-        this.jdbcValidationQuery = BaseConstant.JDBC_VALIDATIONQUERY_MYSQL_REPL;
-        this.jdbcUrl = String.format(BaseConstant.JDBC_URL_MYSQL_REPL, jdbcAddress);
-        break;
-      case "SQL_SERVER":
-        this.hibernateDialect = BaseConstant.HIBERNATE_DIALECT_SQL_SERVER;
-        this.jdbcDriverClassName = BaseConstant.JDBC_DRIVERCLASSNAME_SQL_SERVER;
-        this.jdbcValidationQuery = BaseConstant.JDBC_VALIDATIONQUERY_SQL_SERVER;
-        this.jdbcUrl = String.format(BaseConstant.JDBC_URL_SQL_SERVER, jdbcAddress);
-        break;
-      case "ORACLE":
-        this.hibernateDialect = BaseConstant.HIBERNATE_DIALECT_ORACLE;
-        this.jdbcDriverClassName = BaseConstant.JDBC_DRIVERCLASSNAME_ORACLE;
-        this.jdbcValidationQuery = BaseConstant.JDBC_VALIDATIONQUERY_ORACLE;
-        this.jdbcUrl = String.format(BaseConstant.JDBC_URL_ORACLE, jdbcAddress);
-        break;
-    }
   }
 }

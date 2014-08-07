@@ -1,16 +1,17 @@
 apply plugin: 'maven'
 task uploadSnapshots(type: Upload, dependsOn: build)  { 
    configuration = configurations.archives
-uploadArchives {
-	repositories {
-   		mavenDeployer {
-    		repository(url: "http://nexus.bywook.com/content/repositories/releases/") {
-	        	authentication(userName: "${serverUsername}", password: "${serverPassword}")
-        	}
-    		snapshotRepository(url: "http://nexus.bywook.com/content/repositories/snapshots/") {
-        		authentication(userName: "${serverUsername}", password: "${serverPassword}")
-    		}
-    	}
+	uploadArchives {
+		repositories {
+	   		mavenDeployer {
+	    		repository(url: "http://nexus.bywook.com/content/repositories/releases/") {
+		        	authentication(userName: System.properties['serverUsername'], password: System.properties['serverPassword'])
+	        	}
+	    		snapshotRepository(url: "http://nexus.bywook.com/content/repositories/snapshots/") {
+	        		//authentication(userName: "${serverUsername}", password: "${serverPassword}")
+	        		authentication(userName: System.properties['serverUsername'], password: System.properties['serverPassword'])
+	    		}
+	    	}
+		}
 	}
-}
 }
