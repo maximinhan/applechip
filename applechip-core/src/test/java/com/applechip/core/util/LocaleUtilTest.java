@@ -7,6 +7,7 @@ import java.util.MissingResourceException;
 
 import lombok.extern.slf4j.Slf4j;
 
+import org.apache.commons.codec.Charsets;
 import org.junit.Test;
 
 @Slf4j
@@ -56,6 +57,8 @@ public class LocaleUtilTest {
     for (Locale locale : LocaleUtil.getSupportLocaleList(list.toArray(new String[] {}))) {
       System.out.println(locale.toString());
     }
+    System.out.println(Charsets.UTF_8.toString());
+    System.out.println(Charsets.UTF_8.displayName());
   }
 
 }
