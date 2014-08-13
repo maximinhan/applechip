@@ -1,0 +1,27 @@
+/**
+ * Eclipse source class location 을 기본 build/classes, build/testClasses로 정의한다. <br />
+ * 이는 resources 에 같은 이름의 resource를 뒀을때 겹치는 문제가 있고, <br />
+ * eclipse기본 설정으로는 gradle 기본 빌드 디렉토리인 build/가 아닌 bin 밑이 기본 class 디렉토리이다. 
+ */
+eclipse { 
+	classpath {
+		defaultOutputDir = file("build/classes")
+		file {
+			whenMerged {
+				cp ->cp.entries.findAll{ entry ->entry.kind == 'src' && entry.path.startsWith("src/test/") }*.output = "build/testClasses" 
+			}
+		}
+	}
+}
+
+eclipse.classpath.file { 
+	beforeMerged { classpath -> 
+		classpath.entries.removeAll { entry -> entry.kind == 'lib' || entry.kind == 'var' }
+	}
+}
+
+eclipse.project.file.beforeMerged { project ->
+	project.natures.clear()
+}
+
+tasks.eclipse.dependsOn(cleanEclipse)

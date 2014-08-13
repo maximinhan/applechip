@@ -3,12 +3,12 @@ package com.applechip.core.configurer;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.hibernate.tool.hbm2ddl.SchemaExport;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ResourceBundleMessageSource;
+import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
@@ -23,9 +23,16 @@ public class CustomConfigurer {
     List<MediaType> list = new ArrayList<MediaType>();
     list.add(MediaType.APPLICATION_JSON);
     bean.setSupportedMediaTypes(list);
-//    org.hibernate.cfg.Configuration
-//    SchemaExport
-//    Class.forName(className)
+    // org.hibernate.cfg.Configuration
+    // SchemaExport
+    // Class.forName(className)
+    return bean;
+  }
+
+  @Bean
+  public PageableHandlerMethodArgumentResolver pageableHandlerMethodArgumentResolver() {
+    PageableHandlerMethodArgumentResolver bean = new PageableHandlerMethodArgumentResolver();
+    bean.setOneIndexedParameters(true);
     return bean;
   }
 

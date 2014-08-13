@@ -27,15 +27,5 @@ public class HibernateProperties {
     properties.put(Environment.DIALECT, PluginConstant.HIBERNATE_DIALECT_MAP.get(this.jdbcType));
     properties.put(Environment.URL, applechipSetting.getJdbcUrl());
     properties.put(Environment.USER, applechipSetting.getJdbcUsername());
-    properties.put(Environment.PASS, applechipSetting.getJdbcPassword());
-
-    // hibernate.connection.username=${jdbc.username}
-    // hibernate.connection.password=${jdbc.password}
-    // hibernate.connection.url=${jdbc.url}
-    // hibernate.connection.driver_class=${jdbc.driverClassName}
-    //
-    // hibernate.dialect=${hibernate.dialect}
-    // hibernate.hbm2ddl.auto=${hibernate.hbm2ddl.auto}
-    // hibernate.format_sql=${hibernate.format_sql}
   }
 }

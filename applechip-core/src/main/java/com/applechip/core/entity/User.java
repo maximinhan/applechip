@@ -20,8 +20,12 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
+import javax.ws.rs.FormParam;
 
+import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.annotations.GenericGenerator;
@@ -34,6 +38,10 @@ import com.applechip.core.util.BitwisePermissions;
 
 @Entity
 @Table(name = "mt_user")
+@EqualsAndHashCode(callSuper = false, of = {"username"})
+@ToString(exclude = {"roles", "categories"})
+@NoArgsConstructor
+@Data
 public class User extends GenericTraceable<String> implements UserDetails {
 
   private static final long serialVersionUID = 1920694340054206260L;
@@ -42,31 +50,6 @@ public class User extends GenericTraceable<String> implements UserDetails {
   public static final long ACCOUNT_NON_LOCKED = 1 << 1;
   public static final long CREDENTIALS_NON_EXPIRED = 1 << 2;
   public static final long ENABLED = 1 << 3;
-  
-  @Override
-  public int hashCode() {
-      final int prime = 31;
-      int result = 1;
-      result = prime * result + ((id == null) ? 0 : id.hashCode());
-      return result;
-  }
-
-  @Override
-  public boolean equals(Object obj) {
-      if (this == obj)
-          return true;
-      if (obj == null)
-          return false;
-      if (getClass() != obj.getClass())
-          return false;
-      User other = (User)obj;
-      if (id == null) {
-          if (other.id != null)
-              return false;
-      } else if (!id.equals(other.id))
-          return false;
-      return true;
-  }
 
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO, generator = "system-uuid")
@@ -92,34 +75,24 @@ public class User extends GenericTraceable<String> implements UserDetails {
   // @PrimaryKeyJoinColumn
   // private Client client;
 
-  // @FormParam("device")
+  @FormParam("device")
   @Column(name = "device", length = 50)
   private String device;
 
-  // @FormParam("token")
+  @FormParam("token")
   @Column(name = "token", length = 255)
   private String token;
 
-  // @FormParam("username")
+  @FormParam("username")
   @Column(name = "username", length = 50, nullable = false, unique = true)
   private String username;
 
-  // @FormParam("password")
+  @FormParam("password")
   @Column(name = "password", length = 50, nullable = false)
   private String password;
 
   @Column(name = "status")
   private long status;
-
-  // public List<String> getRoleAuthorityList() {
-  // List<String> list = new ArrayList<String>();
-  // if (!CollectionUtils.isEmpty(roles)) {
-  // for (Role role : roles) {
-  // list.add(role.getAuthority().toLowerCase());
-  // }
-  // }
-  // return list;
-  // }
 
   @Override
   public Collection<GrantedAuthority> getAuthorities() {
@@ -139,78 +112,6 @@ public class User extends GenericTraceable<String> implements UserDetails {
     return StringUtils.join(categoryList.toArray(), ",");
   }
 
-  public String getId() {
-    return id;
-  }
-
-  public void setId(String id) {
-    this.id = id;
-  }
-
-  public Set<Role> getRoles() {
-    return roles;
-  }
-
-  public void setRoles(Set<Role> roles) {
-    this.roles = roles;
-  }
-
-  public Set<String> getCategories() {
-    return categories;
-  }
-
-  public void setCategories(Set<String> categories) {
-    this.categories = categories;
-  }
-
-  // public Client getClient() {
-  // return client;
-  // }
-  //
-  // public void setClient(Client client) {
-  // this.client = client;
-  // }
-
-  public String getDevice() {
-    return device;
-  }
-
-  public void setDevice(String device) {
-    this.device = device;
-  }
-
-  public String getToken() {
-    return token;
-  }
-
-  public void setToken(String token) {
-    this.token = token;
-  }
-
-  public String getUsername() {
-    return username;
-  }
-
-  public void setUsername(String username) {
-    this.username = username;
-  }
-
-  public String getPassword() {
-    return password;
-  }
-
-  public void setPassword(String password) {
-    this.password = password;
-  }
-
-  public long getStatus() {
-    return status;
-  }
-
-  public void setStatus(long status) {
-    this.status = status;
-  }
-
   public boolean isAccountNonExpired() {
     return BitwisePermissions.isPermitted(this.status, ACCOUNT_NON_EXPIRED);
   }
@@ -225,10 +126,5 @@ public class User extends GenericTraceable<String> implements UserDetails {
 
   public boolean isEnabled() {
     return BitwisePermissions.isPermitted(this.status, ENABLED);
-  }
-
-  @Override
-  public String toString() {
-    return "User [id=" + id + ", device=" + device + ", token=" + token + ", username=" + username + ", password=" + password + "]";
   }
 }

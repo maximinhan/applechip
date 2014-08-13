@@ -7,32 +7,30 @@ import javax.persistence.MappedSuperclass;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import com.applechip.core.constant.ColumnSizeConstant;
+import com.applechip.core.util.SecurityUtil;
 
 @SuppressWarnings("serial")
 @MappedSuperclass
+@Getter
+@Setter
 public abstract class GenericByUpdated<PK extends Serializable> extends GenericByCreated<PK> {
 
   @Column(name = "updated_by", insertable = true, updatable = true, length = ColumnSizeConstant.UUID)
   protected String updatedBy;
 
   @PreUpdate
-  public void setUpdatedBy() {
-    this.updatedBy = getCurrentUserId();
+  private void setUpdatedBy() {
+    this.updatedBy = SecurityUtil.getCurrentUserId();
   }
 
   @PrePersist
-  public void setCreatedBy() {
-    String currentUserId = getCurrentUserId();
+  private void setCreatedBy() {
+    String currentUserId = SecurityUtil.getCurrentUserId();
     this.createdBy = currentUserId;
     this.updatedBy = currentUserId;
-  }
-
-  public String getUpdatedBy() {
-    return updatedBy;
-  }
-
-  public void setUpdatedBy(String updatedBy) {
-    this.updatedBy = updatedBy;
   }
 }

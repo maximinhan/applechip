@@ -6,8 +6,8 @@ import java.sql.SQLException;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceException;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import lombok.extern.slf4j.Slf4j;
+
 import org.hibernate.Session;
 import org.hibernate.jdbc.Work;
 import org.springframework.jdbc.datasource.ConnectionHandle;
@@ -25,9 +25,9 @@ public class CustomHibernateJpaVendorAdapter extends HibernateJpaVendorAdapter {
     return this.jpaDialect;
   }
 
+  @Slf4j
   private static class CustomHibernateJpaDialect extends HibernateJpaDialect {
     private static final long serialVersionUID = -2162607544160231149L;
-    private static final Log log = LogFactory.getLog(CustomHibernateJpaDialect.class);
 
     @Override
     public ConnectionHandle getJdbcConnection(EntityManager entityManager, boolean readOnly) throws PersistenceException, SQLException {
@@ -35,10 +35,10 @@ public class CustomHibernateJpaVendorAdapter extends HibernateJpaVendorAdapter {
       if (null != connectionHandle && null != connectionHandle.getConnection()) {
         if (readOnly) {
           connectionHandle.getConnection().setReadOnly(true);
-          log.debug("readOnly... connection info:" + connectionHandle.getConnection());
+          log.debug("readOnly... connection info: {}", connectionHandle.getConnection());
         } else {
           connectionHandle.getConnection().setReadOnly(false);
-          log.debug("writeOnly... connection info:" + connectionHandle.getConnection());
+          log.debug("writeOnly... connection info: {}", connectionHandle.getConnection());
         }
       }
       return connectionHandle;
@@ -55,7 +55,7 @@ public class CustomHibernateJpaVendorAdapter extends HibernateJpaVendorAdapter {
         @Override
         public void execute(Connection connection) throws SQLException {
           Integer old = DataSourceUtils.prepareConnectionForTransaction(connection, transactionDefinition);
-          log.debug(String.format("old: %s, new: %s", old, transactionDefinition.getIsolationLevel()));
+          log.debug("old: {}, new: {}", old, transactionDefinition.getIsolationLevel());
           data.setisolationLevel(old);
           data.setConnection(connection);
         }
@@ -81,8 +81,7 @@ public class CustomHibernateJpaVendorAdapter extends HibernateJpaVendorAdapter {
 
       private Connection connection;
 
-      public Data() {
-      }
+      public Data() {}
 
       public void reset() {
         if (null != this.connection && null != this.isolationLevel) {

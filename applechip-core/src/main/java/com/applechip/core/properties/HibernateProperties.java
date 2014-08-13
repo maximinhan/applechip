@@ -5,6 +5,8 @@ import java.util.Properties;
 import lombok.Getter;
 import lombok.Setter;
 
+import org.hibernate.cfg.Environment;
+
 import com.applechip.core.constant.BaseConstant;
 
 @Getter
@@ -31,16 +33,7 @@ public class HibernateProperties {
   private int jdbcNumTestsPerEvictionRun;
   private int jdbcMinEvictableIdleTimeMillis;
   private int jdbcDefaultTransactionIsolation;
-  private String hibernateDialect;
-  private String hibernateShowSql;
-  private String hibernateFormatSql;
-  private String hibernateUseSqlComments;
-  private String hibernateQuerySubstitutions;
-  private String hibernateHbm2ddlAuto;
-  private String hibernateUseQueryCache;
-  private String hibernateUseSecondLevelCache;
-  private String hibernateCacheRegionFactory;
-  private String hibernateCacheProviderConfig;
+  private Properties hibernateProperties;
 
   public static HibernateProperties getProperties(Properties properties) {
     return new HibernateProperties(properties);
@@ -53,22 +46,31 @@ public class HibernateProperties {
   }
 
   private void setHibernateProperties(Properties properties) {
-    this.hibernateDialect = BaseConstant.hibernateDialectMap.get(this.jdbcType);
-    this.hibernateShowSql = properties.getProperty("hibernate.show_sql");
-    this.hibernateFormatSql = properties.getProperty("hibernate.format_sql");
-    this.hibernateUseSqlComments = properties.getProperty("hibernate.use_sql_comments");
-    this.hibernateQuerySubstitutions = properties.getProperty("hibernate.query.substitutions");
-    this.hibernateHbm2ddlAuto = properties.getProperty("hibernate.hbm2ddl.auto");
-    this.hibernateUseQueryCache = properties.getProperty("hibernate.cache.use_query_cache");
-    this.hibernateUseSecondLevelCache = properties.getProperty("hibernate.cache.use_second_level_cache");
-    this.hibernateCacheRegionFactory = properties.getProperty("hibernate.cache.region.factory_class");
-    this.hibernateCacheProviderConfig = properties.getProperty("hibernate.cache.provider_configuration_file_resource_path");
+    Properties bean = new Properties();
+    bean.put(Environment.DIALECT, BaseConstant.HIBERNATE_DIALECT_MAP.get(this.jdbcType));
+    bean.put(Environment.SHOW_SQL, properties.getProperty("hibernate.show_sql"));
+    bean.put(Environment.FORMAT_SQL, properties.getProperty("hibernate.format_sql"));
+    bean.put(Environment.USE_SQL_COMMENTS, properties.getProperty("hibernate.use_sql_comments"));
+    bean.put(Environment.QUERY_SUBSTITUTIONS, properties.getProperty("hibernate.query.substitutions"));
+    bean.put(Environment.HBM2DDL_AUTO, properties.getProperty("hibernate.hbm2ddl.auto"));
+    bean.put(Environment.USE_QUERY_CACHE, properties.getProperty("hibernate.cache.use_query_cache"));
+    bean.put(Environment.USE_SECOND_LEVEL_CACHE, properties.getProperty("hibernate.cache.use_second_level_cache"));
+    bean.put(Environment.CACHE_REGION_FACTORY, properties.getProperty("hibernate.cache.region.factory_class"));
+    bean.put(Environment.CACHE_PROVIDER_CONFIG, properties.getProperty("hibernate.cache.provider_configuration_file_resource_path"));
+    
+    bean.put(Environment.DRIVER, BaseConstant.JDBC_DRIVER_CLASS_MAP.get(this.jdbcType));
+    bean.put(Environment.URL, properties.getProperty("jdbc.url"));
+    bean.put(Environment.USER, properties.getProperty("jdbc.username"));
+    bean.put(Environment.PASS, properties.getProperty("jdbc.password"));
+    this.hibernateProperties = bean;
   }
 
   private void setJdbcProperties(Properties properties) {
-    this.jdbcDriverClassName = BaseConstant.jdbcDriverClassMap.get(this.jdbcType);
-    this.jdbcValidationQuery = BaseConstant.jdbcValidationQueryMap.get(this.jdbcType);
+    this.jdbcDriverClassName = BaseConstant.JDBC_DRIVER_CLASS_MAP.get(this.jdbcType);
+    this.jdbcValidationQuery = BaseConstant.JDBC_VALIDATION_QUERY_MAP.get(this.jdbcType);
     this.jdbcUrl = properties.getProperty("jdbc.url");
+    this.jdbcUsername = properties.getProperty("jdbc.username");
+    this.jdbcPassword = properties.getProperty("jdbc.password");
     this.jdbcMaxActive = Integer.parseInt(properties.getProperty("jdbc.maxActive"));
     this.jdbcMaxWait = Integer.parseInt(properties.getProperty("jdbc.maxWait"));
     this.jdbcMinIdle = Integer.parseInt(properties.getProperty("jdbc.minIdle"));

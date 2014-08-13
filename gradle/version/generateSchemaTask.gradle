@@ -19,12 +19,12 @@ class GenerateSchemaTask extends DefaultTask {
 		ORACLE: "org.hibernate.dialect.Oracle10gDialect",
 		HSQL: "org.hibernate.dialect.HSQLDialect",
 		H2: "org.hibernate.dialect.H2Dialect"
-		//MYSQL5: "org.hibernate.dialect.MySQL5Dialect",
-		//MYSQL: "org.hibernate.dialect.MySQLDialect",
 	]
 	def Map<String, String> driverClassMap = [
 		MYSQL: "com.mysql.jdbc.Driver",
-		ORACLE: "oracle.jdbc.OracleDriver"
+		ORACLE: "oracle.jdbc.OracleDriver",
+		HSQL: "org.hsqldb.jdbcDriver",
+		H2: "org.h2.Driver"
 	]
 	def classesDir = project.sourceSets.main.output.classesDir
     def jdbcType = System.properties['jdbcType']
@@ -33,7 +33,7 @@ class GenerateSchemaTask extends DefaultTask {
     def jdbcUrl = System.properties['jdbcUrl']
     
 	@TaskAction
-	def performSchemaGeneration() {
+	def generateSchemaTask() {
 		assert classesDir.isDirectory()
 		def urlList = []
 		urlList.add(classesDir.toURI().toURL())
@@ -68,9 +68,7 @@ class GenerateSchemaTask extends DefaultTask {
 			configuration.properties['hibernate.connection.username'] = jdbcUsername
 			configuration.properties['hibernate.connection.password'] = jdbcPassword
 			org.hibernate.tool.hbm2ddl.SchemaExport schemaExport = new org.hibernate.tool.hbm2ddl.SchemaExport(configuration)
-			schemaExport.delimiter = ';'
-			schemaExport.execute false, false, false, true
-			schemaExport.execute false, true, false, false
+			schemaExport.execute true, true, false, true
 		} finally {
 			Thread.currentThread().setContextClassLoader(classLoader)
 		}

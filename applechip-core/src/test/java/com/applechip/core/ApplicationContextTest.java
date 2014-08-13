@@ -2,9 +2,9 @@ package com.applechip.core;
 
 import java.util.Properties;
 
+import lombok.extern.slf4j.Slf4j;
+
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
@@ -20,9 +20,8 @@ import com.applechip.core.util.PropertiesLoaderUtils;
 
 @Configuration
 @Import(CoreConfig.class)
+@Slf4j
 public class ApplicationContextTest extends PropertiesLoaderSupport {
-
-  private final static Log log = LogFactory.getLog(ApplicationContextTest.class);
 
   @Bean
   public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
@@ -39,7 +38,7 @@ public class ApplicationContextTest extends PropertiesLoaderSupport {
       }
       Resource resource = resolver.getResource(source.getProperty(propertyName));
       sources.addFirst(new PropertiesPropertySource(propertyName, PropertiesLoaderUtils.loadProperties(resource)));
-      log.debug(String.format("property add... name : %s", propertyName));
+      log.debug("property add... name: {}, path: {}", propertyName, resource.getFilename());
     }
     PropertySourcesPlaceholderConfigurer bean = new PropertySourcesPlaceholderConfigurer();
     bean.setPropertySources(sources);

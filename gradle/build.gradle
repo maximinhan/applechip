@@ -1,4 +1,5 @@
 ext {
-    hibernateJpaSchemaGenerationTask = 'http://webdav.bywook.com/resource/1.0/hibernateJpaSchemaGenerationTask.gradle'
+	gradleVersion = '1.0'
+    generateSchemaTask = 'http://webdav.bywook.com/resource/${gradleVersion}/generateSchemaTask.gradle'
 }
 

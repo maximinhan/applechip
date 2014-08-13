@@ -27,12 +27,4 @@ public class ApplechipApiApplicationContextConfig extends WebMvcConfigurationSup
     bean.setOrder(0);
     return bean;
   }
-
-  @Bean
-  public PageableHandlerMethodArgumentResolver pageableResolver() {
-    PageableHandlerMethodArgumentResolver pageableHandlerMethodArgumentResolver = new PageableHandlerMethodArgumentResolver();
-    pageableHandlerMethodArgumentResolver.setOneIndexedParameters(true);
-
-    return pageableHandlerMethodArgumentResolver;
-  }
 }

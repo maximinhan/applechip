@@ -29,7 +29,7 @@
 	</logger>
 
 	<root>
-		<level value="WARN" />
+		<level value="TRACE" />
 		<appender-ref ref="FILE_APPLECHIP" />
 		<appender-ref ref="CONSOLE" />
 	</root>

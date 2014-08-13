@@ -1,6 +1,6 @@
 apply plugin: 'maven'
 task uploadSnapshots(type: Upload, dependsOn: build)  { 
-   configuration = configurations.archives
+	configuration = configurations.archives
 	uploadArchives {
 		repositories {
 	   		mavenDeployer {

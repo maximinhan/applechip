@@ -6,10 +6,9 @@ import java.util.UUID;
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 
+import lombok.extern.slf4j.Slf4j;
+
 import org.apache.commons.dbcp.BasicDataSource;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.hibernate.cfg.Environment;
 import org.springframework.aop.aspectj.AspectJExpressionPointcutAdvisor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.AdviceMode;
@@ -38,9 +37,8 @@ import com.applechip.core.util.CryptoUtil;
 @Configuration
 @EnableAspectJAutoProxy(proxyTargetClass = true)
 @EnableTransactionManagement(proxyTargetClass = true, mode = AdviceMode.PROXY, order = Ordered.HIGHEST_PRECEDENCE)
+@Slf4j
 public class CustomTransactionManagementConfigurer implements TransactionManagementConfigurer {
-
-  private final static Log log = LogFactory.getLog(CustomTransactionManagementConfigurer.class);
 
   @Autowired
   private HibernateProperties hibernateProperties;
@@ -60,7 +58,7 @@ public class CustomTransactionManagementConfigurer implements TransactionManagem
     LocalContainerEntityManagerFactoryBean bean = new LocalContainerEntityManagerFactoryBean();
     bean.setJpaVendorAdapter(new CustomHibernateJpaVendorAdapter());
     bean.setDataSource(this.dataSource());
-    bean.setJpaProperties(this.jpaProperties());
+    bean.setJpaProperties(hibernateProperties.getHibernateProperties());
     bean.setPersistenceUnitName(BaseConstant.PERSISTENCE_UNIT_NAME);
     bean.setPackagesToScan(User.class.getPackage().getName());
     bean.afterPropertiesSet();
@@ -104,21 +102,6 @@ public class CustomTransactionManagementConfigurer implements TransactionManagem
     }
   }
 
-  private Properties jpaProperties() {
-    Properties bean = new Properties();
-    bean.put(Environment.DIALECT, hibernateProperties.getHibernateDialect());
-    bean.put(Environment.SHOW_SQL, hibernateProperties.getHibernateShowSql());
-    bean.put(Environment.FORMAT_SQL, hibernateProperties.getHibernateFormatSql());
-    bean.put(Environment.USE_SQL_COMMENTS, hibernateProperties.getHibernateUseSqlComments());
-    bean.put(Environment.QUERY_SUBSTITUTIONS, hibernateProperties.getHibernateQuerySubstitutions());
-    bean.put(Environment.HBM2DDL_AUTO, hibernateProperties.getHibernateHbm2ddlAuto());
-    bean.put(Environment.USE_QUERY_CACHE, hibernateProperties.getHibernateUseQueryCache());
-    bean.put(Environment.USE_SECOND_LEVEL_CACHE, hibernateProperties.getHibernateUseSecondLevelCache());
-    bean.put(Environment.CACHE_REGION_FACTORY, hibernateProperties.getHibernateCacheRegionFactory());
-    bean.put(Environment.CACHE_PROVIDER_CONFIG, hibernateProperties.getHibernateCacheProviderConfig());
-    return bean;
-  }
-
   @Bean
   public TransactionInterceptor transactionInterceptor() {
     TransactionInterceptor bean = new TransactionInterceptor();
@@ -133,7 +116,8 @@ public class CustomTransactionManagementConfigurer implements TransactionManagem
     nameMatchTransactionAttributeSource.setProperties(this.transactionAttributes());
     AnnotationTransactionAttributeSource annotationTransactionAttributeSource = new AnnotationTransactionAttributeSource();
     TransactionAttributeSource transactionAttributeSource =
-        new CompositeTransactionAttributeSource(new TransactionAttributeSource[] {annotationTransactionAttributeSource, nameMatchTransactionAttributeSource});
+        new CompositeTransactionAttributeSource(new TransactionAttributeSource[] {annotationTransactionAttributeSource,
+            nameMatchTransactionAttributeSource});
     log.debug("transactionAttributeSource create...");
     return transactionAttributeSource;
   }

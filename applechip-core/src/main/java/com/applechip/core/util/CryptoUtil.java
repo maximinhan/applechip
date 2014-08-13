@@ -1,7 +1,5 @@
 package com.applechip.core.util;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
 import java.security.MessageDigest;
 
 import javax.crypto.Cipher;
@@ -20,12 +18,12 @@ public class CryptoUtil {
 
   public enum Digest {
 
-    SHA("SHA"), SHA_256("SHA-256"), MD5("MD5");
+    SHA_256("SHA-256"), SHA_384("SHA-384"), SHA_512("SHA-512"), MD5("MD5");
 
     private String name;
 
-    private Digest(String s) {
-      this.name = s;
+    private Digest(String name) {
+      this.name = name;
     }
 
     public boolean equals(String name) {
@@ -42,12 +40,12 @@ public class CryptoUtil {
   private Cipher cipher = null;
 
   public CryptoUtil() {
-    generateKey();
+    generateKey(SecurityUtil.getSecurityKey());
   }
 
-  private void generateKey() {
-    byte[] key = StringUtils.getBytesUtf8("5206182152061821");
-    byte[] iv = StringUtils.getBytesUtf8("1281602512816025");
+  public void generateKey(String string) {
+    byte[] key = StringUtils.getBytesUtf8(string);
+    byte[] iv = StringUtils.getBytesUtf8(org.apache.commons.lang.StringUtils.reverse(string));
     this.keySpec = new SecretKeySpec(key, 0, 16, "AES");
     this.ivSpec = new IvParameterSpec(iv);
     try {
@@ -57,29 +55,24 @@ public class CryptoUtil {
     }
   }
 
-  public String encrypt(String decryptText, Digest digest) {
-    try {
-      MessageDigest md = MessageDigest.getInstance(digest.toString());
-      md.update(StringUtils.getBytesUtf8(decryptText));
-      return toHexString(md.digest());
-    } catch (Exception e) {
-      throw new SystemException(String.format("cryto fail.. %s", e));
-    }
-  }
 
-  public String toHexStringByDigest(InputStream inputStream, Digest digest) {
+  public String toHexStringByDigest(String string, Digest digest) {
+    String result = "";
     try {
       switch (digest) {
-      case SHA:
-        return DigestUtils.shaHex(inputStream);
-      case SHA_256:
-        return DigestUtils.sha256Hex(inputStream);
-      default:
-        return DigestUtils.md5Hex(inputStream);
+        case SHA_256:
+          result = DigestUtils.sha256Hex(string);
+        case SHA_384:
+          result = DigestUtils.sha512Hex(string);
+        case SHA_512:
+          result = DigestUtils.sha512Hex(string);
+        case MD5:
+          result = DigestUtils.md5Hex(string);
       }
     } catch (Exception e) {
       throw new SystemException(String.format("cryto fail.. %s", e));
     }
+    return result;
   }
 
   public String encrypt(String decryptText) {
@@ -97,6 +90,16 @@ public class CryptoUtil {
       this.cipher.init(Cipher.DECRYPT_MODE, this.keySpec, this.ivSpec);
       byte[] plain = cipher.doFinal(Base64.decodeBase64(StringUtils.getBytesUtf8(encryptText)));
       return StringUtils.newStringUtf8(plain);
+    } catch (Exception e) {
+      throw new SystemException(String.format("cryto fail.. %s", e));
+    }
+  }
+
+  public String encrypt(String decryptText, Digest digest) {
+    try {
+      MessageDigest md = MessageDigest.getInstance(digest.toString());
+      md.update(StringUtils.getBytesUtf8(decryptText));
+      return toHexString(md.digest());
     } catch (Exception e) {
       throw new SystemException(String.format("cryto fail.. %s", e));
     }
@@ -120,9 +123,9 @@ public class CryptoUtil {
     System.out.println("a==b" + (a == b));
 
     CryptoUtil cryptUtil = new CryptoUtil();
-    System.out.println(cryptUtil.toHexStringByDigest(new ByteArrayInputStream(StringUtils.getBytesUtf8("test")), Digest.MD5));
-    System.out.println(cryptUtil.toHexStringByDigest(new ByteArrayInputStream(StringUtils.getBytesUtf8("test")), Digest.SHA_256));
+    System.out.println(cryptUtil.toHexStringByDigest("test", Digest.MD5));
+    System.out.println(cryptUtil.toHexStringByDigest("test", Digest.SHA_256));
     System.out.println(cryptUtil.encrypt("password"));
-    System.out.println(cryptUtil.decrypt("z5RWAt8nyREgIYlL5nt6D7Z7+Eqcr32MWsM+RzY9Ma8="));
+    System.out.println(cryptUtil.decrypt("iaLQS4uk5SrS0oV+mm7s/g=="));
   }
 }
