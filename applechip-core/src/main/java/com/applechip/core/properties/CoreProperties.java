@@ -6,7 +6,7 @@ import java.util.Properties;
 
 import lombok.Getter;
 
-import com.applechip.core.constant.BaseConstant;
+import com.applechip.core.constant.CoreConstant;
 
 @Getter
 public class CoreProperties {
@@ -66,10 +66,10 @@ public class CoreProperties {
   }
 
   public String getDownloadPath() {
-    return storagePath + BaseConstant.FILE_SEPARATOR + "download";
+    return storagePath + CoreConstant.FILE_SEPARATOR + "download";
   }
 
   public String getGeoipFile() {
-    return storagePath + BaseConstant.FILE_SEPARATOR + "geoip" + BaseConstant.FILE_SEPARATOR + "GeoIP2-City.mmdb";
+    return storagePath + CoreConstant.FILE_SEPARATOR + "geoip" + CoreConstant.FILE_SEPARATOR + "GeoIP2-City.mmdb";
   }
 }

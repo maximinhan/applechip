@@ -28,7 +28,7 @@ import org.springframework.transaction.interceptor.NameMatchTransactionAttribute
 import org.springframework.transaction.interceptor.TransactionAttributeSource;
 import org.springframework.transaction.interceptor.TransactionInterceptor;
 
-import com.applechip.core.constant.BaseConstant;
+import com.applechip.core.constant.CoreConstant;
 import com.applechip.core.entity.User;
 import com.applechip.core.properties.HibernateProperties;
 import com.applechip.core.repository.CustomHibernateJpaVendorAdapter;
@@ -59,7 +59,7 @@ public class CustomTransactionManagementConfigurer implements TransactionManagem
     bean.setJpaVendorAdapter(new CustomHibernateJpaVendorAdapter());
     bean.setDataSource(this.dataSource());
     bean.setJpaProperties(hibernateProperties.getHibernateProperties());
-    bean.setPersistenceUnitName(BaseConstant.PERSISTENCE_UNIT_NAME);
+    bean.setPersistenceUnitName(CoreConstant.PERSISTENCE_UNIT_NAME);
     bean.setPackagesToScan(User.class.getPackage().getName());
     bean.afterPropertiesSet();
     log.debug("entityManagerFactory create...");

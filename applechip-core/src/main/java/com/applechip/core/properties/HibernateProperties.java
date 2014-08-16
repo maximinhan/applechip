@@ -7,7 +7,8 @@ import lombok.Setter;
 
 import org.hibernate.cfg.Environment;
 
-import com.applechip.core.constant.BaseConstant;
+import com.applechip.core.constant.CoreConstant;
+import com.applechip.core.constant.HibernateConstant;
 
 @Getter
 @Setter
@@ -47,7 +48,7 @@ public class HibernateProperties {
 
   private void setHibernateProperties(Properties properties) {
     Properties bean = new Properties();
-    bean.put(Environment.DIALECT, BaseConstant.HIBERNATE_DIALECT_MAP.get(this.jdbcType));
+    bean.put(Environment.DIALECT, HibernateConstant.HIBERNATE_DIALECT_MAP.get(this.jdbcType));
     bean.put(Environment.SHOW_SQL, properties.getProperty("hibernate.show_sql"));
     bean.put(Environment.FORMAT_SQL, properties.getProperty("hibernate.format_sql"));
     bean.put(Environment.USE_SQL_COMMENTS, properties.getProperty("hibernate.use_sql_comments"));
@@ -58,7 +59,7 @@ public class HibernateProperties {
     bean.put(Environment.CACHE_REGION_FACTORY, properties.getProperty("hibernate.cache.region.factory_class"));
     bean.put(Environment.CACHE_PROVIDER_CONFIG, properties.getProperty("hibernate.cache.provider_configuration_file_resource_path"));
     
-    bean.put(Environment.DRIVER, BaseConstant.JDBC_DRIVER_CLASS_MAP.get(this.jdbcType));
+    bean.put(Environment.DRIVER, HibernateConstant.JDBC_DRIVER_CLASS_MAP.get(this.jdbcType));
     bean.put(Environment.URL, properties.getProperty("jdbc.url"));
     bean.put(Environment.USER, properties.getProperty("jdbc.username"));
     bean.put(Environment.PASS, properties.getProperty("jdbc.password"));
@@ -66,8 +67,8 @@ public class HibernateProperties {
   }
 
   private void setJdbcProperties(Properties properties) {
-    this.jdbcDriverClassName = BaseConstant.JDBC_DRIVER_CLASS_MAP.get(this.jdbcType);
-    this.jdbcValidationQuery = BaseConstant.JDBC_VALIDATION_QUERY_MAP.get(this.jdbcType);
+    this.jdbcDriverClassName = HibernateConstant.JDBC_DRIVER_CLASS_MAP.get(this.jdbcType);
+    this.jdbcValidationQuery = HibernateConstant.JDBC_VALIDATION_QUERY_MAP.get(this.jdbcType);
     this.jdbcUrl = properties.getProperty("jdbc.url");
     this.jdbcUsername = properties.getProperty("jdbc.username");
     this.jdbcPassword = properties.getProperty("jdbc.password");

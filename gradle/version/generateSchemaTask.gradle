@@ -34,6 +34,8 @@ class GenerateSchemaTask extends DefaultTask {
     
 	@TaskAction
 	def generateSchemaTask() {
+		println classesDir
+		println 'testschema!!!'
 		assert classesDir.isDirectory()
 		def urlList = []
 		urlList.add(classesDir.toURI().toURL())
@@ -55,7 +57,7 @@ class GenerateSchemaTask extends DefaultTask {
 			entityList.each { clazz ->
 				try {
 					Class entity = Class.forName(clazz, true, urlClassLoader)
-					if(possibleJpaEntity.isAnnotationPresent(javax.persistence.Entity.class)) {
+					if(entity.isAnnotationPresent(javax.persistence.Entity.class)) {
 						configuration.addAnnotatedClass(entity)
 					}
 				} catch (Exception e) {
@@ -67,8 +69,12 @@ class GenerateSchemaTask extends DefaultTask {
 			configuration.properties['hibernate.connection.url'] = jdbcUrl
 			configuration.properties['hibernate.connection.username'] = jdbcUsername
 			configuration.properties['hibernate.connection.password'] = jdbcPassword
+			configuration.properties['hibernate.hbm2ddl.auto'] = 'update'
 			org.hibernate.tool.hbm2ddl.SchemaExport schemaExport = new org.hibernate.tool.hbm2ddl.SchemaExport(configuration)
-			schemaExport.execute true, true, false, true
+			schemaExport.delimiter = ';'
+		    schemaExport.format = true
+			schemaExport.drop false, true
+			schemaExport.execute true, true, false, false
 		} finally {
 			Thread.currentThread().setContextClassLoader(classLoader)
 		}

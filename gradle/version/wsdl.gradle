@@ -1,0 +1,23 @@
+task wsdl2java(type: JavaExec) {
+    ext {
+        wsdlFile = 'src/main/resources/ath/btrans/xath.wsdl'
+        outputDir = project.ext.generatedSrcDir
+    }
+    inputs.file file(wsdlFile)
+    outputs.dir outputDir
+    main = 'org.apache.cxf.tools.wsdlto.WSDLToJava'
+    classpath = configurations.provided
+    args '-p', 'https.my.web.service.package'
+    args '-d', outputDir
+    args '-client'
+    args '-verbose'
+    args '-validate'
+    args '-wsdlLocation', 'classpath:my/wsdl/file.wsdl'
+    args wsdlFile
+}
+task xmlbean << {
+    ant.taskdef(name: 'xmlbean', classname: 'org.apache.xmlbeans.impl.tool.XMLBean', classpath: configurations.compile.asPath)
+    ant.xmlbean(srconly: true, srcgendir: project.ext.generatedSrcDir.absolutePath, classgendir: "$buildDir/classes/main") {
+        fileset(dir: 'src/main/resources/my/xml/schemas/dir', includes: '**/*.xsd **/*.xsdconfig')
+    }
+}

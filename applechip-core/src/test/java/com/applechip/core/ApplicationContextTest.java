@@ -15,7 +15,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.core.io.support.PropertiesLoaderSupport;
 
-import com.applechip.core.constant.BaseConstant;
+import com.applechip.core.constant.CoreConstant;
 import com.applechip.core.util.PropertiesLoaderUtils;
 
 @Configuration
@@ -26,14 +26,14 @@ public class ApplicationContextTest extends PropertiesLoaderSupport {
   @Bean
   public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
     PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
-    Properties properties = PropertiesLoaderUtils.loadProperties(resolver.getResource(BaseConstant.CONFIG_PROPERTIES_PATH_DEV));
+    Properties properties = PropertiesLoaderUtils.loadProperties(resolver.getResource(CoreConstant.CONFIG_PROPERTIES_PATH_DEV));
 
     MutablePropertySources sources = new MutablePropertySources();
-    sources.addFirst(new PropertiesPropertySource(BaseConstant.CONFIG_PROPERTIES, properties));
+    sources.addFirst(new PropertiesPropertySource(CoreConstant.CONFIG_PROPERTIES, properties));
 
-    Properties source = (Properties) sources.get(BaseConstant.CONFIG_PROPERTIES).getSource();
+    Properties source = (Properties) sources.get(CoreConstant.CONFIG_PROPERTIES).getSource();
     for (String propertyName : source.stringPropertyNames()) {
-      if (StringUtils.equals(propertyName, BaseConstant.ENVIRONMENT)) {
+      if (StringUtils.equals(propertyName, CoreConstant.ENVIRONMENT)) {
         continue;
       }
       Resource resource = resolver.getResource(source.getProperty(propertyName));

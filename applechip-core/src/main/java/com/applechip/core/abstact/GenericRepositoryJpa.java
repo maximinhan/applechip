@@ -15,13 +15,13 @@ import javax.persistence.criteria.CriteriaQuery;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import com.applechip.core.constant.BaseConstant;
+import com.applechip.core.constant.CoreConstant;
 
 public class GenericRepositoryJpa<T extends GenericEntity<PK>, PK extends Serializable> implements GenericRepository<T, PK> {
 
   protected final Log log = LogFactory.getLog(getClass());
 
-  @PersistenceContext(unitName = BaseConstant.PERSISTENCE_UNIT_NAME)
+  @PersistenceContext(unitName = CoreConstant.PERSISTENCE_UNIT_NAME)
   public EntityManager entityManager;
 
   private Class<T> persistentClass;

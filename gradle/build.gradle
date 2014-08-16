@@ -1,5 +1,5 @@
 ext {
-	gradleVersion = '1.0'
-    generateSchemaTask = 'http://webdav.bywook.com/resource/${gradleVersion}/generateSchemaTask.gradle'
+	def scriptVersion = '1.0'
+    generateSchemaTask = 'http://webdav.bywook.com/resource/${scriptVersion}/generateSchemaTask.gradle'
 }
 

@@ -222,7 +222,6 @@ apply from: '../gradle/version/generateQueryDSLTask.gradle'
 	    provided("org.aspectj:aspectjweaver:1.8.1")
 	    provided 'javax.servlet:javax.servlet-api:3.0.1'
         provided 'jstl:jstl:1.2'
-        //compile("org.apache.cxf:cxf-rt-frontend-jaxrs:3.0.1")
         provided("javax.ws.rs:jsr311-api:1.1.1")
         provided("javax.transaction:javax.transaction-api:1.2")
         provided("org.javassist:javassist:3.18.2-GA")
