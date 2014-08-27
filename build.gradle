@@ -23,11 +23,13 @@ buildscript {
     repositories {
         maven { url "http://nexus.bywook.com/content/groups/public" }
         mavenCentral()
+        maven { url "http://repo.springsource.org/plugins-release" }
 	}
 	dependencies {
+	classpath("org.springframework.build.gradle:propdeps-plugin:0.0.7")
 	//println "$project.rootProject.projectDir/applechip-plugin/build/libs/applechip-plugin-${version}.jar"
-		classpath files("D:/dev/workspace-applechip/applechip-plugin-${version}.jar")
-		//classpath("com.applechip:applechip-plugin:1.0-SNAPSHOT")
+		//classpath files("D:/dev/workspace-applechip/applechip-plugin-${version}.jar")
+		classpath("com.applechip:applechip-plugin:1.0-SNAPSHOT")
 	}
 }
 
@@ -38,6 +40,7 @@ configure(allprojects) { project ->
 		maven { url "http://nexus.bywook.com/content/groups/public" }
 		mavenCentral()
 	}
+	apply plugin: "propdeps"
 	gradle.taskGraph.whenReady { taskGraph -> if (taskGraph.hasTask('build')) { version = "${version}".replace("-SNAPSHOT", "") }}
 	configurations {
 		all {
