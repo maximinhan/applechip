@@ -258,12 +258,16 @@ jdbcPassword = System.properties['jdbcPassword']
 */
 }
 
+
 project(":applechip-plugin") {
+	description = "Exposes gradle buildSrc for IDE support"
 	apply from: "$project.rootProject.projectDir/gradle/version/uploadArchives.gradle"
 	dependencies {
 	    compile gradleApi()
+	    compile localGroovy()
 	    compile("org.hibernate:hibernate-core:$hibernateVersion")
 	}
+	configurations.archives.artifacts.clear()
 	
 /*
 sourceSets.main.resources.srcDirs += "src/main/java"
