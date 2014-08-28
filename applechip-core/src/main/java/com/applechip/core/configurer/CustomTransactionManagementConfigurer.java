@@ -7,6 +7,7 @@ import javax.sql.DataSource;
 
 import lombok.extern.slf4j.Slf4j;
 
+import org.apache.commons.dbcp.BasicDataSourceFactory;
 import org.springframework.aop.aspectj.AspectJExpressionPointcutAdvisor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.AdviceMode;
@@ -28,7 +29,7 @@ import org.springframework.transaction.interceptor.TransactionInterceptor;
 
 import com.applechip.core.constant.CoreConstant;
 import com.applechip.core.entity.User;
-import com.applechip.core.entity.support.CustomDriverManagerDataSource;
+import com.applechip.core.exception.SystemException;
 import com.applechip.core.properties.HibernateProperties;
 import com.applechip.core.repository.CustomHibernateJpaVendorAdapter;
 
@@ -61,31 +62,14 @@ public class CustomTransactionManagementConfigurer implements TransactionManagem
     return bean.getObject();
   }
 
-  @Bean
-  // (destroyMethod = "close")
+  @Bean(destroyMethod = "close")
   public DataSource dataSource() {
-    CustomDriverManagerDataSource bean = new CustomDriverManagerDataSource();
-    bean.setDriverClassName(hibernateProperties.getJdbcDriverClassName());
-    bean.setUrl(hibernateProperties.getJdbcUrl());
-    bean.setUsername(hibernateProperties.getJdbcUsername());
-    bean.setPassword(hibernateProperties.getJdbcPassword());
-    // bean.setValidationQuery(hibernateProperties.getJdbcValidationQuery());
-    // bean.setMaxActive(hibernateProperties.getJdbcMaxActive());
-    // bean.setMaxWait(hibernateProperties.getJdbcMaxWait());
-    // bean.setMinIdle(hibernateProperties.getJdbcMinIdle());
-    // bean.setInitialSize(hibernateProperties.getJdbcInitialSize());
-    // bean.setTestOnBorrow(hibernateProperties.isJdbcTestOnBorrow());
-    // bean.setPoolPreparedStatements(hibernateProperties.isJdbcPoolingStatements());
-    // bean.setDefaultAutoCommit(hibernateProperties.isJdbcDefaultAutoCommit());
-    // bean.setRemoveAbandoned(hibernateProperties.isJdbcRemoveAbandoned());
-    // bean.setRemoveAbandonedTimeout(hibernateProperties.getJdbcRemoveAbandonedTimeout());
-    // bean.setTestOnReturn(hibernateProperties.isJdbcTestOnReturn());
-    // bean.setTestWhileIdle(hibernateProperties.isJdbcTestWhileIdle());
-    // bean.setTimeBetweenEvictionRunsMillis(hibernateProperties.getJdbcTimeBetweenEvictionRunsMillis());
-    // bean.setNumTestsPerEvictionRun(hibernateProperties.getJdbcNumTestsPerEvictionRun());
-    // bean.setMinEvictableIdleTimeMillis(hibernateProperties.getJdbcMinEvictableIdleTimeMillis());
-    // bean.setDefaultTransactionIsolation(hibernateProperties.getJdbcDefaultTransactionIsolation());
-    log.debug("dataSource create...");
+    DataSource bean = null;
+    try {
+      bean = BasicDataSourceFactory.createDataSource(hibernateProperties.getDataSourceProperties());
+    } catch (Exception e) {
+      throw new SystemException(String.format("DataSource create fail.. %s", e));
+    }
     return bean;
   }
 
@@ -132,4 +116,5 @@ public class CustomTransactionManagementConfigurer implements TransactionManagem
   public PersistenceExceptionTranslationPostProcessor persistenceExceptionTranslationPostProcessor() {
     return new PersistenceExceptionTranslationPostProcessor();
   }
+
 }

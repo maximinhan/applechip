@@ -1,7 +1,9 @@
 package com.applechip.core.constant;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class HibernateConstant {
@@ -28,6 +30,41 @@ public class HibernateConstant {
       put("MYSQL", "SELECT 1");
       put("MYSQL_REPLICATION", "/* ping */ SELECT 1");
       put("ORACLE", "SELECT 1 FROM DUAL");
+    }
+  });
+
+  public static List<String> JDBC_PROPERTIES_LIST = Collections.unmodifiableList(new ArrayList<String>() {
+    private static final long serialVersionUID = -5954861215952396300L;
+    {
+      add("defaultAutoCommit");
+      add("defaultReadOnly");
+      add("defaultTransactionIsolation");
+      add("defaultCatalog");
+      add("driverClassName");
+      add("maxActive");
+      add("maxIdle");
+      add("minIdle");
+      add("initialSize");
+      add("maxWait");
+      add("testOnBorrow");
+      add("testOnReturn");
+      add("timeBetweenEvictionRunsMillis");
+      add("numTestsPerEvictionRun");
+      add("minEvictableIdleTimeMillis");
+      add("testWhileIdle");
+      add("password");
+      add("url");
+      add("username");
+      add("validationQuery");
+      add("validationQueryTimeout");
+      add("initConnectionSqls");
+      add("accessToUnderlyingConnectionAllowed");
+      add("removeAbandoned");
+      add("removeAbandonedTimeout");
+      add("logAbandoned");
+      add("poolPreparedStatements");
+      add("maxOpenPreparedStatements");
+      add("connectionProperties");
     }
   });
 }

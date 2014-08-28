@@ -1,11 +1,16 @@
 package com.applechip.core.entity.support;
 
-import org.springframework.jdbc.datasource.DriverManagerDataSource;
+import java.sql.Connection;
+import java.sql.SQLException;
+
+import javax.sql.DataSource;
+
+import org.apache.commons.dbcp.BasicDataSource;
 
 import com.applechip.core.exception.SystemException;
 import com.applechip.core.util.CryptoUtil;
 
-public class CustomDriverManagerDataSource extends DriverManagerDataSource {
+public class CustomBasicDataSource extends BasicDataSource {
 
   public void setPassword(String password) {
     super.setPassword(decrypt(password));
@@ -13,6 +18,10 @@ public class CustomDriverManagerDataSource extends DriverManagerDataSource {
 
   public void setUsername(String username) {
     super.setUsername(decrypt(username));
+  }
+
+  public Connection getConnection(String username, String password) throws SQLException {
+    return super.getConnection();
   }
 
   private String decrypt(String str) {

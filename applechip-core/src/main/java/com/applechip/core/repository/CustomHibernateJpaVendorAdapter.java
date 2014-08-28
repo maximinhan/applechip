@@ -7,7 +7,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceException;
 
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
@@ -78,7 +77,6 @@ public class CustomHibernateJpaVendorAdapter extends HibernateJpaVendorAdapter {
 
     @Getter
     @Setter
-    @NoArgsConstructor
     @SuppressWarnings(value = {"PMD.UnusedPrivateField", "PMD.SingularField"})
     private static class Data {
 
