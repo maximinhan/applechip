@@ -83,11 +83,10 @@ public class LocaleUtilTest {
 //    System.out.println(Long.toString(l, Character.MAX_RADIX));
 //    System.out.println(Long.toString(l, Character.SIZE));
 //    System.out.println(Long.toString(l, Character.MIN_SUPPLEMENTARY_CODE_POINT));
-    CryptoUtil cryptoUtil = new CryptoUtil();
+//    CryptoUtil cryptoUtil = new CryptoUtil();
 //    Byte.SIZE;
-    cryptoUtil.generateKey(SecurityUtil.getSecurityKey());
-    System.out.println(cryptoUtil.encrypt("password"));
-    System.out.println(cryptoUtil.decrypt("iaLQS4uk5SrS0oV+mm7s/g=="));
+    System.out.println(CryptoUtil.encrypt("password"));
+    System.out.println(CryptoUtil.decrypt("iaLQS4uk5SrS0oV+mm7s/g=="));
 
     // new CryptoUtil().generateKey(keyString, ivString);
 

@@ -15,21 +15,25 @@ public class CacheServiceImplTest extends AbstractTransactionTest {
 
   // @Autowired
   // private LookupManager lookupManager;
-//  @Autowired
-//  private UserRepository userRepository;
+  @Autowired
+  private UserRepository userRepository;
 
   @Test
   public void testGetRoles() throws Exception {
     System.out.println("ss");
   }
 
-//  @Test
-//  public void testCrud() {
-//    User entity = new User();
-//    entity.setId("vicki");
-//    entity.setUsername("123");
-//    userRepository.save(entity);
-//  }
+  @Test
+  public void testCrud() {
+    User entity = new User();
+    entity.setId("vicki");
+    entity.setUsername("123");
+    entity.setPassword("123");
+    entity = userRepository.merge(entity);
+    log.debug(entity);
+    System.out.println("ttttttttttttttttttttttttttt");
+    System.out.println(entity.toString());
+  }
 
 
   @Test

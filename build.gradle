@@ -1,15 +1,47 @@
-gradle.taskGraph.beforeTask {Task task -> println "excuting $task ..."}
-gradle.taskGraph.afterTask {Task task, TaskState state -> if (state.failure) { println "Failure" } else { println "Done" }}
+buildscript {
+    repositories {
+        maven { url "http://nexus.bywook.com/content/groups/public" }
+        mavenCentral()
+        maven { url "http://repo.springsource.org/plugins-release" }
+	}
+	dependencies {
+		classpath("org.springframework.build.gradle:propdeps-plugin:0.0.7")
+		//println "$project.rootProject.projectDir/applechip-plugin/build/libs/applechip-plugin-${version}.jar"
+		//classpath files("D:/dev/workspace-applechip/applechip-plugin-${version}.jar")
+		classpath("com.applechip:applechip-plugin:1.0-SNAPSHOT")
+	}
+}
+
 ext {
-    javaVersion = '1.6'
+	linkHomepage = 'http://applechip.bywook.com'
+	linkCi = 'https://jenkins.bywook.com'
+	linkIssue = 'https://redmine.bywook.com'
+	linkScmUrl = 'https://github.com/maximinhan/applechip'
+	linkScmConnection = 'scm:git:git://github.com/maximinhan/applechip.git'
+	linkScmDevConnection = 'scm:git:ssh://git@github.com:maximinhan/applechip.git'
+
+	moduleProjects  = subprojects.findAll {
+		it.name.equals('applechip-core') || !it.name.equals('applechip-plugin')
+	}
+	webProjects  = subprojects.findAll {
+		it.name.equals('applechip-api') || it.name.equals('applechip-web')
+	}
+	appProjects  = subprojects.findAll {
+		it.name.equals('applechip-android')
+	}
+	
+	
+	javaVersion = '1.6'
     javaEncoding = 'UTF-8'
     springframeworkVersion = '4.0.3.RELEASE'
     springframeworkdataVersion = '1.8.0.RELEASE'
     springframeworksecurityVersion = '3.2.4.RELEASE'
     hibernateVersion = '4.3.5.Final'
     slf4jVersion = '1.7.7'
-    webProjects = ['applechip-api', 'applechip-web']
 }
+
+gradle.taskGraph.beforeTask {Task task -> println "excuting $task ..."}
+gradle.taskGraph.afterTask {Task task, TaskState state -> if (state.failure) { println "Failure" } else { println "Done" }}
 
 List jdbcDrivers = [
 	"mysql:mysql-connector-java:5.1.31",
@@ -19,29 +51,22 @@ List jdbcDrivers = [
 	"com.h2database:h2:1.4.181"
 ]
 
-buildscript {
-    repositories {
-        maven { url "http://nexus.bywook.com/content/groups/public" }
-        mavenCentral()
-        maven { url "http://repo.springsource.org/plugins-release" }
-	}
-	dependencies {
-	classpath("org.springframework.build.gradle:propdeps-plugin:0.0.7")
-	//println "$project.rootProject.projectDir/applechip-plugin/build/libs/applechip-plugin-${version}.jar"
-		//classpath files("D:/dev/workspace-applechip/applechip-plugin-${version}.jar")
-		classpath("com.applechip:applechip-plugin:1.0-SNAPSHOT")
-	}
-}
-
 configure(allprojects) { project ->
+	group = "com.applechip"
+	version = "1.0-SNAPSHOT"
+	gradle.taskGraph.whenReady { taskGraph -> if (taskGraph.hasTask('release')) { version = "${version}".replace("-SNAPSHOT", "") }}
+	
     ext.javaVersion = "1.7"
     ext.javaEncoding = "UTF-8"
+    
+    ext.gradleScriptDir = "${rootProject.projectDir}/gradle"
+    apply from: "${gradleScriptDir}/gradleScript.gradle"
+    
 	repositories {
 		maven { url "http://nexus.bywook.com/content/groups/public" }
 		mavenCentral()
 	}
 	apply plugin: "propdeps"
-	gradle.taskGraph.whenReady { taskGraph -> if (taskGraph.hasTask('build')) { version = "${version}".replace("-SNAPSHOT", "") }}
 	configurations {
 		all {
 			transitive = false
@@ -56,10 +81,10 @@ configure(allprojects) { project ->
 	}
 }
 
-configure(subprojects.findAll { webProjects.contains(it.name) }) {
+configure(webProjects) {
     apply plugin: 'war'
     apply plugin: 'eclipse-wtp'
-    apply from: '../gradle/version/versioning.gradle'
+    apply from: createBuildInfoFileTask
     webAppDirName = 'src/main/webapp'
     dependencies {
         providedCompile 'javax.servlet:javax.servlet-api:3.0.1'
@@ -191,8 +216,8 @@ project(":applechip-core") {
 //apply from: 'http://webdav.bywook.com/resource/build.gradle'
 //apply from: hibernateJpaSchemaGenerationTask
 
-apply from: '../gradle/version/generateSchemaTask.gradle'
-apply from: '../gradle/version/generateQueryDSLTask.gradle'
+apply from: generateSchemaTask
+apply from: generateQueryDSLTask
 	dependencies {
 		provided("org.springframework.security:spring-security-core:$springframeworksecurityVersion")
 		provided("org.springframework.data:spring-data-commons:${springframeworkdataVersion}")
@@ -248,7 +273,10 @@ apply from: '../gradle/version/generateQueryDSLTask.gradle'
 	clean {
 	    delete sourceSets.generated.java.srcDirs
 	}
-jar.dependsOn << generateSchemaTask
+	jar {
+		dependsOn generateSchema
+	}
+//jar.dependsOn << generateSchemaTask
 	/*
 apply plugin: 'applechip-plugin'
 jar.dependsOn << hibernateTask
@@ -264,7 +292,7 @@ jdbcPassword = System.properties['jdbcPassword']
 
 project(":applechip-plugin") {
 	description = "Exposes gradle buildSrc for IDE support"
-	apply from: "$project.rootProject.projectDir/gradle/version/uploadArchives.gradle"
+	apply from: uploadArchivesTask
 	dependencies {
 	    compile gradleApi()
 	    compile localGroovy()

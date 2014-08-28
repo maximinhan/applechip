@@ -18,6 +18,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.PrePersist;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.ws.rs.FormParam;
@@ -32,7 +33,7 @@ import org.hibernate.annotations.GenericGenerator;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import com.applechip.core.abstact.GenericTraceable;
+import com.applechip.core.abstact.GenericByUpdated;
 import com.applechip.core.constant.ColumnSizeConstant;
 import com.applechip.core.util.BitwisePermissions;
 
@@ -42,7 +43,7 @@ import com.applechip.core.util.BitwisePermissions;
 @ToString(exclude = {"roles", "categories"})
 @NoArgsConstructor
 @Data
-public class User extends GenericTraceable<String> implements UserDetails {
+public class User extends GenericByUpdated<String> implements UserDetails {
 
   private static final long serialVersionUID = 1920694340054206260L;
 
@@ -53,8 +54,8 @@ public class User extends GenericTraceable<String> implements UserDetails {
 
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO, generator = "system-uuid")
-  @GenericGenerator(name = "system-uuid", strategy = "uuid")
-  @Column(name = "id", length = ColumnSizeConstant.UUID)
+  @GenericGenerator(name = "system-uuid", strategy = "uuid2")
+  @Column(name = "id", unique = true, length = ColumnSizeConstant.UUID)
   private String id;
 
   @ManyToMany(fetch = FetchType.EAGER)
@@ -62,8 +63,7 @@ public class User extends GenericTraceable<String> implements UserDetails {
   private Set<Role> roles;// = Collections.emptySet();
 
   @ElementCollection(fetch = FetchType.EAGER)
-  @CollectionTable(name = "mt_user_category", joinColumns = @JoinColumn(name = "user_id"), uniqueConstraints = @UniqueConstraint(columnNames = {
-      "user_id", "category"}))
+  @CollectionTable(name = "mt_user_category", joinColumns = @JoinColumn(name = "user_id"), uniqueConstraints = @UniqueConstraint(columnNames = {"user_id", "category"}))
   @Column(name = "category", length = ColumnSizeConstant.UUID)
   private Set<String> categories;
 
@@ -126,5 +126,10 @@ public class User extends GenericTraceable<String> implements UserDetails {
 
   public boolean isEnabled() {
     return BitwisePermissions.isPermitted(this.status, ENABLED);
+  }
+
+  @PrePersist
+  private void prePersist() {
+
   }
 }

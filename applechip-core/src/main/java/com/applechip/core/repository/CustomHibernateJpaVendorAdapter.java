@@ -6,6 +6,9 @@ import java.sql.SQLException;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceException;
 
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 import org.hibernate.Session;
@@ -56,7 +59,7 @@ public class CustomHibernateJpaVendorAdapter extends HibernateJpaVendorAdapter {
         public void execute(Connection connection) throws SQLException {
           Integer old = DataSourceUtils.prepareConnectionForTransaction(connection, transactionDefinition);
           log.debug("old: {}, new: {}", old, transactionDefinition.getIsolationLevel());
-          data.setisolationLevel(old);
+          data.setIsolationLevel(old);
           data.setConnection(connection);
         }
       });
@@ -73,6 +76,10 @@ public class CustomHibernateJpaVendorAdapter extends HibernateJpaVendorAdapter {
       data.reset();
     }
 
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @SuppressWarnings(value = {"PMD.UnusedPrivateField", "PMD.SingularField"})
     private static class Data {
 
       private Object data;
@@ -81,28 +88,10 @@ public class CustomHibernateJpaVendorAdapter extends HibernateJpaVendorAdapter {
 
       private Connection connection;
 
-      public Data() {}
-
       public void reset() {
         if (null != this.connection && null != this.isolationLevel) {
           DataSourceUtils.resetConnectionAfterTransaction(connection, isolationLevel);
         }
-      }
-
-      public Object getData() {
-        return this.data;
-      }
-
-      public void setData(Object data) {
-        this.data = data;
-      }
-
-      public void setisolationLevel(Integer isolationLevel) {
-        this.isolationLevel = isolationLevel;
-      }
-
-      public void setConnection(Connection connection) {
-        this.connection = connection;
       }
     }
   }

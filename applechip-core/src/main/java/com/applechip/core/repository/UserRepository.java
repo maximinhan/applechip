@@ -1,9 +1,7 @@
 package com.applechip.core.repository;
 
-import org.springframework.data.repository.PagingAndSortingRepository;
-import org.springframework.stereotype.Repository;
+import com.applechip.core.abstact.GenericRepository;
+import com.applechip.core.entity.User;
 
-@Repository
-public interface UserRepository<User> extends PagingAndSortingRepository<User, String> {
-  User findByUserId(Long userId);
+public interface UserRepository extends GenericRepository<User, String> {
 }

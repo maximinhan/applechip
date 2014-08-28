@@ -17,7 +17,7 @@ import org.apache.commons.logging.LogFactory;
 
 import com.applechip.core.constant.CoreConstant;
 
-public class GenericRepositoryJpa<T extends GenericEntity<PK>, PK extends Serializable> implements GenericRepository<T, PK> {
+public class GenericRepositoryImpl<T extends GenericEntity<PK>, PK extends Serializable> implements GenericRepository<T, PK> {
 
   protected final Log log = LogFactory.getLog(getClass());
 
@@ -26,11 +26,11 @@ public class GenericRepositoryJpa<T extends GenericEntity<PK>, PK extends Serial
 
   private Class<T> persistentClass;
 
-  public GenericRepositoryJpa(final Class<T> persistentClass) {
+  public GenericRepositoryImpl(final Class<T> persistentClass) {
     this.persistentClass = persistentClass;
   }
 
-  public GenericRepositoryJpa(final Class<T> persistentClass, EntityManager entityManager) {
+  public GenericRepositoryImpl(final Class<T> persistentClass, EntityManager entityManager) {
     this.persistentClass = persistentClass;
     this.entityManager = entityManager;
   }

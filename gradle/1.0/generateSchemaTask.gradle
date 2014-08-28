@@ -11,6 +11,8 @@ dependencies {
 	compile gradleApi()
 }
 
+task generateSchema(type: GenerateSchemaTask, group: 'build', description: 'Generates the QueryDSL query types', dependsOn: [compileJava, processResources])
+
 task generateSchemaTask(type: GenerateSchemaTask, dependsOn: [compileJava, processResources])
 
 class GenerateSchemaTask extends DefaultTask {
@@ -35,7 +37,7 @@ class GenerateSchemaTask extends DefaultTask {
 	@TaskAction
 	def generateSchemaTask() {
 		println classesDir
-		println 'testschema!!!'
+		println 'testschema!!!-start'
 		assert classesDir.isDirectory()
 		def urlList = []
 		urlList.add(classesDir.toURI().toURL())
@@ -73,10 +75,11 @@ class GenerateSchemaTask extends DefaultTask {
 			org.hibernate.tool.hbm2ddl.SchemaExport schemaExport = new org.hibernate.tool.hbm2ddl.SchemaExport(configuration)
 			schemaExport.delimiter = ';'
 		    schemaExport.format = true
-			schemaExport.drop false, true
+			//schemaExport.drop false, true
 			schemaExport.execute true, true, false, false
 		} finally {
 			Thread.currentThread().setContextClassLoader(classLoader)
 		}
+		println 'testschema!!!-end'
 	}
 }

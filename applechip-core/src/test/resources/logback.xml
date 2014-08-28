@@ -10,7 +10,7 @@
 
 	<appender name="FILE"
 		class="ch.qos.logback.core.rolling.RollingFileAppender">
-		<file>c:/mkyongapp.log</file>
+		<file>${user.home}/.applechip/applechip_logback.log</file>
 		<encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
 			<Pattern>%d{yyyy-MM-dd_HH:mm:ss.SSS} [%thread] %-5level %logger{36} -
 				%msg%n
@@ -18,7 +18,8 @@
 		</encoder>
 
 		<rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
-			<FileNamePattern>c:/sapp.%i.log.zip</FileNamePattern>
+			<FileNamePattern>${user.home}/.applechip/applechip.%i.log.zip
+			</FileNamePattern>
 			<MinIndex>1</MinIndex>
 			<MaxIndex>10</MaxIndex>
 		</rollingPolicy>
@@ -29,13 +30,8 @@
 		</triggeringPolicy>
 
 	</appender>
-
-	<logger name="org.hibernate.type" level="ALL" />
-	<logger name="org.hibernate" level="DEBUG" />
-
 	<root level="INFO">
 		<appender-ref ref="FILE" />
 		<appender-ref ref="STDOUT" />
 	</root>
-
 </configuration>

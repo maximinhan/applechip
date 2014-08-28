@@ -1,0 +1,9 @@
+def gradleScriptVersion = '1.0'
+ext {
+    generateSchemaTask = "${rootProject.projectDir}/gradle/${gradleScriptVersion}/generateSchemaTask.gradle"
+    createBuildInfoFileTask = "${rootProject.projectDir}/gradle/${gradleScriptVersion}/createBuildInfoFileTask.gradle"
+    generateQueryDSLTask = "${rootProject.projectDir}/gradle/${gradleScriptVersion}/generateQueryDSLTask.gradle"
+    uploadArchivesTask = "${rootProject.projectDir}/gradle/${gradleScriptVersion}/uploadArchivesTask.gradle"
+    //generateSchemaTask = "http://webdav.bywook.com/resource/${gradleScriptVersion}/generateSchemaTask.gradle"
+}
+
