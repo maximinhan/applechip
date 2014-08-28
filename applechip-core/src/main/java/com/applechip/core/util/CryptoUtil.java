@@ -86,36 +86,6 @@ public class CryptoUtil {
     }
   }
 
-  @Getter
-  @SuppressWarnings(value = {"PMD.UnusedPrivateField", "PMD.SingularField"})
-  private static class Crypto {
-    private SecretKeySpec keySpec = null;
-    private IvParameterSpec ivSpec = null;
-    private Cipher cipher = null;
-
-    private static Crypto crypto;
-
-    private Crypto(String str) {
-      super();
-      byte[] key = StringUtils.getBytesUtf8(str);
-      byte[] iv = StringUtils.getBytesUtf8(org.apache.commons.lang.StringUtils.reverse(str));
-      this.keySpec = new SecretKeySpec(key, 0, 16, "AES");
-      this.ivSpec = new IvParameterSpec(iv);
-      try {
-        this.cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
-      } catch (GeneralSecurityException e) {
-        throw new SystemException(String.format("cryto fail.. %s", e), e);
-      }
-    }
-
-    public static Crypto getInstance() {
-      if (crypto == null) {
-        crypto = new Crypto(SecurityUtil.getSecurityKey());
-      }
-      return crypto;
-    }
-  }
-
   public static String encrypt(String decryptText, Digest digest) {
     try {
       MessageDigest md = MessageDigest.getInstance(digest.toString());
@@ -137,8 +107,10 @@ public class CryptoUtil {
 
   public static void main(String[] args) {
 
-    CryptoUtil a = new CryptoUtil();
-    CryptoUtil b = new CryptoUtil();
+    // CryptoUtil a = new CryptoUtil();
+    // CryptoUtil b = new CryptoUtil();
+    Crypto a = Crypto.getInstance();
+    Crypto b = Crypto.getInstance();
 
     System.out.println("a.equals(b):" + a.equals(b));
     System.out.println("a==b" + (a == b));
@@ -150,5 +122,39 @@ public class CryptoUtil {
     System.out.println(CryptoUtil.decrypt("iaLQS4uk5SrS0oV+mm7s/g=="));
 
     System.out.println(CryptoUtil.decrypt("iaLQS4uk5SrS0oV+mm7s/g=="));
+    System.out.println(SecurityUtil.getSecurityKey());
+    System.out.println(SecurityUtil.getSecurityKey());
+    System.out.println(SecurityUtil.getSecurityKey());
+  }
+
+  @Getter
+  @SuppressWarnings(value = {"PMD.UnusedPrivateField", "PMD.SingularField"})
+  private static class Crypto {
+    private SecretKeySpec keySpec = null;
+    private IvParameterSpec ivSpec = null;
+    private Cipher cipher = null;
+
+    private static Crypto crypto;
+
+    private Crypto() {
+      super();
+      String applechip = SecurityUtil.getSecurityKey();
+      byte[] key = StringUtils.getBytesUtf8(applechip);
+      byte[] iv = StringUtils.getBytesUtf8(org.apache.commons.lang.StringUtils.reverse(applechip));
+      this.keySpec = new SecretKeySpec(key, 0, 16, "AES");
+      this.ivSpec = new IvParameterSpec(iv);
+      try {
+        this.cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
+      } catch (GeneralSecurityException e) {
+        throw new SystemException(String.format("cryto fail.. %s", e), e);
+      }
+    }
+
+    public static Crypto getInstance() {
+      if (crypto == null) {
+        crypto = new Crypto();
+      }
+      return crypto;
+    }
   }
 }
