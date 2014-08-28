@@ -1,8 +1,11 @@
 package com.applechip.core.util;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.security.GeneralSecurityException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Arrays;
 
 import javax.crypto.Cipher;
 import javax.crypto.spec.IvParameterSpec;
@@ -13,6 +16,7 @@ import lombok.Getter;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.binary.StringUtils;
 import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.commons.dbcp.BasicDataSourceFactory;
 
 import com.applechip.core.exception.SystemException;
 
@@ -125,6 +129,72 @@ public class CryptoUtil {
     System.out.println(SecurityUtil.getSecurityKey());
     System.out.println(SecurityUtil.getSecurityKey());
     System.out.println(SecurityUtil.getSecurityKey());
+
+//    Field[] fields = BasicDataSourceFactory.class.getDeclaredFields();
+//    for (Field field : fields) {
+//      if(String.class.equals(field.getType())){
+//        field.setAccessible(true);
+//        try {
+//          System.out.println(field.get(field.getName()).toString());
+//        } catch (IllegalArgumentException e) {
+//          // TODO Auto-generated catch block
+//          // e.printStackTrace();
+//        } catch (IllegalAccessException e) {
+//          // TODO Auto-generated catch block
+//          // e.printStackTrace();
+//        }
+//        // clazz.get
+//      }
+//    }
+    
+    
+    Field[] fieldsCfg = org.hibernate.cfg.AvailableSettings.class.getDeclaredFields();
+    Field[] fieldsjpa = org.hibernate.jpa.AvailableSettings.class.getDeclaredFields();
+    Field[] result = Arrays.copyOf(fieldsCfg, fieldsCfg.length + fieldsjpa.length);
+    System.arraycopy(fieldsjpa, 0, result, fieldsCfg.length, fieldsjpa.length);
+    for (Field field : result) {
+      if (String.class.equals(field.getType())) {
+        if (!field.isAccessible()) {
+          field.setAccessible(true);
+        }
+        try {
+          System.out.println(field.get(field.getName()).toString());
+        } catch (IllegalArgumentException e) {
+        } catch (IllegalAccessException e) {
+        }
+      }
+    }
+    
+    
+    // for (int i = 0; i < fields.length; i++) {
+    // if (!Modifier.isStatic(fields[i].getModifiers())) {
+    // if (categoryMap.get(fields[i].getName()) != null) {
+    // String optionCodeId = categoryMap.get(fields[i].getName());
+    // String optionValue = null;
+    // try {
+    // optionValue = String.valueOf(fields[i].get(userCategoryVO));
+    // if (fields[i].getType().equals(boolean.class)) {
+    // optionValue = optionValue.equals("true") ? "1" : "0";
+    // }
+    // } catch (Exception e) {
+    // e.printStackTrace();
+    // }
+    // UserCategory userCategory = new UserCategory(userId, optionCodeId,
+    // BooleanUtils.toBoolean(optionValue));
+    // userCategories.add(userCategory);
+    // }
+    // }
+    // }
+
+//    for (Field field : org.hibernate.cfg.AvailableSettings.class.getDeclaredFields()) {
+//      System.out.println(field.getName());
+//      // System.out.println(field.getName());
+//    }
+    // org.hibernate.cfg.AvailableSettings.class.getDeclaredFields()[0].getName();
+  }
+
+  @Getter
+  class Test implements org.hibernate.cfg.AvailableSettings, org.hibernate.jpa.AvailableSettings {
   }
 
   @Getter

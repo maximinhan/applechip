@@ -1,10 +1,14 @@
 package com.applechip.core.constant;
 
-import java.util.ArrayList;
+import java.lang.reflect.Field;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
+
+import org.apache.commons.dbcp.BasicDataSourceFactory;
 
 public class HibernateConstant {
 
@@ -33,38 +37,42 @@ public class HibernateConstant {
     }
   });
 
-  public static List<String> JDBC_PROPERTIES_LIST = Collections.unmodifiableList(new ArrayList<String>() {
+  public static Set<String> DATA_SOURCE_PROPERTIES_SET = Collections.unmodifiableSet(new HashSet<String>() {
     private static final long serialVersionUID = -5954861215952396300L;
     {
-      add("defaultAutoCommit");
-      add("defaultReadOnly");
-      add("defaultTransactionIsolation");
-      add("defaultCatalog");
-      add("driverClassName");
-      add("maxActive");
-      add("maxIdle");
-      add("minIdle");
-      add("initialSize");
-      add("maxWait");
-      add("testOnBorrow");
-      add("testOnReturn");
-      add("timeBetweenEvictionRunsMillis");
-      add("numTestsPerEvictionRun");
-      add("minEvictableIdleTimeMillis");
-      add("testWhileIdle");
-      add("password");
-      add("url");
-      add("username");
-      add("validationQuery");
-      add("validationQueryTimeout");
-      add("initConnectionSqls");
-      add("accessToUnderlyingConnectionAllowed");
-      add("removeAbandoned");
-      add("removeAbandonedTimeout");
-      add("logAbandoned");
-      add("poolPreparedStatements");
-      add("maxOpenPreparedStatements");
-      add("connectionProperties");
+      for (Field field : BasicDataSourceFactory.class.getDeclaredFields()) {
+        if (String.class.equals(field.getType())) {
+          if (!field.isAccessible()) {
+            field.setAccessible(true);
+          }
+          try {
+            add(field.get(field.getName()).toString());
+          } catch (IllegalArgumentException e) {
+          } catch (IllegalAccessException e) {
+          }
+        }
+      }
+    }
+  });
+  public static Set<String> HIBERNATE_PROPERTIES_SET = Collections.unmodifiableSet(new HashSet<String>() {
+    private static final long serialVersionUID = -5954861215952396300L;
+    {
+      Field[] cfg = org.hibernate.cfg.AvailableSettings.class.getDeclaredFields();
+      Field[] jpa = org.hibernate.jpa.AvailableSettings.class.getDeclaredFields();
+      Field[] fields = Arrays.copyOf(cfg, cfg.length + jpa.length);
+      System.arraycopy(jpa, 0, fields, cfg.length, jpa.length);
+      for (Field field : fields) {
+        if (String.class.equals(field.getType())) {
+          if (!field.isAccessible()) {
+            field.setAccessible(true);
+          }
+          try {
+            add(field.get(field.getName()).toString());
+          } catch (IllegalArgumentException e) {
+          } catch (IllegalAccessException e) {
+          }
+        }
+      }
     }
   });
 }
