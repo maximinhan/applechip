@@ -10,6 +10,8 @@ import java.util.Set;
 
 import org.apache.commons.dbcp.BasicDataSourceFactory;
 
+import com.applechip.core.util.ReflectUtil;
+
 public class HibernateConstant {
 
   public static Map<String, String> HIBERNATE_DIALECT_MAP = Collections.unmodifiableMap(new HashMap<String, String>() {
@@ -41,15 +43,9 @@ public class HibernateConstant {
     private static final long serialVersionUID = -5954861215952396300L;
     {
       for (Field field : BasicDataSourceFactory.class.getDeclaredFields()) {
-        if (String.class.equals(field.getType())) {
-          if (!field.isAccessible()) {
-            field.setAccessible(true);
-          }
-          try {
-            add(field.get(field.getName()).toString());
-          } catch (IllegalArgumentException e) {
-          } catch (IllegalAccessException e) {
-          }
+        Object object = ReflectUtil.readField(field, String.class);
+        if (object != null) {
+          add(object.toString());
         }
       }
     }
@@ -62,15 +58,9 @@ public class HibernateConstant {
       Field[] fields = Arrays.copyOf(cfg, cfg.length + jpa.length);
       System.arraycopy(jpa, 0, fields, cfg.length, jpa.length);
       for (Field field : fields) {
-        if (String.class.equals(field.getType())) {
-          if (!field.isAccessible()) {
-            field.setAccessible(true);
-          }
-          try {
-            add(field.get(field.getName()).toString());
-          } catch (IllegalArgumentException e) {
-          } catch (IllegalAccessException e) {
-          }
+        Object object = ReflectUtil.readField(field, String.class);
+        if (object != null) {
+          add(object.toString());
         }
       }
     }

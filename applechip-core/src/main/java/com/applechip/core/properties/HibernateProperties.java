@@ -3,12 +3,14 @@ package com.applechip.core.properties;
 import java.util.Properties;
 
 import lombok.Getter;
-
-import org.hibernate.cfg.Environment;
+import lombok.extern.slf4j.Slf4j;
 
 import com.applechip.core.constant.HibernateConstant;
+import com.applechip.core.exception.SystemException;
+import com.applechip.core.util.CryptoUtil;
 
 @Getter
+@Slf4j
 public class HibernateProperties {
   private String jdbcType;
   private Properties hibernateProperties;
@@ -20,34 +22,46 @@ public class HibernateProperties {
 
   private HibernateProperties(Properties properties) {
     this.jdbcType = properties.getProperty("type");
-    this.setJdbcProperties(properties);
+    // properties.put(Environment.DRIVER,
+    // HibernateConstant.JDBC_DRIVER_CLASS_MAP.get(this.jdbcType));
+    // properties.put(Environment.DIALECT,
+    // HibernateConstant.HIBERNATE_DIALECT_MAP.get(this.jdbcType));
+    // properties.put("driverClassName",
+    // HibernateConstant.JDBC_DRIVER_CLASS_MAP.get(this.jdbcType));
+    // properties.put("validationQuery",
+    // HibernateConstant.JDBC_VALIDATION_QUERY_MAP.get(this.jdbcType));
+    this.setDataSourceProperties(properties);
     this.setHibernateProperties(properties);
   }
 
   private void setHibernateProperties(Properties properties) {
-    properties.put(Environment.DRIVER, HibernateConstant.JDBC_DRIVER_CLASS_MAP.get(this.jdbcType));
-    properties.put(Environment.DIALECT, HibernateConstant.HIBERNATE_DIALECT_MAP.get(this.jdbcType));
     Properties bean = new Properties();
     for (String string : HibernateConstant.HIBERNATE_PROPERTIES_SET) {
       if (properties.containsKey(string)) {
         bean.put(string, properties.getProperty(string));
+        log.info("setHibernateProperties put finish... key: {}, value: {}", string, properties.getProperty(string));
       }
     }
-//    bean.put(Environment.URL, properties.getProperty("url"));
-    // bean.put(Environment.USER, properties.getProperty("jdbc.username"));
-    // bean.put(Environment.PASS, properties.getProperty("jdbc.password"));
     this.hibernateProperties = bean;
   }
 
-  private void setJdbcProperties(Properties properties) {
-    properties.put("driverClassName", HibernateConstant.JDBC_DRIVER_CLASS_MAP.get(this.jdbcType));
-    properties.put("validationQuery", HibernateConstant.JDBC_VALIDATION_QUERY_MAP.get(this.jdbcType));
+  private void setDataSourceProperties(Properties properties) {
     Properties bean = new Properties();
     for (String string : HibernateConstant.DATA_SOURCE_PROPERTIES_SET) {
       if (properties.containsKey(string)) {
-        bean.put(string, properties.getProperty(string));
+        String decrypt = decrypt(properties.getProperty(string));
+        bean.put(string, decrypt);
+        log.info("setJdbcProperties put finish... key: {}, value: {}", string, decrypt);
       }
     }
     this.dataSourceProperties = bean;
+  }
+
+  private String decrypt(String str) {
+    try {
+      return CryptoUtil.decrypt(str);
+    } catch (SystemException e) {
+      return str;
+    }
   }
 }

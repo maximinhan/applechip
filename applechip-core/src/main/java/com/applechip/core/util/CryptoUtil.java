@@ -1,11 +1,8 @@
 package com.applechip.core.util;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
 import java.security.GeneralSecurityException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.Arrays;
 
 import javax.crypto.Cipher;
 import javax.crypto.spec.IvParameterSpec;
@@ -16,7 +13,6 @@ import lombok.Getter;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.binary.StringUtils;
 import org.apache.commons.codec.digest.DigestUtils;
-import org.apache.commons.dbcp.BasicDataSourceFactory;
 
 import com.applechip.core.exception.SystemException;
 
@@ -61,33 +57,40 @@ public class CryptoUtil {
   }
 
   public static String encrypt(String decryptText) {
-    if (org.apache.commons.lang.StringUtils.isBlank(decryptText)) {
-      return "";
-    }
+    Crypto crypto = Crypto.getInstance();
+    Cipher cipher = crypto.getCipher();
+    String decrypt = null;
     try {
-      Crypto crypto = Crypto.getInstance();
-      Cipher cipher = crypto.getCipher();
       cipher.init(Cipher.ENCRYPT_MODE, crypto.getKeySpec(), crypto.getIvSpec());
-      byte[] encrypt = cipher.doFinal(StringUtils.getBytesUtf8(decryptText));
-      return StringUtils.newStringUtf8(Base64.encodeBase64(encrypt));
+      decrypt = StringUtils.newStringUtf8(Base64.encodeBase64(cipher.doFinal(StringUtils.getBytesUtf8(decryptText))));
     } catch (GeneralSecurityException e) {
       throw new SystemException(String.format("cryto fail.. %s", e.getMessage()), e);
+    } catch (IllegalArgumentException e) {
+      throw new SystemException(String.format("cryto fail.. %s", e.getMessage()), e);
+    } catch (NullPointerException e) {
+      throw new SystemException(String.format("cryto fail.. %s", e.getMessage()), e);
     }
+    return decrypt;
   }
 
   public static String decrypt(String encryptText) {
-    if (org.apache.commons.lang.StringUtils.isBlank(encryptText)) {
-      return "";
-    }
+    Crypto crypto = Crypto.getInstance();
+    Cipher cipher = crypto.getCipher();
+    String decrypt = null;
     try {
-      Crypto crypto = Crypto.getInstance();
-      Cipher cipher = crypto.getCipher();
+      if (encryptText.length() < 2) {
+        throw new IllegalArgumentException("The field must not be length() < 2");
+      }
       cipher.init(Cipher.DECRYPT_MODE, crypto.getKeySpec(), crypto.getIvSpec());
-      byte[] plain = cipher.doFinal(Base64.decodeBase64(StringUtils.getBytesUtf8(encryptText)));
-      return StringUtils.newStringUtf8(plain);
+      decrypt = StringUtils.newStringUtf8(cipher.doFinal(Base64.decodeBase64(StringUtils.getBytesUtf8(encryptText))));
     } catch (GeneralSecurityException e) {
       throw new SystemException(String.format("cryto fail.. %s", e.getMessage()), e);
+    } catch (IllegalArgumentException e) {
+      throw new SystemException(String.format("cryto fail.. %s", e.getMessage()), e);
+    } catch (NullPointerException e) {
+      throw new SystemException(String.format("cryto fail.. %s", e.getMessage()), e);
     }
+    return decrypt;
   }
 
   public static String encrypt(String decryptText, Digest digest) {
@@ -113,59 +116,72 @@ public class CryptoUtil {
 
     // CryptoUtil a = new CryptoUtil();
     // CryptoUtil b = new CryptoUtil();
-    Crypto a = Crypto.getInstance();
-    Crypto b = Crypto.getInstance();
+    // Crypto a = Crypto.getInstance();
+    // Crypto b = Crypto.getInstance();
+    //
+    // System.out.println("a.equals(b):" + a.equals(b));
+    // System.out.println("a==b" + (a == b));
+    //
+    // System.out.println(CryptoUtil.toHexStringByDigest("test", Digest.MD5));
+    // System.out.println(CryptoUtil.toHexStringByDigest("test", Digest.SHA_256));
+    // System.out.println(CryptoUtil.encrypt("password"));
+    // // System.out.println(CryptoUtil.decrypt("password"));
+    // System.out.println(CryptoUtil.decrypt("iaLQS4uk5SrS0oV+mm7s/g=="));
+    //
+    // System.out.println(CryptoUtil.decrypt("iaLQS4uk5SrS0oV+mm7s/g=="));
+    // System.out.println(SecurityUtil.getSecurityKey());
+    // System.out.println(SecurityUtil.getSecurityKey());
+    System.out.println(CryptoUtil.decrypt("43mtVG+B6SrIXd2BLH0DDQ=="));
 
-    System.out.println("a.equals(b):" + a.equals(b));
-    System.out.println("a==b" + (a == b));
+    // Field[] fields = BasicDataSourceFactory.class.getDeclaredFields();
+    // for (Field field : fields) {
+    // if(String.class.equals(field.getType())){
+    // field.setAccessible(true);
+    // try {
+    // System.out.println(field.get(field.getName()).toString());
+    // } catch (IllegalArgumentException e) {
+    // // TODO Auto-generated catch block
+    // // e.printStackTrace();
+    // } catch (IllegalAccessException e) {
+    // // TODO Auto-generated catch block
+    // // e.printStackTrace();
+    // }
+    // // clazz.get
+    // }
+    // }
 
-    System.out.println(CryptoUtil.toHexStringByDigest("test", Digest.MD5));
-    System.out.println(CryptoUtil.toHexStringByDigest("test", Digest.SHA_256));
-    System.out.println(CryptoUtil.encrypt("password"));
-    // System.out.println(CryptoUtil.decrypt("password"));
-    System.out.println(CryptoUtil.decrypt("iaLQS4uk5SrS0oV+mm7s/g=="));
 
-    System.out.println(CryptoUtil.decrypt("iaLQS4uk5SrS0oV+mm7s/g=="));
-    System.out.println(SecurityUtil.getSecurityKey());
-    System.out.println(SecurityUtil.getSecurityKey());
-    System.out.println(SecurityUtil.getSecurityKey());
+    // Field[] fieldsCfg = org.hibernate.cfg.AvailableSettings.class.getDeclaredFields();
+    // Field[] fieldsjpa = org.hibernate.jpa.AvailableSettings.class.getDeclaredFields();
+    // Field[] result = Arrays.copyOf(fieldsCfg, fieldsCfg.length + fieldsjpa.length);
+    // System.arraycopy(fieldsjpa, 0, result, fieldsCfg.length, fieldsjpa.length);
+    // for (Field field : result) {
+    // if (String.class.equals(field.getType())) {
+    // if (!field.isAccessible()) {
+    // field.setAccessible(true);
+    // }
+    // try {
+    // System.out.println(field.get(field.getName()).toString());
+    // } catch (IllegalArgumentException e) {
+    // } catch (IllegalAccessException e) {
+    // }
+    // }
+    // }
 
-//    Field[] fields = BasicDataSourceFactory.class.getDeclaredFields();
-//    for (Field field : fields) {
-//      if(String.class.equals(field.getType())){
-//        field.setAccessible(true);
-//        try {
-//          System.out.println(field.get(field.getName()).toString());
-//        } catch (IllegalArgumentException e) {
-//          // TODO Auto-generated catch block
-//          // e.printStackTrace();
-//        } catch (IllegalAccessException e) {
-//          // TODO Auto-generated catch block
-//          // e.printStackTrace();
-//        }
-//        // clazz.get
-//      }
-//    }
-    
-    
-    Field[] fieldsCfg = org.hibernate.cfg.AvailableSettings.class.getDeclaredFields();
-    Field[] fieldsjpa = org.hibernate.jpa.AvailableSettings.class.getDeclaredFields();
-    Field[] result = Arrays.copyOf(fieldsCfg, fieldsCfg.length + fieldsjpa.length);
-    System.arraycopy(fieldsjpa, 0, result, fieldsCfg.length, fieldsjpa.length);
-    for (Field field : result) {
-      if (String.class.equals(field.getType())) {
-        if (!field.isAccessible()) {
-          field.setAccessible(true);
-        }
-        try {
-          System.out.println(field.get(field.getName()).toString());
-        } catch (IllegalArgumentException e) {
-        } catch (IllegalAccessException e) {
-        }
-      }
-    }
-    
-    
+
+    // for (Field field : BasicDataSourceFactory.class.getDeclaredFields()) {
+    // Object object = ReflectUtil.readField(field, String.class);
+    // if (object != null) {
+    // System.out.println(object.toString());
+    // }
+    // // System.out.println(ReflectUtil.readField(field, String.class));
+    // }
+
+    // for (Field field : BasicDataSourceFactory.class.getDeclaredFields()) {
+    // System.out.println(ReflectUtil.readField(field, String.class));
+    // }
+
+
     // for (int i = 0; i < fields.length; i++) {
     // if (!Modifier.isStatic(fields[i].getModifiers())) {
     // if (categoryMap.get(fields[i].getName()) != null) {
@@ -186,15 +202,11 @@ public class CryptoUtil {
     // }
     // }
 
-//    for (Field field : org.hibernate.cfg.AvailableSettings.class.getDeclaredFields()) {
-//      System.out.println(field.getName());
-//      // System.out.println(field.getName());
-//    }
+    // for (Field field : org.hibernate.cfg.AvailableSettings.class.getDeclaredFields()) {
+    // System.out.println(field.getName());
+    // // System.out.println(field.getName());
+    // }
     // org.hibernate.cfg.AvailableSettings.class.getDeclaredFields()[0].getName();
-  }
-
-  @Getter
-  class Test implements org.hibernate.cfg.AvailableSettings, org.hibernate.jpa.AvailableSettings {
   }
 
   @Getter

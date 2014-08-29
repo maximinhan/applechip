@@ -68,7 +68,7 @@ public class CustomTransactionManagementConfigurer implements TransactionManagem
     try {
       bean = BasicDataSourceFactory.createDataSource(hibernateProperties.getDataSourceProperties());
     } catch (Exception e) {
-      throw new SystemException(String.format("DataSource create fail.. %s", e));
+      throw new SystemException(String.format("DataSource create fail.. %s", e), e);
     }
     return bean;
   }
