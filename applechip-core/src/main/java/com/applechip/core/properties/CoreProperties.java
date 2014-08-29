@@ -25,7 +25,7 @@ public class CoreProperties {
   private int clearClientBeforeMinute;
   private String pushParamWp;
 
-  public static CoreProperties getProperties(Properties properties) {
+  public static CoreProperties getInstance(Properties properties) {
     return new CoreProperties(properties);
   }
 

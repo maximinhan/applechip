@@ -5,23 +5,24 @@ import java.util.Properties;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
-import com.applechip.core.constant.HibernateConstant;
+import com.applechip.core.constant.DatabaseConstant;
 import com.applechip.core.exception.SystemException;
 import com.applechip.core.util.CryptoUtil;
 
 @Getter
 @Slf4j
-public class HibernateProperties {
+public class DatabaseProperties {
   private String jdbcType;
   private Properties hibernateProperties;
   private Properties dataSourceProperties;
+  private Properties transactionProperties;
 
-  public static HibernateProperties getProperties(Properties properties) {
-    return new HibernateProperties(properties);
+  public static DatabaseProperties getInstance(Properties properties) {
+    return new DatabaseProperties(properties);
   }
 
-  private HibernateProperties(Properties properties) {
-    this.jdbcType = properties.getProperty("type");
+  private DatabaseProperties(Properties properties) {
+    // this.jdbcType = properties.getProperty("type");
     // properties.put(Environment.DRIVER,
     // HibernateConstant.JDBC_DRIVER_CLASS_MAP.get(this.jdbcType));
     // properties.put(Environment.DIALECT,
@@ -32,11 +33,20 @@ public class HibernateProperties {
     // HibernateConstant.JDBC_VALIDATION_QUERY_MAP.get(this.jdbcType));
     this.setDataSourceProperties(properties);
     this.setHibernateProperties(properties);
+    this.setTransactionProperties(properties);
+  }
+
+  private void setTransactionProperties(Properties properties) {
+    Properties bean = new Properties();
+    bean.setProperty("exist*", "PROPAGATION_REQUIRED,readOnly");// ISOLATION_READ_UNCOMMITTED,timeout_30,-Exception
+    bean.setProperty("get*", "PROPAGATION_REQUIRED,readOnly");
+    bean.setProperty("*", "PROPAGATION_REQUIRED");
+    this.transactionProperties = bean;
   }
 
   private void setHibernateProperties(Properties properties) {
     Properties bean = new Properties();
-    for (String string : HibernateConstant.HIBERNATE_PROPERTIES_SET) {
+    for (String string : DatabaseConstant.HIBERNATE_PROPERTIES_SET) {
       if (properties.containsKey(string)) {
         bean.put(string, properties.getProperty(string));
         log.info("setHibernateProperties put finish... key: {}, value: {}", string, properties.getProperty(string));
@@ -47,11 +57,11 @@ public class HibernateProperties {
 
   private void setDataSourceProperties(Properties properties) {
     Properties bean = new Properties();
-    for (String string : HibernateConstant.DATA_SOURCE_PROPERTIES_SET) {
+    for (String string : DatabaseConstant.DATA_SOURCE_PROPERTIES_SET) {
       if (properties.containsKey(string)) {
-        String decrypt = decrypt(properties.getProperty(string));
-        bean.put(string, decrypt);
-        log.info("setJdbcProperties put finish... key: {}, value: {}", string, decrypt);
+        String value = properties.getProperty(string);
+        bean.put(string, decrypt(value));
+        log.info("setDataSourceProperties put finish... key: {}, value: {}", string, value);
       }
     }
     this.dataSourceProperties = bean;

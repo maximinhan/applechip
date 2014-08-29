@@ -20,13 +20,15 @@ class GenerateSchemaTask extends DefaultTask {
 		MYSQL: "org.hibernate.dialect.MySQL5InnoDBDialect",
 		ORACLE: "org.hibernate.dialect.Oracle10gDialect",
 		HSQL: "org.hibernate.dialect.HSQLDialect",
-		H2: "org.hibernate.dialect.H2Dialect"
+		H2: "org.hibernate.dialect.H2Dialect",
+		SQLSERVER: "org.hibernate.dialect.SQLServer2008Dialect"
 	]
 	def Map<String, String> driverClassMap = [
 		MYSQL: "com.mysql.jdbc.Driver",
 		ORACLE: "oracle.jdbc.OracleDriver",
 		HSQL: "org.hsqldb.jdbcDriver",
-		H2: "org.h2.Driver"
+		H2: "org.h2.Driver",
+		SQLSERVER: "com.microsoft.sqlserver.jdbc.SQLServerDriver"
 	]
 	def classesDir = project.sourceSets.main.output.classesDir
     def jdbcType = System.properties['jdbcType']

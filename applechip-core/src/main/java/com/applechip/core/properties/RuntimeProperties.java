@@ -10,7 +10,7 @@ public class RuntimeProperties {
 
   private String[] serverAddress;
 
-  public static RuntimeProperties getProperties(PropertiesConfiguration properties) {
+  public static RuntimeProperties getInstance(PropertiesConfiguration properties) {
     return new RuntimeProperties(properties);
   }
 

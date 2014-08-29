@@ -13,19 +13,18 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.Resource;
-import org.springframework.core.io.support.PropertiesLoaderSupport;
 
 import com.applechip.core.exception.SystemException;
 import com.applechip.core.properties.CoreProperties;
-import com.applechip.core.properties.HibernateProperties;
+import com.applechip.core.properties.DatabaseProperties;
 import com.applechip.core.properties.RuntimeProperties;
-import com.applechip.core.util.PropertiesLoaderUtils;
+import com.applechip.core.util.PropertiesLoaderUtil;
 
 
 @Configuration
 @ComponentScan(basePackageClasses = {CoreConfig.class})
 @Slf4j
-public class CoreConfig extends PropertiesLoaderSupport {
+public class CoreConfig {
 
   @Value("${runtimeProperties}")
   private Resource runtimeProperties;
@@ -33,7 +32,7 @@ public class CoreConfig extends PropertiesLoaderSupport {
   @Value("${coreProperties}")
   private Resource coreProperties;
 
-  @Value("${hibernateProperties}")
+  @Value("${databaseProperties}")
   private Resource hibernateProperties;
 
   @PostConstruct
@@ -45,19 +44,19 @@ public class CoreConfig extends PropertiesLoaderSupport {
       // TODO Auto-generated catch block
       e.printStackTrace();
     }
-    return CoreProperties.getProperties(PropertiesLoaderUtils.loadProperties(coreProperties));
+    return CoreProperties.getInstance(PropertiesLoaderUtil.loadProperties(coreProperties));
   }
 
   @PostConstruct
   @Bean
-  public HibernateProperties hibernateProperties() {
+  public DatabaseProperties databaseProperties() {
     try {
-      log.debug("hibernateProperties path {}", hibernateProperties.getFile().getAbsolutePath());
+      log.debug("databaseProperties path {}", hibernateProperties.getFile().getAbsolutePath());
     } catch (IOException e) {
       // TODO Auto-generated catch block
       e.printStackTrace();
     }
-    return HibernateProperties.getProperties(PropertiesLoaderUtils.loadProperties(hibernateProperties));
+    return DatabaseProperties.getInstance(PropertiesLoaderUtil.loadProperties(hibernateProperties));
   }
 
   @PostConstruct
@@ -70,6 +69,6 @@ public class CoreConfig extends PropertiesLoaderSupport {
     } catch (Exception e) {
       throw new SystemException(e);
     }
-    return RuntimeProperties.getProperties(bean);
+    return RuntimeProperties.getInstance(bean);
   }
 }

@@ -22,6 +22,10 @@ import org.springframework.transaction.TransactionDefinition;
 public class CustomHibernateJpaVendorAdapter extends HibernateJpaVendorAdapter {
   private final JpaDialect jpaDialect = new CustomHibernateJpaDialect();
 
+  private static CustomHibernateJpaVendorAdapter customHibernateJpaVendorAdapter;
+
+  private CustomHibernateJpaVendorAdapter() {}
+
   @Override
   public JpaDialect getJpaDialect() {
     return this.jpaDialect;
@@ -34,7 +38,7 @@ public class CustomHibernateJpaVendorAdapter extends HibernateJpaVendorAdapter {
     @Override
     public ConnectionHandle getJdbcConnection(EntityManager entityManager, boolean readOnly) throws PersistenceException, SQLException {
       ConnectionHandle connectionHandle = super.getJdbcConnection(entityManager, readOnly);
-      if (null != connectionHandle && null != connectionHandle.getConnection()) {
+      if (connectionHandle != null && connectionHandle.getConnection() != null) {
         if (readOnly) {
           connectionHandle.getConnection().setReadOnly(true);
           log.debug("readOnly... connection info: {}", connectionHandle.getConnection());
@@ -48,7 +52,7 @@ public class CustomHibernateJpaVendorAdapter extends HibernateJpaVendorAdapter {
 
     @Override
     public Object beginTransaction(EntityManager entityManager, final TransactionDefinition transactionDefinition) {
-      Session session = getSession(entityManager);
+      Session session = super.getSession(entityManager);
       if (TransactionDefinition.TIMEOUT_DEFAULT != transactionDefinition.getTimeout()) {
         session.getTransaction().setTimeout(transactionDefinition.getTimeout());
       }
@@ -56,22 +60,21 @@ public class CustomHibernateJpaVendorAdapter extends HibernateJpaVendorAdapter {
       session.doWork(new Work() {
         @Override
         public void execute(Connection connection) throws SQLException {
-          Integer old = DataSourceUtils.prepareConnectionForTransaction(connection, transactionDefinition);
-          log.debug("old: {}, new: {}", old, transactionDefinition.getIsolationLevel());
-          data.setIsolationLevel(old);
+          Integer isolationLevel = DataSourceUtils.prepareConnectionForTransaction(connection, transactionDefinition);
+          log.debug("old: {}, new: {}", isolationLevel, transactionDefinition.getIsolationLevel());
+          data.setIsolationLevel(isolationLevel);
           data.setConnection(connection);
         }
       });
       entityManager.getTransaction().begin();
-      Object transactionData = super.prepareTransaction(entityManager, transactionDefinition.isReadOnly(), transactionDefinition.getName());
-      data.setData(transactionData);
+      data.setObject(super.prepareTransaction(entityManager, transactionDefinition.isReadOnly(), transactionDefinition.getName()));
       return data;
     }
 
     @Override
     public void cleanupTransaction(Object object) {
       Data data = (Data) object;
-      super.cleanupTransaction(data.getData());
+      super.cleanupTransaction(data.getObject());
       data.reset();
     }
 
@@ -80,17 +83,24 @@ public class CustomHibernateJpaVendorAdapter extends HibernateJpaVendorAdapter {
     @SuppressWarnings(value = {"PMD.UnusedPrivateField", "PMD.SingularField"})
     private static class Data {
 
-      private Object data;
+      private Object object;
 
       private Integer isolationLevel;
 
       private Connection connection;
 
       public void reset() {
-        if (null != this.connection && null != this.isolationLevel) {
+        if (this.connection != null && this.isolationLevel != null) {
           DataSourceUtils.resetConnectionAfterTransaction(connection, isolationLevel);
         }
       }
     }
+  }
+
+  public static CustomHibernateJpaVendorAdapter getInstance() {
+    if (customHibernateJpaVendorAdapter == null) {
+      customHibernateJpaVendorAdapter = new CustomHibernateJpaVendorAdapter();
+    }
+    return customHibernateJpaVendorAdapter;
   }
 }
