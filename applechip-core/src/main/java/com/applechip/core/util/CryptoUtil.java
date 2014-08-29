@@ -93,6 +93,14 @@ public class CryptoUtil {
     return decrypt;
   }
 
+  public static String forceDecrypt(String str) {
+    try {
+      return decrypt(str);
+    } catch (SystemException e) {
+      return str;
+    }
+  }
+
   public static String encrypt(String decryptText, Digest digest) {
     try {
       MessageDigest md = MessageDigest.getInstance(digest.toString());

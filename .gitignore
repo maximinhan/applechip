@@ -3,6 +3,7 @@ classes
 .classes
 assets
 gen
+generated
 
 *.java.hsp
 *.sonarj

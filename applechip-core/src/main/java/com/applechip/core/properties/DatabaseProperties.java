@@ -6,13 +6,12 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 import com.applechip.core.constant.DatabaseConstant;
-import com.applechip.core.exception.SystemException;
 import com.applechip.core.util.CryptoUtil;
 
 @Getter
 @Slf4j
 public class DatabaseProperties {
-  private String jdbcType;
+  // private String jdbcType;
   private Properties hibernateProperties;
   private Properties dataSourceProperties;
   private Properties transactionProperties;
@@ -60,18 +59,10 @@ public class DatabaseProperties {
     for (String string : DatabaseConstant.DATA_SOURCE_PROPERTIES_SET) {
       if (properties.containsKey(string)) {
         String value = properties.getProperty(string);
-        bean.put(string, decrypt(value));
+        bean.put(string, CryptoUtil.forceDecrypt(value));
         log.info("setDataSourceProperties put finish... key: {}, value: {}", string, value);
       }
     }
     this.dataSourceProperties = bean;
-  }
-
-  private String decrypt(String str) {
-    try {
-      return CryptoUtil.decrypt(str);
-    } catch (SystemException e) {
-      return str;
-    }
   }
 }
