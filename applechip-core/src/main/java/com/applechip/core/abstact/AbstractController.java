@@ -18,19 +18,11 @@ import org.springframework.http.MediaType;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.http.converter.xml.Jaxb2RootElementHttpMessageConverter;
 import org.springframework.http.server.ServletServerHttpResponse;
-import org.springframework.security.access.AccessDeniedException;
-import org.springframework.security.authentication.AuthenticationTrustResolver;
-import org.springframework.security.authentication.AuthenticationTrustResolverImpl;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.validation.Validator;
 import org.springframework.web.context.ServletContextAware;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 
-import com.applechip.core.entity.User;
 import com.applechip.core.exception.SystemException;
 
 @Getter
@@ -108,25 +100,5 @@ public abstract class AbstractController implements ServletContextAware {
 
   protected RequestAttributes getRequestAttributes() {
     return RequestContextHolder.currentRequestAttributes();
-  }
-
-  protected User getCurrentUser() {
-    SecurityContext ctx = SecurityContextHolder.getContext();
-    User currentUser = null;
-    if (ctx.getAuthentication() != null) {
-      Authentication auth = ctx.getAuthentication();
-      AuthenticationTrustResolver resolver = new AuthenticationTrustResolverImpl();
-      boolean signupUser = resolver.isAnonymous(auth);
-      if (!signupUser) {
-        if (auth.getPrincipal() instanceof UserDetails) {
-          currentUser = (User) auth.getPrincipal();
-        } else if (auth.getDetails() instanceof UserDetails) {
-          currentUser = (User) auth.getDetails();
-        } else {
-          throw new AccessDeniedException("User not properly authenticated.");
-        }
-      }
-    }
-    return currentUser;
   }
 }
