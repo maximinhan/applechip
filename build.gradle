@@ -79,6 +79,9 @@ configure(allprojects) { project ->
         }
 	    compile.extendsFrom provided
 	}
+	task wrapper(type: Wrapper) {
+	  gradleVersion = "2.0"
+	}
 }
 
 configure(webProjects) {
@@ -172,7 +175,6 @@ configure(subprojects) { project ->
 	processResources {
 		filter(org.apache.tools.ant.filters.ReplaceTokens, 
 	          tokens: [
-	            'environment': System.properties['environment'],
 	            'jdbcType': System.properties['jdbcType'],
 	            'jdbcUrl': System.properties['jdbcUrl'],
 	            'jdbcUsername': System.properties['jdbcUsername'],
@@ -183,7 +185,6 @@ configure(subprojects) { project ->
 	processTestResources {
 		filter(org.apache.tools.ant.filters.ReplaceTokens, 
 	          tokens: [
-	            'environment': System.properties['environment'],
 	            'jdbcType': System.properties['jdbcType'],
 	            'jdbcUrl': System.properties['jdbcUrl'],
 	            'jdbcUsername': System.properties['jdbcUsername'],

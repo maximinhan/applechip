@@ -10,45 +10,43 @@ import edu.uci.ics.crawler4j.url.WebURL;
 
 public class MyCrawler extends WebCrawler {
 
-    private final static Pattern FILTERS = Pattern.compile(".*(\\.(css|js|bmp|gif|jpe?g" 
-                                                      + "|png|tiff?|mid|mp2|mp3|mp4"
-                                                      + "|wav|avi|mov|mpeg|ram|m4v|pdf" 
-                                                      + "|rm|smil|wmv|swf|wma|zip|rar|gz))$");
+  private final static Pattern FILTERS = Pattern.compile(".*(\\.(css|js|bmp|gif|jpe?g"
+      + "|png|tiff?|mid|mp2|mp3|mp4" + "|wav|avi|mov|mpeg|ram|m4v|pdf"
+      + "|rm|smil|wmv|swf|wma|zip|rar|gz))$");
 
-    /**
-     * You should implement this function to specify whether
-     * the given url should be crawled or not (based on your
-     * crawling logic).
-     */
-    @Override
-    public boolean shouldVisit(WebURL url) {
-            String href = url.getURL().toLowerCase();
-            return !FILTERS.matcher(href).matches()&& href.startsWith("http://www.coupang.com/deal.pang")&& 0>=href.indexOf("areacode=MRC");
-//          return !FILTERS.matcher(href).matches()&& href.startsWith("http://www.coupang.com/alldeal.pang?type=C");
+  /**
+   * You should implement this function to specify whether the given url should be crawled or not
+   * (based on your crawling logic).
+   */
+  @Override
+  public boolean shouldVisit(WebURL url) {
+    String href = url.getURL().toLowerCase();
+    return !FILTERS.matcher(href).matches() && href.startsWith("http://www.coupang.com/deal.pang")
+        && 0 >= href.indexOf("areacode=MRC");
+    // return !FILTERS.matcher(href).matches()&&
+    // href.startsWith("http://www.coupang.com/alldeal.pang?type=C");
+  }
+
+  /**
+   * This function is called when a page is fetched and ready to be processed by your program.
+   */
+  @Override
+  public void visit(Page page) {
+    String url = page.getWebURL().getURL();
+    System.out.println(url);
+
+    if (page.getParseData() instanceof HtmlParseData) {
+      HtmlParseData htmlParseData = (HtmlParseData) page.getParseData();
+      String text = htmlParseData.getText();
+      String html = htmlParseData.getHtml();
+      List<WebURL> links = htmlParseData.getOutgoingUrls();
+
+      System.out.println(text.substring(text.indexOf("1") + 4, text.indexOf("2") - 10).trim());
+      // System.out.println(html);
+      // System.out.println("Text length: " + text.length());
+      // System.out.println("Html length: " + html.length());
+      // System.out.println("Number of outgoing links: " + links.size());
+      System.out.println("================================123===============================");
     }
-
-    /**
-     * This function is called when a page is fetched and ready 
-     * to be processed by your program.
-     */
-    @Override
-    public void visit(Page page) {          
-            String url = page.getWebURL().getURL();
-            System.out.println(url);
-
-            if (page.getParseData() instanceof HtmlParseData) {
-                    HtmlParseData htmlParseData = (HtmlParseData) page.getParseData();
-                    String text = htmlParseData.getText();
-                    String html = htmlParseData.getHtml();
-                    List<WebURL> links = htmlParseData.getOutgoingUrls();
-                    
-                    
-                  System.out.println(text.substring(text.indexOf("구독신청")+4,text.indexOf("개 구매")-10).trim());
-//                  System.out.println(html);
-//                  System.out.println("Text length: " + text.length());
-//                  System.out.println("Html length: " + html.length());
-//                  System.out.println("Number of outgoing links: " + links.size());
-                  System.out.println("================================다음 페이지===============================");
-            }
-    }
+  }
 }
