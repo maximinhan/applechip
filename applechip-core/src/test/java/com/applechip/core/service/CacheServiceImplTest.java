@@ -24,6 +24,7 @@ public class CacheServiceImplTest extends AbstractTransactionTest {
   }
 
   @Test
+  @Ignore
   public void testCrud() {
     User entity = new User();
     entity.setId("vicki");

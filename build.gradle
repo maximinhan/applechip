@@ -33,11 +33,12 @@ ext {
 	
 	javaVersion = '1.6'
     javaEncoding = 'UTF-8'
-    springframeworkVersion = '4.0.3.RELEASE'
+    springframeworkVersion = '4.0.6.RELEASE'
     springframeworkdataVersion = '1.8.0.RELEASE'
     springframeworksecurityVersion = '3.2.4.RELEASE'
     hibernateVersion = '4.3.5.Final'
     slf4jVersion = '1.7.7'
+    queryDslVersion = '3.4.2'
 }
 
 gradle.taskGraph.beforeTask {Task task -> println "excuting $task ..."}
@@ -79,9 +80,6 @@ configure(allprojects) { project ->
         }
 	    compile.extendsFrom provided
 	}
-	task wrapper(type: Wrapper) {
-	  gradleVersion = "2.0"
-	}
 }
 
 configure(webProjects) {
@@ -91,15 +89,17 @@ configure(webProjects) {
     webAppDirName = 'src/main/webapp'
     dependencies {
         providedCompile 'javax.servlet:javax.servlet-api:3.0.1'
-        providedCompile 'jstl:jstl:1.2'
+        compile 'jstl:jstl:1.2'
+        //providedCompile 'javax.servlet.jsp.jstl:jstl:1.2'
 	    //compile(project(":applechip-core"))
-	    		provided("org.springframework.security:spring-security-core:$springframeworksecurityVersion")
+	    provided("org.springframework.security:spring-security-core:$springframeworksecurityVersion")
 		provided("org.springframework.data:spring-data-commons:${springframeworkdataVersion}")
 		provided("org.springframework:spring-orm:$springframeworkVersion")
 		provided("org.springframework:spring-tx:$springframeworkVersion")
 		provided("org.springframework:spring-jdbc:$springframeworkVersion")
 		provided("org.springframework:spring-context-support:$springframeworkVersion")
 		provided("org.springframework:spring-context:$springframeworkVersion")
+		provided("org.springframework:spring-expression:$springframeworkVersion")
 		provided("org.hibernate:hibernate-entitymanager:$hibernateVersion")
 		provided("org.hibernate:hibernate-core:$hibernateVersion")
 		provided("net.sf.ehcache:ehcache:2.8.3")
@@ -114,7 +114,7 @@ configure(webProjects) {
 	    provided("com.fasterxml.jackson.core:jackson-databind:2.4.1")
 	    provided("com.fasterxml.jackson.core:jackson-annotations:2.4.1")
 	    provided("com.mysema.querydsl:querydsl-jpa:3.4.0")
-	    provided("org.eclipse.persistence:javax.persistence:2.1.0")
+	    provided("org.hibernate.javax.persistence:hibernate-jpa-2.1-api:1.0.0.Final")
     }
     eclipse {
         wtp {
@@ -131,21 +131,19 @@ configure(webProjects) {
     war {
     	dependsOn createBuildInfoFile
     	from(buildDir) {
-    		include 'build-info.properties'
+    		include 'version.txt'
     		into('WEB-INF/classes')
     	}
     }
 }
-/*
-task wrapper(type: Wrapper) {
-    gradleVersion = '1.8'
-}
-*/
 
 configure(rootProject) {
 	tasks.withType(JavaCompile){
 		def warnLogFile = file("$buildDir/${name}Warnings.log")
 		logging.addStandardErrorListener(new StandardOutputListener(){ void onOutput(CharSequence output){ warnLogFile << output }})
+	}
+	task wrapper(type: Wrapper) {
+	  gradleVersion = "2.0"
 	}
 }
 

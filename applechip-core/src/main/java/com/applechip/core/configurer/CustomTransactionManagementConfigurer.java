@@ -33,20 +33,22 @@ import com.applechip.core.repository.CustomHibernateJpaVendorAdapter;
 
 @Configuration
 @EnableAspectJAutoProxy(proxyTargetClass = true)
-@EnableTransactionManagement(proxyTargetClass = true, mode = AdviceMode.PROXY, order = Ordered.HIGHEST_PRECEDENCE)
+@EnableTransactionManagement(proxyTargetClass = true, mode = AdviceMode.PROXY,
+    order = Ordered.HIGHEST_PRECEDENCE)
 public class CustomTransactionManagementConfigurer implements TransactionManagementConfigurer {
 
   @Autowired
   private DatabaseProperties databaseProperties;
 
   @Override
-  @Bean
+  @Bean(name = "transactionManager")
   public PlatformTransactionManager annotationDrivenTransactionManager() {
     PlatformTransactionManager bean = null;
     try {
       bean = new JpaTransactionManager(this.entityManagerFactory());
     } catch (Exception e) {
-      throw new SystemException(String.format("annotationDrivenTransactionManager create fail.. %s", e), e);
+      throw new SystemException(String.format(
+          "annotationDrivenTransactionManager create fail.. %s", e), e);
     }
     return bean;
   }
@@ -55,11 +57,15 @@ public class CustomTransactionManagementConfigurer implements TransactionManagem
   public EntityManagerFactory entityManagerFactory() {
     EntityManagerFactory bean = null;
     try {
-      LocalContainerEntityManagerFactoryBean localContainerEntityManagerFactoryBean = new LocalContainerEntityManagerFactoryBean();
-      localContainerEntityManagerFactoryBean.setJpaVendorAdapter(CustomHibernateJpaVendorAdapter.getInstance());
+      LocalContainerEntityManagerFactoryBean localContainerEntityManagerFactoryBean =
+          new LocalContainerEntityManagerFactoryBean();
+      localContainerEntityManagerFactoryBean.setJpaVendorAdapter(CustomHibernateJpaVendorAdapter
+          .getInstance());
       localContainerEntityManagerFactoryBean.setDataSource(this.dataSource());
-      localContainerEntityManagerFactoryBean.setJpaProperties(databaseProperties.getHibernateProperties());
-      localContainerEntityManagerFactoryBean.setPersistenceUnitName(CoreConstant.PERSISTENCE_UNIT_NAME);
+      localContainerEntityManagerFactoryBean.setJpaProperties(databaseProperties
+          .getHibernateProperties());
+      localContainerEntityManagerFactoryBean
+          .setPersistenceUnitName(CoreConstant.PERSISTENCE_UNIT_NAME);
       localContainerEntityManagerFactoryBean.setPackagesToScan(User.class.getPackage().getName());
       localContainerEntityManagerFactoryBean.afterPropertiesSet();
       bean = localContainerEntityManagerFactoryBean.getObject();
@@ -94,7 +100,9 @@ public class CustomTransactionManagementConfigurer implements TransactionManagem
   public Advice advice() {
     Advice bean = null;
     try {
-      bean = new TransactionInterceptor(this.annotationDrivenTransactionManager(), this.transactionAttributeSource());
+      bean =
+          new TransactionInterceptor(this.annotationDrivenTransactionManager(),
+              this.transactionAttributeSource());
     } catch (Exception e) {
       throw new SystemException(String.format("advice create fail.. %s", e), e);
     }
@@ -104,10 +112,15 @@ public class CustomTransactionManagementConfigurer implements TransactionManagem
   private TransactionAttributeSource transactionAttributeSource() {
     TransactionAttributeSource bean = null;
     try {
-      NameMatchTransactionAttributeSource nameMatchTransactionAttributeSource = new NameMatchTransactionAttributeSource();
-      nameMatchTransactionAttributeSource.setProperties(databaseProperties.getTransactionProperties());
-      AnnotationTransactionAttributeSource annotationTransactionAttributeSource = new AnnotationTransactionAttributeSource();
-      bean = new CompositeTransactionAttributeSource(new TransactionAttributeSource[] {annotationTransactionAttributeSource, nameMatchTransactionAttributeSource});
+      NameMatchTransactionAttributeSource nameMatchTransactionAttributeSource =
+          new NameMatchTransactionAttributeSource();
+      nameMatchTransactionAttributeSource.setProperties(databaseProperties
+          .getTransactionProperties());
+      AnnotationTransactionAttributeSource annotationTransactionAttributeSource =
+          new AnnotationTransactionAttributeSource();
+      bean =
+          new CompositeTransactionAttributeSource(new TransactionAttributeSource[] {
+              annotationTransactionAttributeSource, nameMatchTransactionAttributeSource});
     } catch (Exception e) {
       throw new SystemException(String.format("transactionAttributeSource create fail.. %s", e), e);
     }

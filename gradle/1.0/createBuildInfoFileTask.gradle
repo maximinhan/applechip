@@ -1,4 +1,4 @@
-ext.buildTimestamp = new Date().format('yyyy-MM-dd HH:mm:ss S')
+ext.build = new Date().format('yyyy-MM-dd HH:mm:ss S')
 version = new ProjectVersion(version, System.env.SOURCE_BUILD_NUMBER)
 class ProjectVersion {
 	String version
@@ -19,13 +19,10 @@ class ProjectVersion {
 }
 
 task createBuildInfoFile << {
-	def buildInfoFile = new File("$buildDir/build-info.properties")
+	def buildInfoFile = new File("$buildDir/version.txt")
 	Properties properties = new Properties()
-	println version
-	println System.env.SOURCE_BUILD_NUMBER
-	println project.version.toString()
-	println buildTimestamp
-	properties.setProperty('version', project.version.toString())
-	properties.setProperty('buildTimestamp', buildTimestamp)
+	properties.setProperty('project-name', project.name)
+	properties.setProperty('project-version', project.version.toString())
+	properties.setProperty('project-build', build)
 	properties.store(buildInfoFile.newWriter(), null)
 }
