@@ -35,10 +35,10 @@ ext {
     javaEncoding = 'UTF-8'
     springframeworkVersion = '4.0.6.RELEASE'
     springframeworkdataVersion = '1.8.0.RELEASE'
-    springframeworksecurityVersion = '3.2.4.RELEASE'
+    springframeworksecurityVersion = '3.2.5.RELEASE'
     hibernateVersion = '4.3.5.Final'
     slf4jVersion = '1.7.7'
-    queryDslVersion = '3.4.2'
+    queryDslVersion = '3.4.3'
 }
 
 gradle.taskGraph.beforeTask {Task task -> println "excuting $task ..."}
@@ -212,11 +212,8 @@ configure(subprojects) { project ->
 }
 
 project(":applechip-core") {
-//apply from: 'http://webdav.bywook.com/resource/build.gradle'
-//apply from: hibernateJpaSchemaGenerationTask
-
-apply from: generateSchemaTask
-apply from: generateQueryDSLTask
+	apply from: generateSchemaTask
+	apply from: generateQueryDSLTask
 	dependencies {
 		provided("org.springframework.security:spring-security-core:$springframeworksecurityVersion")
 		provided("org.springframework.data:spring-data-commons:${springframeworkdataVersion}")
@@ -254,9 +251,11 @@ apply from: generateQueryDSLTask
         provided("org.javassist:javassist:3.18.2-GA")
         provided("dom4j:dom4j:1.6")
             //compile gradleApi()
-	    //provided("com.mysema.querydsl:querydsl-core:3.4.2")
-	    //provided("com.mysema.querydsl:querydsl-apt:3.4.2")
-	    //provided("com.mysema.querydsl:querydsl-jpa:3.4.2")
+	    compile("com.mysema.querydsl:querydsl-core:$queryDslVersion")
+	    compile("com.mysema.querydsl:querydsl-apt:$queryDslVersion")
+	    compile("com.mysema.querydsl:querydsl-jpa:$queryDslVersion")
+	    compile("com.mysema.querydsl:querydsl-jdo:$queryDslVersion")
+	    compile("com.mysema.commons:mysema-commons-lang:0.2.4")
 	}
 	
 	compileJava {

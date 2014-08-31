@@ -6,16 +6,16 @@ import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-public class GenericManagerImpl<T extends GenericEntity<PK>, PK extends Serializable> implements GenericManager<T, PK> {
+public class GenericServiceImpl<T extends GenericEntity<PK>, PK extends Serializable> implements GenericService<T, PK> {
 
   protected Log log = LogFactory.getLog(getClass());
 
   protected GenericRepository<T, PK> repository;
 
-  public GenericManagerImpl() {
+  public GenericServiceImpl() {
   }
 
-  public GenericManagerImpl(GenericRepository<T, PK> repository) {
+  public GenericServiceImpl(GenericRepository<T, PK> repository) {
     this.repository = repository;
   }
 

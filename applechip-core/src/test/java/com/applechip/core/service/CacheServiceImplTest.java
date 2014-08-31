@@ -18,10 +18,8 @@ public class CacheServiceImplTest extends AbstractTransactionTest {
   @Autowired
   private UserRepository userRepository;
 
-  @Test
-  public void testGetRoles() throws Exception {
-    System.out.println("ss");
-  }
+  @Autowired
+  private UserService userService;
 
   @Test
   @Ignore

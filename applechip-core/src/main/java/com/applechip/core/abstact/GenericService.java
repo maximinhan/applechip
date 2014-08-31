@@ -3,7 +3,7 @@ package com.applechip.core.abstact;
 import java.io.Serializable;
 import java.util.List;
 
-public interface GenericManager<T extends GenericEntity<PK>, PK extends Serializable> {
+public interface GenericService<T extends GenericEntity<PK>, PK extends Serializable> {
 
   public List<T> getAll();
 
