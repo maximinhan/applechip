@@ -4,6 +4,9 @@ classes
 assets
 gen
 generated
+applechip-*/gradle
+applechip-*/gradlew
+applechip-*/gradlew.bat
 
 *.java.hsp
 *.sonarj
