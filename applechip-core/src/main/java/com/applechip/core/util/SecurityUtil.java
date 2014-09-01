@@ -14,7 +14,7 @@ import com.applechip.core.entity.User;
 public class SecurityUtil {
 
   public static String getCurrentUserId() {
-    String id = "";
+    String id = null;
     User user = getCurrentUser();
     if (user != null) {
       id = user.getId();

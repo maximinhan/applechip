@@ -2,10 +2,9 @@ package com.applechip.core;
 
 import org.junit.Test;
 
-import com.applechip.core.abstact.ResponseVO;
-import com.applechip.core.abstact.VO;
 import com.applechip.core.entity.Role;
 import com.applechip.core.entity.User;
+import com.applechip.core.vo.ResponseVO;
 
 public class ObjectTest {
   @Test
@@ -24,9 +23,9 @@ public class ObjectTest {
     System.out.println("dto3.equals(dto4)" + dto3.equals(dto4)); // False (if equals is not overridden)
     System.out.println(dto3 == dto4); // False
 
-    ResponseVO vo1 = ResponseVO.ok();
+    ResponseVO vo1 = ResponseVO.getResponseVO();
     vo1.setMessage("123");
-    ResponseVO vo2 = ResponseVO.ok();
+    ResponseVO vo2 = ResponseVO.getResponseVO();
     vo2.setMessage("1234");
     System.out.println("vo1.equals(vo2)" + vo1.equals(vo2)); // True
     System.out.println(vo1 == vo2); // True

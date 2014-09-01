@@ -8,7 +8,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import lombok.Getter;
 import lombok.Setter;
-import lombok.extern.apachecommons.CommonsLog;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
@@ -27,7 +26,6 @@ import com.applechip.core.exception.SystemException;
 
 @Getter
 @Setter
-@CommonsLog
 public abstract class AbstractController implements ServletContextAware {
 
   private ServletContext servletContext;
@@ -44,16 +42,16 @@ public abstract class AbstractController implements ServletContextAware {
   private MessageSourceAccessor messageSourceAccessor;
 
   @Autowired
-  public void setMessages(MessageSource messageSource) {
+  public void setMessageSourceAccessor(MessageSource messageSource) {
     messageSourceAccessor = new MessageSourceAccessor(messageSource);
   }
 
-  protected String getText(String msgKey, Locale locale) {
-    return messageSourceAccessor.getMessage(msgKey, locale);
+  protected String getText(String code, Locale locale) {
+    return messageSourceAccessor.getMessage(code, locale);
   }
 
-  protected String getText(String msgKey, Object[] args, Locale locale) {
-    return messageSourceAccessor.getMessage(msgKey, args, locale);
+  protected String getText(String code, Object[] args, Locale locale) {
+    return messageSourceAccessor.getMessage(code, args, locale);
   }
 
   protected String getLanguage() {
@@ -65,36 +63,18 @@ public abstract class AbstractController implements ServletContextAware {
   }
 
   protected void writeJson(Object obj, HttpServletResponse response) {
-    MediaType mediaType = MediaType.APPLICATION_JSON;
-    writeJson(obj, mediaType, response);
-  }
-
-  protected void writeJson(Object obj, MediaType mediaType, HttpServletResponse response) {
     try {
-      if (!mappingJackson2HttpMessageConverter.canWrite(obj.getClass(), mediaType)) {
-        throw new SystemException("json create error");
-      }
-      mappingJackson2HttpMessageConverter.write(obj, mediaType, new ServletServerHttpResponse(response));
+      mappingJackson2HttpMessageConverter.write(obj, MediaType.APPLICATION_JSON, new ServletServerHttpResponse(response));
     } catch (IOException e) {
-      log.error("mappingJackson2HttpMessageConverter error");
-      throw new RuntimeException("mappingJackson2HttpMessageConverter error");
+      throw new SystemException(e, "mappingJackson2HttpMessageConverter error");
     }
   }
 
   protected void writeXml(Object obj, HttpServletResponse response) {
-    MediaType mediaType = MediaType.TEXT_XML;
-    writeXml(obj, mediaType, response);
-  }
-
-  protected void writeXml(Object obj, MediaType mediaType, HttpServletResponse response) {
     try {
-      if (!jaxb2RootElementHttpMessageConverter.canWrite(obj.getClass(), mediaType)) {
-        throw new SystemException("xml create error");
-      }
-      jaxb2RootElementHttpMessageConverter.write(obj, mediaType, new ServletServerHttpResponse(response));
+      jaxb2RootElementHttpMessageConverter.write(obj, MediaType.TEXT_XML, new ServletServerHttpResponse(response));
     } catch (IOException e) {
-      log.error("jaxb2RootElementHttpMessageConverter error");
-      throw new RuntimeException("jaxb2RootElementHttpMessageConverter error");
+      throw new SystemException(e, "jaxb2RootElementHttpMessageConverter error");
     }
   }
 

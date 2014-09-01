@@ -6,9 +6,11 @@ import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
+import org.springframework.test.context.transaction.TransactionConfiguration;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(loader = AnnotationConfigContextLoader.class, classes = { ApplicationContextTest.class })
+@TransactionConfiguration(defaultRollback = true)
 public abstract class AbstractTest {
 
   protected final Log log = LogFactory.getLog(getClass());

@@ -22,7 +22,7 @@ import org.apache.commons.lang.StringUtils;
 import org.hibernate.annotations.GenericGenerator;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.applechip.core.abstact.GenericTimestamp;
+import com.applechip.core.abstact.GenericDtUpdated;
 import com.applechip.core.util.FileUtil;
 
 @Getter
@@ -33,7 +33,7 @@ import com.applechip.core.util.FileUtil;
 @NoArgsConstructor
 @Entity
 @Table(name = "zt_upload_file")
-public class UploadFile extends GenericTimestamp<String> {
+public class UploadFile extends GenericDtUpdated<String> {
 
   private static final long serialVersionUID = -7837313689981801628L;
 

@@ -30,20 +30,6 @@ public class GenericRepositoryImpl<T extends GenericEntity<PK>, PK extends Seria
     this.persistentClass = persistentClass;
   }
 
-  public GenericRepositoryImpl(final Class<T> persistentClass, EntityManager entityManager) {
-    this.persistentClass = persistentClass;
-    this.entityManager = entityManager;
-  }
-
-  @Override
-  public EntityManager getEntityManager() {
-    return this.entityManager;
-  }
-
-  public CriteriaBuilder getCriteriaBuilder() {
-    return this.entityManager.getCriteriaBuilder();
-  }
-
   @Override
   public List<T> getAll() {
     CriteriaQuery<T> query = getCriteriaBuilder().createQuery(this.persistentClass);
@@ -64,7 +50,7 @@ public class GenericRepositoryImpl<T extends GenericEntity<PK>, PK extends Seria
     query.select(builder.count(query.from(this.persistentClass)));
     try {
       return this.entityManager.createQuery(query).getSingleResult();
-    } catch (NoResultException exception) {
+    } catch (NoResultException e) {
       return 0;
     }
   }
@@ -85,11 +71,6 @@ public class GenericRepositoryImpl<T extends GenericEntity<PK>, PK extends Seria
   }
 
   @Override
-  public void persist(T object) {
-    this.entityManager.persist(object);
-  }
-
-  @Override
   public void remove(T object) {
     this.entityManager.remove(object);
   }
@@ -99,214 +80,7 @@ public class GenericRepositoryImpl<T extends GenericEntity<PK>, PK extends Seria
     this.entityManager.remove(get(id));
   }
 
-  // @Override
-  // public <S extends T> S save(S entity) {
-  // // TODO Auto-generated method stub
-  // return null;
-  // }
-  //
-  // @Override
-  // public <S extends T> Iterable<S> save(Iterable<S> entities) {
-  // // TODO Auto-generated method stub
-  // return null;
-  // }
-  //
-  // @Override
-  // public T findOne(PK id) {
-  // // TODO Auto-generated method stub
-  // return null;
-  // }
-  //
-  // @Override
-  // public boolean exists(PK id) {
-  // // TODO Auto-generated method stub
-  // return false;
-  // }
-  //
-  // @Override
-  // public Iterable<T> findAll() {
-  // // TODO Auto-generated method stub
-  // return null;
-  // }
-  //
-  // @Override
-  // public Iterable<T> findAll(Iterable<PK> ids) {
-  // // TODO Auto-generated method stub
-  // return null;
-  // }
-  //
-  // @Override
-  // public long count() {
-  // // TODO Auto-generated method stub
-  // return 0;
-  // }
-  //
-  // @Override
-  // public void delete(PK id) {
-  // // TODO Auto-generated method stub
-  //
-  // }
-  //
-  // @Override
-  // public void delete(T entity) {
-  // // TODO Auto-generated method stub
-  //
-  // }
-  //
-  // @Override
-  // public void delete(Iterable<? extends T> entities) {
-  // // TODO Auto-generated method stub
-  //
-  // }
-  //
-  // @Override
-  // public void deleteAll() {
-  // // TODO Auto-generated method stub
-  //
-  // }
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  //
-  // @Override
-  // public Page<T> findAll(Pageable pageable) {
-  // // TODO Auto-generated method stub
-  // return null;
-  // }
-  //
-  // @Override
-  // public <S extends T> S save(S entity) {
-  // // TODO Auto-generated method stub
-  // return null;
-  // }
-  //
-  // @Override
-  // public T findOne(PK id) {
-  // // TODO Auto-generated method stub
-  // return null;
-  // }
-  //
-  // @Override
-  // public boolean exists(PK id) {
-  // // TODO Auto-generated method stub
-  // return false;
-  // }
-  //
-  // @Override
-  // public long count() {
-  // // TODO Auto-generated method stub
-  // return 0;
-  // }
-  //
-  // @Override
-  // public void delete(PK id) {
-  // // TODO Auto-generated method stub
-  //
-  // }
-  //
-  // @Override
-  // public void delete(T entity) {
-  // // TODO Auto-generated method stub
-  //
-  // }
-  //
-  // @Override
-  // public void delete(Iterable<? extends T> entities) {
-  // // TODO Auto-generated method stub
-  //
-  // }
-  //
-  // @Override
-  // public void deleteAll() {
-  // // TODO Auto-generated method stub
-  //
-  // }
-  //
-  // @Override
-  // public List<T> findAll() {
-  // // TODO Auto-generated method stub
-  // return null;
-  // }
-  //
-  // @Override
-  // public List<T> findAll(Sort sort) {
-  // // TODO Auto-generated method stub
-  // return null;
-  // }
-  //
-  // @Override
-  // public List<T> findAll(Iterable<PK> ids) {
-  // // TODO Auto-generated method stub
-  // return null;
-  // }
-  //
-  // @Override
-  // public <S extends T> List<S> save(Iterable<S> entities) {
-  // // TODO Auto-generated method stub
-  // return null;
-  // }
-  //
-  // @Override
-  // public void flush() {
-  // // TODO Auto-generated method stub
-  //
-  // }
-  //
-  // @Override
-  // public T saveAndFlush(T entity) {
-  // // TODO Auto-generated method stub
-  // return null;
-  // }
-  //
-  // @Override
-  // public void deleteInBatch(Iterable<T> entities) {
-  // // TODO Auto-generated method stub
-  //
-  // }
-  //
-  // @Override
-  // public void deleteAllInBatch() {
-  // // TODO Auto-generated method stub
-  //
-  // }
-  //
-  // @Override
-  // public T getOne(PK id) {
-  // // TODO Auto-generated method stub
-  // return null;
-  // }
-
+  private CriteriaBuilder getCriteriaBuilder() {
+    return this.entityManager.getCriteriaBuilder();
+  }
 }

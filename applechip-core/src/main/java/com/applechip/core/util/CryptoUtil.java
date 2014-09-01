@@ -51,7 +51,7 @@ public class CryptoUtil {
           result = DigestUtils.md5Hex(string);
       }
     } catch (Exception e) {
-      throw new SystemException(String.format("cryto fail.. %s", e));
+      throw new SystemException(e, "encrypt fail.. %s", e.getMessage());
     }
     return result;
   }
@@ -64,11 +64,11 @@ public class CryptoUtil {
       cipher.init(Cipher.ENCRYPT_MODE, crypto.getKeySpec(), crypto.getIvSpec());
       decrypt = StringUtils.newStringUtf8(Base64.encodeBase64(cipher.doFinal(StringUtils.getBytesUtf8(decryptText))));
     } catch (GeneralSecurityException e) {
-      throw new SystemException(String.format("cryto fail.. %s", e.getMessage()), e);
+      throw new SystemException(e, "encrypt fail.. %s", e.getMessage());
     } catch (IllegalArgumentException e) {
-      throw new SystemException(String.format("cryto fail.. %s", e.getMessage()), e);
+      throw new SystemException(e, "encrypt fail.. %s", e.getMessage());
     } catch (NullPointerException e) {
-      throw new SystemException(String.format("cryto fail.. %s", e.getMessage()), e);
+      throw new SystemException(e, "encrypt fail.. %s", e.getMessage());
     }
     return decrypt;
   }
@@ -84,11 +84,11 @@ public class CryptoUtil {
       cipher.init(Cipher.DECRYPT_MODE, crypto.getKeySpec(), crypto.getIvSpec());
       decrypt = StringUtils.newStringUtf8(cipher.doFinal(Base64.decodeBase64(StringUtils.getBytesUtf8(encryptText))));
     } catch (GeneralSecurityException e) {
-      throw new SystemException(String.format("cryto fail.. %s", e.getMessage()), e);
+      throw new SystemException(e, "decrypt fail.. %s", e.getMessage());
     } catch (IllegalArgumentException e) {
-      throw new SystemException(String.format("cryto fail.. %s", e.getMessage()), e);
+      throw new SystemException(e, "decrypt fail.. %s", e.getMessage());
     } catch (NullPointerException e) {
-      throw new SystemException(String.format("cryto fail.. %s", e.getMessage()), e);
+      throw new SystemException(e, "decrypt fail.. %s", e.getMessage());
     }
     return decrypt;
   }
@@ -107,7 +107,7 @@ public class CryptoUtil {
       md.update(StringUtils.getBytesUtf8(decryptText));
       return toHexString(md.digest());
     } catch (NoSuchAlgorithmException e) {
-      throw new SystemException(String.format("cryto fail.. %s", e.getMessage()), e);
+      throw new SystemException(e, "encrypt fail.. %s", e.getMessage());
     }
   }
 
@@ -236,7 +236,7 @@ public class CryptoUtil {
       try {
         this.cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
       } catch (GeneralSecurityException e) {
-        throw new SystemException(String.format("cryto fail.. %s", e), e);
+        throw new SystemException(e, "cryto fail.. %s", e);
       }
     }
 

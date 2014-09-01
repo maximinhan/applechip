@@ -1,8 +1,8 @@
 package com.applechip.core;
 
-import org.springframework.test.context.transaction.TransactionConfiguration;
+import javax.transaction.Transactional;
 
-@TransactionConfiguration(transactionManager = "transactionManager", defaultRollback = false)
+@Transactional
 public abstract class AbstractTransactionTest extends AbstractTest {
 
 }

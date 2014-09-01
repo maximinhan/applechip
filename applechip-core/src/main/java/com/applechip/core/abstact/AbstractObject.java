@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
@@ -18,6 +19,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 @SuppressWarnings("serial")
 @XmlAccessorType(XmlAccessType.FIELD)
+@XmlRootElement
 @JsonAutoDetect(fieldVisibility = Visibility.ANY, getterVisibility = Visibility.NONE, setterVisibility = Visibility.NONE)
 @JsonSerialize
 @JsonInclude(Include.NON_EMPTY)

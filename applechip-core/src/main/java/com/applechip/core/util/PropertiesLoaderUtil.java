@@ -17,15 +17,15 @@ public class PropertiesLoaderUtil {
     try {
       properties = org.springframework.core.io.support.PropertiesLoaderUtils.loadProperties(resource);
     } catch (IOException e) {
-      throw new SystemException(e);
+      throw new SystemException(e, "loadProperties fail... filename: %s, message: %s", resource.getFilename(), e.getMessage());
     }
     return properties;
   }
 
-  public static Resource[] getResources(String... strings) {
+  public static Resource[] getResources(String... resources) {
     PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
     List<Resource> list = new ArrayList<Resource>();
-    for (String string : strings) {
+    for (String string : resources) {
       list.add(resolver.getResource(string));
     }
     return list.toArray(new Resource[list.size()]);

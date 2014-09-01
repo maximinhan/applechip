@@ -1,7 +1,5 @@
 package com.applechip.core.repository;
 
-import javax.transaction.Transactional;
-
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -20,7 +18,6 @@ public class UserRepositoryImplTest extends AbstractTransactionTest {
   }
 
   @Test
-  @Transactional
   public void testMerge() throws Exception {
     User user = new User();
     user.setId("vicki");

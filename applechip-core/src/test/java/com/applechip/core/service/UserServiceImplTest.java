@@ -4,11 +4,11 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
-import com.applechip.core.AbstractTransactionTest;
+import com.applechip.core.AbstractTest;
 import com.applechip.core.entity.User;
 
 
-public class UserServiceImplTest extends AbstractTransactionTest {
+public class UserServiceImplTest extends AbstractTest {
 
   @Autowired
   private UserService userService;
@@ -19,11 +19,38 @@ public class UserServiceImplTest extends AbstractTransactionTest {
   }
 
   @Test
-  public void testMerge() throws Exception {
+  public void testMerge1() throws Exception {
+    User user = null;
+    try {
+      user = userService.loadUserByUsername("username");
+    } catch (UsernameNotFoundException e) {
+      user = getUser();
+    }
+    user.setPassword("testMerge1");
+    userService.merge(user);
+  }
+
+  @Test
+  public void testMerge2() throws Exception {
+    User user = null;
+    try {
+      user = userService.loadUserByUsername("username");
+    } catch (UsernameNotFoundException e) {
+      user = getUser();
+    }
+    user.setPassword("testMerge2");
+    userService.merge(user);
+  }
+
+  @Test
+  public void testGet() throws Exception {
+    log.debug(userService.getAll());
+  }
+
+  private User getUser() {
     User user = new User();
-    user.setId("username");
-    user.setUsername("merge");
-    user.setPassword("merge");
-    log.debug(userService.merge(user));
+    user.setUsername("username");
+    user.setPassword("password");
+    return user;
   }
 }

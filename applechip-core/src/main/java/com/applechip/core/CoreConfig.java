@@ -1,11 +1,11 @@
 package com.applechip.core;
 
+import java.io.File;
 import java.io.IOException;
 
 import javax.annotation.PostConstruct;
 
-import lombok.extern.slf4j.Slf4j;
-
+import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.commons.configuration.reloading.FileChangedReloadingStrategy;
 import org.springframework.beans.factory.annotation.Value;
@@ -23,7 +23,6 @@ import com.applechip.core.util.PropertiesLoaderUtil;
 
 @Configuration
 @ComponentScan(basePackageClasses = {CoreConfig.class})
-@Slf4j
 public class CoreConfig {
 
   @Value("${runtimeProperties}")
@@ -38,24 +37,12 @@ public class CoreConfig {
   @PostConstruct
   @Bean
   public CoreProperties baseProperties() {
-    try {
-      log.debug("coreProperties path {}", coreProperties.getFile().getAbsolutePath());
-    } catch (IOException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    }
     return CoreProperties.getInstance(PropertiesLoaderUtil.loadProperties(coreProperties));
   }
 
   @PostConstruct
   @Bean
   public DatabaseProperties databaseProperties() {
-    try {
-      log.debug("databaseProperties path {}", hibernateProperties.getFile().getAbsolutePath());
-    } catch (IOException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    }
     return DatabaseProperties.getInstance(PropertiesLoaderUtil.loadProperties(hibernateProperties));
   }
 
@@ -63,11 +50,15 @@ public class CoreConfig {
   @Bean
   public RuntimeProperties runtimeProperties() {
     PropertiesConfiguration bean = null;
+    File file = null;
     try {
-      bean = new PropertiesConfiguration(runtimeProperties.getFile());
+      file = runtimeProperties.getFile();
+      bean = new PropertiesConfiguration(file);
       bean.setReloadingStrategy(new FileChangedReloadingStrategy());
-    } catch (Exception e) {
-      throw new SystemException(e);
+    } catch (ConfigurationException e) {
+      throw new SystemException(e, "runtimeProperties create fail... path: %s, message: %s", file.getPath(), e.getMessage());
+    } catch (IOException e) {
+      throw new SystemException(e, "runtimeProperties create fail... filename: %s, message: %s", runtimeProperties.getFilename(), e.getMessage());
     }
     return RuntimeProperties.getInstance(bean);
   }

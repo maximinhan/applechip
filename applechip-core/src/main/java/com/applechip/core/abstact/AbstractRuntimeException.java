@@ -7,37 +7,26 @@ import org.springframework.context.support.MessageSourceAccessor;
 @SuppressWarnings("serial")
 public abstract class AbstractRuntimeException extends RuntimeException {
 
-  public Object[] messageArgs;
+  public Object[] arguments;
 
   public AbstractRuntimeException() {
     super();
   }
 
-  public AbstractRuntimeException(Throwable cause) {
-    super(cause);
-  }
-
-  public AbstractRuntimeException(String message) {
-    super(message);
-  }
-
-  public AbstractRuntimeException(String message, Throwable cause) {
+  public AbstractRuntimeException(Throwable cause, String message) {
     super(message, cause);
   }
 
-  public AbstractRuntimeException(String format, Object... args) {
-    super(String.format(format, args));
-    this.messageArgs = args;
+  public AbstractRuntimeException(Throwable cause, String format, Object... arguments) {
+    super(String.format(format, arguments), cause);
+    this.arguments = arguments;
   }
 
-  public abstract String getExceptionCode();
-
-  public String getExceptionDebugMessage() {
-    return this.toString();
+  public String getMessage(MessageSourceAccessor messageSourceAccessor) {
+    String pattern = messageSourceAccessor.getMessage("error." + getCode());
+    return MessageFormat.format(pattern, arguments);
   }
 
-  public String getExceptionMessage(MessageSourceAccessor messageSourceAccessor) {
-    String errorMessageFormat = messageSourceAccessor.getMessage("error." + getExceptionCode());
-    return MessageFormat.format(errorMessageFormat, messageArgs);
-  }
+  public abstract String getCode();
+
 }
