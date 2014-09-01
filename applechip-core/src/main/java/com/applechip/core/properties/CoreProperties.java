@@ -1,7 +1,5 @@
 package com.applechip.core.properties;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Properties;
 
 import lombok.Getter;
@@ -22,7 +20,7 @@ public class CoreProperties {
   private String scheduleThreadPool;
   private String storagePath;
   private String pushSignKeyIos;
-  private int clearClientBeforeMinute;
+  private int clearBeforeMinute;
   private String pushParamWp;
 
   public static CoreProperties getInstance(Properties properties) {
@@ -34,16 +32,17 @@ public class CoreProperties {
     this.setExecutor(properties);
     this.setCache(properties);
     this.setSchedule(properties);
+    this.setPush(properties);
   }
 
   private void setProperties(Properties properties) {
     this.storagePath = properties.getProperty("storage.path");
-    Map<String, String> map = new HashMap<String, String>();
-//    map.
-//    new File("").
-    this.pushSignKeyIos = properties.getProperty("push.signKey.ios");
-    this.clearClientBeforeMinute = Integer.parseInt(properties.getProperty("clear.client.beforeMinute"));
-    this.pushParamWp = properties.getProperty("push.param.wp");
+    this.clearBeforeMinute = Integer.parseInt(properties.getProperty("clear.beforeMinute"));
+  }
+
+  private void setPush(Properties properties) {
+    this.pushSignKeyIos = properties.getProperty("push.ios.signKey");
+    this.pushParamWp = properties.getProperty("push.wp.param");
   }
 
   private void setSchedule(Properties properties) {
@@ -61,7 +60,8 @@ public class CoreProperties {
     this.executorCorePoolSize = Integer.parseInt(properties.getProperty("executor.corePoolSize"));
     this.executorMaxPoolSize = Integer.parseInt(properties.getProperty("executor.maxPoolSize"));
     this.executorQueueCapacity = Integer.parseInt(properties.getProperty("executor.queueCapacity"));
-    this.executorKeepAliveSeconds = Integer.parseInt(properties.getProperty("executor.keepAliveSeconds"));
+    this.executorKeepAliveSeconds =
+        Integer.parseInt(properties.getProperty("executor.keepAliveSeconds"));
     this.executorThreadNamePrefix = properties.getProperty("executor.threadNamePrefix");
   }
 
@@ -69,7 +69,8 @@ public class CoreProperties {
     return storagePath + CoreConstant.FILE_SEPARATOR + "download";
   }
 
-  public String getGeoipFile() {
-    return storagePath + CoreConstant.FILE_SEPARATOR + "geoip" + CoreConstant.FILE_SEPARATOR + "GeoIP2-City.mmdb";
+  public String getGeoipFilePath() {
+    return storagePath + CoreConstant.FILE_SEPARATOR + "geoip" + CoreConstant.FILE_SEPARATOR
+        + "GeoIP2-City.mmdb";
   }
 }

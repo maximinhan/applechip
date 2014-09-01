@@ -1,6 +1,5 @@
 package com.applechip.core;
 
-import java.io.File;
 import java.io.IOException;
 
 import javax.annotation.PostConstruct;
@@ -49,17 +48,16 @@ public class CoreConfig {
   @PostConstruct
   @Bean
   public RuntimeProperties runtimeProperties() {
-    PropertiesConfiguration bean = null;
-    File file = null;
+    PropertiesConfiguration propertiesConfiguration = null;
     try {
-      file = runtimeProperties.getFile();
-      bean = new PropertiesConfiguration(file);
-      bean.setReloadingStrategy(new FileChangedReloadingStrategy());
+      propertiesConfiguration = new PropertiesConfiguration(runtimeProperties.getFile());
+      propertiesConfiguration.setReloadingStrategy(new FileChangedReloadingStrategy());
     } catch (ConfigurationException e) {
-      throw new SystemException(e, "runtimeProperties create fail... path: %s, message: %s", file.getPath(), e.getMessage());
+      throw new SystemException(e, "runtimeProperties create fail... message: %s", e.getMessage());
     } catch (IOException e) {
-      throw new SystemException(e, "runtimeProperties create fail... filename: %s, message: %s", runtimeProperties.getFilename(), e.getMessage());
+      throw new SystemException(e, "runtimeProperties create fail... filename: %s, message: %s",
+          runtimeProperties.getFilename(), e.getMessage());
     }
-    return RuntimeProperties.getInstance(bean);
+    return RuntimeProperties.getInstance(propertiesConfiguration);
   }
 }

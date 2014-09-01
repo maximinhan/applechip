@@ -15,18 +15,21 @@ public class PropertiesLoaderUtil {
   public static Properties loadProperties(Resource resource) {
     Properties properties = null;
     try {
-      properties = org.springframework.core.io.support.PropertiesLoaderUtils.loadProperties(resource);
+      properties =
+          org.springframework.core.io.support.PropertiesLoaderUtils.loadProperties(resource);
     } catch (IOException e) {
-      throw new SystemException(e, "loadProperties fail... filename: %s, message: %s", resource.getFilename(), e.getMessage());
+      throw new SystemException(e, "loadProperties fail... filename: %s, message: %s",
+          resource.getFilename(), e.getMessage());
     }
     return properties;
   }
 
   public static Resource[] getResources(String... resources) {
-    PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
+    PathMatchingResourcePatternResolver pathMatchingResourcePatternResolver =
+        new PathMatchingResourcePatternResolver();
     List<Resource> list = new ArrayList<Resource>();
-    for (String string : resources) {
-      list.add(resolver.getResource(string));
+    for (String resource : resources) {
+      list.add(pathMatchingResourcePatternResolver.getResource(resource));
     }
     return list.toArray(new Resource[list.size()]);
   }
