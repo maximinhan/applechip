@@ -1,9 +1,15 @@
 package com.applechip.core.configurer;
 
+import javax.annotation.PostConstruct;
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 
 import org.apache.commons.dbcp.BasicDataSourceFactory;
+import org.hibernate.SessionFactory;
+import org.hibernate.event.service.spi.EventListenerRegistry;
+import org.hibernate.event.spi.EventType;
+import org.hibernate.internal.SessionFactoryImpl;
+import org.hibernate.jpa.HibernateEntityManagerFactory;
 import org.springframework.aop.aspectj.AspectJExpressionPointcutAdvisor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.AdviceMode;
@@ -28,6 +34,7 @@ import com.applechip.core.entity.User;
 import com.applechip.core.exception.SystemException;
 import com.applechip.core.properties.DatabaseProperties;
 import com.applechip.core.repository.CustomHibernateJpaVendorAdapter;
+import com.applechip.core.repository.EntityListener;
 
 @Configuration
 @EnableAspectJAutoProxy(proxyTargetClass = true)
@@ -36,6 +43,9 @@ public class CustomTransactionManagementConfigurer implements TransactionManagem
 
   @Autowired
   private DatabaseProperties databaseProperties;
+
+  @Autowired
+  private EntityListener entityListener;
 
   @Override
   @Bean
@@ -47,6 +57,15 @@ public class CustomTransactionManagementConfigurer implements TransactionManagem
       throw new SystemException(e, "annotationDrivenTransactionManager create fail.. %s", e.getMessage());
     }
     return bean;
+  }
+
+  @PostConstruct
+  public void eventListenerRegistry() {
+    HibernateEntityManagerFactory hibernateEntityManagerFactory = (HibernateEntityManagerFactory) this.entityManagerFactory();
+    SessionFactory sessionFactory = hibernateEntityManagerFactory.getSessionFactory();
+    EventListenerRegistry eventListenerRegistry = ((SessionFactoryImpl) sessionFactory).getServiceRegistry().getService(EventListenerRegistry.class);
+    eventListenerRegistry.getEventListenerGroup(EventType.POST_COMMIT_INSERT).appendListener(entityListener);
+    eventListenerRegistry.getEventListenerGroup(EventType.POST_COMMIT_UPDATE).appendListener(entityListener);
   }
 
   @Bean
