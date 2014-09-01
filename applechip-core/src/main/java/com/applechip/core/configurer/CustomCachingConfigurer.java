@@ -24,7 +24,7 @@ import com.applechip.core.properties.CoreProperties;
 public class CustomCachingConfigurer implements CachingConfigurer {
 
   @Autowired
-  private CoreProperties baseProperties;
+  private CoreProperties coreProperties;
 
   @Override
   @Bean
@@ -35,8 +35,8 @@ public class CustomCachingConfigurer implements CachingConfigurer {
   @Bean
   public EhCacheManagerFactoryBean ehCacheManagerFactoryBean() {
     EhCacheManagerFactoryBean bean = new EhCacheManagerFactoryBean();
-    bean.setShared(baseProperties.isCacheShared());
-    String configLocation = baseProperties.getCacheConfigLocation();
+    bean.setShared(coreProperties.isCacheShared());
+    String configLocation = coreProperties.getCacheConfigLocation();
     if (StringUtils.isNotBlank(configLocation)) {
       bean.setConfigLocation(new PathMatchingResourcePatternResolver().getResource(configLocation));
     }

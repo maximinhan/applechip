@@ -7,6 +7,8 @@ public interface GenericService<T extends GenericEntity<PK>, PK extends Serializ
 
   public List<T> getAll();
 
+  public List<T> getAllDistinct();
+
   public long getCount();
 
   public T get(PK id);

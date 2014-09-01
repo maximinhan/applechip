@@ -15,8 +15,8 @@ public class UserServiceImpl extends GenericServiceImpl<User, String> implements
   private UserRepository userRepository;
 
   @Autowired
-  public void setUserRepository(UserRepository userRepository) {
-    this.repository = userRepository;
+  public UserServiceImpl(UserRepository userRepository) {
+    super(userRepository);
     this.userRepository = userRepository;
   }
 

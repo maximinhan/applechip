@@ -19,18 +19,20 @@ import com.applechip.core.properties.CoreProperties;
 public class CustomAsyncConfigurer implements AsyncConfigurer {
 
   @Autowired
-  private CoreProperties baseProperties;
+  private CoreProperties coreProperties;
 
   @Override
   @Bean
   public Executor getAsyncExecutor() {
-    ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-    executor.setCorePoolSize(baseProperties.getExecutorCorePoolSize());
-    executor.setMaxPoolSize(baseProperties.getExecutorMaxPoolSize());
-    executor.setQueueCapacity(baseProperties.getExecutorQueueCapacity());
-    executor.setKeepAliveSeconds(baseProperties.getExecutorKeepAliveSeconds());
-    executor.setThreadNamePrefix(baseProperties.getExecutorThreadNamePrefix());
-    executor.initialize();
+    Executor executor = null;
+    ThreadPoolTaskExecutor threadPoolTaskExecutor = new ThreadPoolTaskExecutor();
+    threadPoolTaskExecutor.setCorePoolSize(coreProperties.getExecutorCorePoolSize());
+    threadPoolTaskExecutor.setMaxPoolSize(coreProperties.getExecutorMaxPoolSize());
+    threadPoolTaskExecutor.setQueueCapacity(coreProperties.getExecutorQueueCapacity());
+    threadPoolTaskExecutor.setKeepAliveSeconds(coreProperties.getExecutorKeepAliveSeconds());
+    threadPoolTaskExecutor.setThreadNamePrefix(coreProperties.getExecutorThreadNamePrefix());
+    threadPoolTaskExecutor.initialize();
+    executor = threadPoolTaskExecutor;
     return executor;
   }
 
