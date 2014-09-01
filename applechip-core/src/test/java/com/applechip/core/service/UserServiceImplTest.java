@@ -1,5 +1,7 @@
 package com.applechip.core.service;
 
+import lombok.extern.slf4j.Slf4j;
+
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -7,7 +9,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import com.applechip.core.AbstractTest;
 import com.applechip.core.entity.User;
 
-
+@Slf4j
 public class UserServiceImplTest extends AbstractTest {
 
   @Autowired
@@ -15,7 +17,7 @@ public class UserServiceImplTest extends AbstractTest {
 
   @Test(expected = UsernameNotFoundException.class)
   public void testLoadUserByUsername() throws Exception {
-    log.debug(userService.loadUserByUsername("username"));
+    log.debug("{}", userService.loadUserByUsername("username"));
   }
 
   @Test
@@ -44,7 +46,7 @@ public class UserServiceImplTest extends AbstractTest {
 
   @Test
   public void testGet() throws Exception {
-    log.debug(userService.getAll());
+    log.debug("{}", userService.getAll());
   }
 
   private User getUser() {

@@ -1,5 +1,7 @@
 package com.applechip.core.service;
 
+import lombok.extern.slf4j.Slf4j;
+
 import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +10,7 @@ import com.applechip.core.AbstractTransactionTest;
 import com.applechip.core.entity.User;
 import com.applechip.core.repository.UserRepository;
 
+@Slf4j
 public class CacheServiceImplTest extends AbstractTransactionTest {
 
   // @PersistenceContext(unitName = BaseConstant.PERSISTENCE_UNIT_NAME)
@@ -29,7 +32,7 @@ public class CacheServiceImplTest extends AbstractTransactionTest {
     entity.setUsername("123");
     entity.setPassword("123");
     entity = userRepository.merge(entity);
-    log.debug(entity);
+    log.debug("{}", entity);
     System.out.println("ttttttttttttttttttttttttttt");
     System.out.println(entity.toString());
   }

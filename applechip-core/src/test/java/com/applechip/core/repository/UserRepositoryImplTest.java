@@ -1,5 +1,7 @@
 package com.applechip.core.repository;
 
+import lombok.extern.slf4j.Slf4j;
+
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -7,6 +9,7 @@ import com.applechip.core.AbstractTransactionTest;
 import com.applechip.core.entity.User;
 
 
+@Slf4j
 public class UserRepositoryImplTest extends AbstractTransactionTest {
 
   @Autowired
@@ -14,7 +17,7 @@ public class UserRepositoryImplTest extends AbstractTransactionTest {
 
   @Test
   public void testGetAll() throws Exception {
-    log.debug(userRepository.getAll());
+    log.debug("{}", userRepository.getAll());
   }
 
   @Test
@@ -23,6 +26,6 @@ public class UserRepositoryImplTest extends AbstractTransactionTest {
     user.setId("vicki");
     user.setUsername("123");
     user.setPassword("123");
-    log.debug(userRepository.merge(user));
+    log.debug("{}", userRepository.merge(user));
   }
 }

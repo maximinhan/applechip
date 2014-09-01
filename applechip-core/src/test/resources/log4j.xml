@@ -9,7 +9,7 @@
 		</layout>
 	</appender>
 	<appender name="FILE_APPLECHIP" class="org.apache.log4j.DailyRollingFileAppender">
-		<param name="file" value="${user.home}/.applechip/applechip.log" />
+		<param name="file" value="${user.home}/.applechip/applechip_log4j.log" />
 		<param name="Append" value="true" />
 		<param name="Encoding" value="UTF-8" />
 		<param name="DatePattern" value="yyyy-MM-dd" />
