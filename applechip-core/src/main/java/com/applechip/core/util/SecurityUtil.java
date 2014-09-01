@@ -3,7 +3,6 @@ package com.applechip.core.util;
 import java.util.UUID;
 
 import org.apache.commons.lang.StringUtils;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.AuthenticationTrustResolver;
 import org.springframework.security.authentication.AuthenticationTrustResolverImpl;
 import org.springframework.security.core.Authentication;
@@ -16,12 +15,7 @@ import com.applechip.core.entity.User;
 public class SecurityUtil {
 
   public static String getCurrentUserId() {
-    User user = null;
-    try {
-      user = getCurrentUser();
-    } catch (AccessDeniedException e) {
-
-    }
+    User user = getCurrentUser();
     if (user == null) {
       return "";
     } else {
@@ -31,19 +25,20 @@ public class SecurityUtil {
 
   public static User getCurrentUser() {
     SecurityContext securityContext = SecurityContextHolder.getContext();
+    AuthenticationTrustResolver authenticationTrustResolver = new AuthenticationTrustResolverImpl();
+    Authentication authentication = securityContext.getAuthentication();
+    if (authentication == null || authenticationTrustResolver.isAnonymous(authentication)) {
+      return null;
+    }
+    return getCurrentUser(authentication);
+  }
+
+  private static User getCurrentUser(Authentication authentication) {
     User user = null;
-    if (securityContext.getAuthentication() != null) {
-      Authentication authentication = securityContext.getAuthentication();
-      AuthenticationTrustResolver authenticationTrustResolver = new AuthenticationTrustResolverImpl();
-      if (!authenticationTrustResolver.isAnonymous(authentication)) {
-        if (authentication.getPrincipal() instanceof UserDetails) {
-          user = (User) authentication.getPrincipal();
-        } else if (authentication.getDetails() instanceof UserDetails) {
-          user = (User) authentication.getDetails();
-        } else {
-          throw new AccessDeniedException("User not properly authenticated.");
-        }
-      }
+    if (authentication.getPrincipal() instanceof UserDetails) {
+      user = (User) authentication.getPrincipal();
+    } else if (authentication.getDetails() instanceof UserDetails) {
+      user = (User) authentication.getDetails();
     }
     return user;
   }
