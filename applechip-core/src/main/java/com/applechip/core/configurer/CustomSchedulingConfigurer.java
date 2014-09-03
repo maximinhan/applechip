@@ -19,7 +19,7 @@ import com.applechip.core.properties.CoreProperties;
 public class CustomSchedulingConfigurer implements SchedulingConfigurer {
 
   @Autowired
-  private CoreProperties baseProperties;
+  private CoreProperties coreProperties;
 
 //  @Autowired
 //  private ClearData clearData;
@@ -27,12 +27,12 @@ public class CustomSchedulingConfigurer implements SchedulingConfigurer {
   @Override
   public void configureTasks(ScheduledTaskRegistrar taskRegistrar) {
     TimeZone timeZone = TimeZone.getDefault();
-    String timeZoneId = baseProperties.getScheduleTimeZoneId();
+    String timeZoneId = coreProperties.getScheduleTimeZoneId();
     if (StringUtils.isNotBlank(timeZoneId)) {
       timeZone = TimeZone.getTimeZone(timeZoneId);
     }
-    CronTrigger cronTrigger = new CronTrigger(baseProperties.getScheduleCronExpression(), timeZone);
-    taskRegistrar.setScheduler(Executors.newScheduledThreadPool(Integer.parseInt(baseProperties.getScheduleThreadPool())));
+    CronTrigger cronTrigger = new CronTrigger(coreProperties.getScheduleCronExpression(), timeZone);
+    taskRegistrar.setScheduler(Executors.newScheduledThreadPool(Integer.parseInt(coreProperties.getScheduleThreadPool())));
     taskRegistrar.addCronTask(new CronTask(new Runnable() {
       public void run() {
 //        clearData.clearClient(baseProperties.getClearClientBeforeMinute());

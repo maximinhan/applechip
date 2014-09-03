@@ -31,33 +31,47 @@ public class CoreConfig {
   private Resource coreProperties;
 
   @Value("${databaseProperties}")
-  private Resource hibernateProperties;
+  private Resource databaseProperties;
 
   @PostConstruct
   @Bean
-  public CoreProperties baseProperties() {
-    return CoreProperties.getInstance(PropertiesLoaderUtil.loadProperties(coreProperties));
+  public CoreProperties coreProperties() {
+    return new CoreProperties(PropertiesLoaderUtil.loadProperties(coreProperties));
   }
 
   @PostConstruct
   @Bean
   public DatabaseProperties databaseProperties() {
-    return DatabaseProperties.getInstance(PropertiesLoaderUtil.loadProperties(hibernateProperties));
+    return DatabaseProperties.getInstance(PropertiesLoaderUtil.loadProperties(databaseProperties));
   }
 
-  @PostConstruct
+  // @PostConstruct
   @Bean
-  public RuntimeProperties runtimeProperties() {
+  public PropertiesConfiguration propertiesConfiguration() {
     PropertiesConfiguration propertiesConfiguration = null;
     try {
       propertiesConfiguration = new PropertiesConfiguration(runtimeProperties.getFile());
-      propertiesConfiguration.setReloadingStrategy(new FileChangedReloadingStrategy());
+      propertiesConfiguration.setReloadingStrategy(this.fileChangedReloadingStrategy());
     } catch (ConfigurationException e) {
       throw new SystemException(e, "runtimeProperties create fail... message: %s", e.getMessage());
     } catch (IOException e) {
       throw new SystemException(e, "runtimeProperties create fail... filename: %s, message: %s",
           runtimeProperties.getFilename(), e.getMessage());
     }
-    return RuntimeProperties.getInstance(propertiesConfiguration);
+    return propertiesConfiguration;
+  }
+
+  private FileChangedReloadingStrategy fileChangedReloadingStrategy() {
+    FileChangedReloadingStrategy fileChangedReloadingStrategy = new FileChangedReloadingStrategy();
+    fileChangedReloadingStrategy.setRefreshDelay(this.coreProperties().getRefreshDelay());
+    return fileChangedReloadingStrategy;
+  }
+
+  @Bean
+  public RuntimeProperties runtimeProperties() {
+    RuntimeProperties runtimeProperties =
+        new RuntimeProperties(PropertiesLoaderUtil.loadProperties(coreProperties),
+            this.propertiesConfiguration());
+    return runtimeProperties;
   }
 }

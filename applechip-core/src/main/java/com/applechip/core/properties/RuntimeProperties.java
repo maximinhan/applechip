@@ -1,20 +1,25 @@
 package com.applechip.core.properties;
 
+import java.util.Properties;
+
 import lombok.Getter;
 
 import org.apache.commons.configuration.PropertiesConfiguration;
 
 
 @Getter
-public class RuntimeProperties {
+public class RuntimeProperties extends CoreProperties {
 
   private String[] serverAddress;
 
-  public static RuntimeProperties getInstance(PropertiesConfiguration properties) {
-    return new RuntimeProperties(properties);
+  private PropertiesConfiguration propertiesConfiguration;
+
+  public RuntimeProperties(Properties properties, PropertiesConfiguration propertiesConfiguration) {
+    super(properties);
+    this.setProperties(propertiesConfiguration);
   }
 
-  private RuntimeProperties(PropertiesConfiguration runtimeProperties) {
-    this.serverAddress = runtimeProperties.getStringArray("server.address");
+  private void setProperties(PropertiesConfiguration propertiesConfiguration) {
+    this.serverAddress = propertiesConfiguration.getStringArray("server.address");
   }
 }

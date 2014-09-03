@@ -8,6 +8,8 @@ import com.applechip.core.constant.CoreConstant;
 
 @Getter
 public class CoreProperties {
+  private String storagePath;
+  private long refreshDelay;
   private int executorCorePoolSize;
   private int executorMaxPoolSize;
   private int executorQueueCapacity;
@@ -18,16 +20,10 @@ public class CoreProperties {
   private String scheduleCronExpression;
   private String scheduleTimeZoneId;
   private String scheduleThreadPool;
-  private String storagePath;
-  private String pushSignKeyIos;
-  private int clearBeforeMinute;
-  private String pushParamWp;
+  private String pushMdmKey;
+  private String pushWpParam;
 
-  public static CoreProperties getInstance(Properties properties) {
-    return new CoreProperties(properties);
-  }
-
-  private CoreProperties(Properties properties) {
+  public CoreProperties(Properties properties) {
     this.setProperties(properties);
     this.setExecutor(properties);
     this.setCache(properties);
@@ -37,12 +33,12 @@ public class CoreProperties {
 
   private void setProperties(Properties properties) {
     this.storagePath = properties.getProperty("storage.path");
-    this.clearBeforeMinute = Integer.parseInt(properties.getProperty("clear.beforeMinute"));
+    this.refreshDelay = Long.parseLong(properties.getProperty("refresh.delay", "1000"));
   }
 
   private void setPush(Properties properties) {
-    this.pushSignKeyIos = properties.getProperty("push.ios.signKey");
-    this.pushParamWp = properties.getProperty("push.wp.param");
+    this.pushMdmKey = properties.getProperty("push.mdm.key");
+    this.pushWpParam = properties.getProperty("push.wp.param");
   }
 
   private void setSchedule(Properties properties) {
