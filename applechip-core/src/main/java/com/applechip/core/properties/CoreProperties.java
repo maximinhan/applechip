@@ -32,7 +32,7 @@ public class CoreProperties {
   }
 
   private void setProperties(Properties properties) {
-    this.storagePath = properties.getProperty("storage.path");
+    this.storagePath = properties.getProperty("storage.path", CoreConstant.STORAGE_PATH);
     this.refreshDelay = Long.parseLong(properties.getProperty("refresh.delay", "1000"));
   }
 
@@ -65,8 +65,11 @@ public class CoreProperties {
     return storagePath + CoreConstant.FILE_SEPARATOR + "download";
   }
 
+  public String getResourcePath() {
+    return storagePath + CoreConstant.FILE_SEPARATOR + "resource";
+  }
+
   public String getGeoipFilePath() {
-    return storagePath + CoreConstant.FILE_SEPARATOR + "geoip" + CoreConstant.FILE_SEPARATOR
-        + "GeoIP2-City.mmdb";
+    return this.getResourcePath() + CoreConstant.FILE_SEPARATOR + "GeoIP2-City.mmdb";
   }
 }

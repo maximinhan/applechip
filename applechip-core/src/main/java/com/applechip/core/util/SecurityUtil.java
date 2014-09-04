@@ -42,7 +42,14 @@ public class SecurityUtil {
   }
 
   public static String getSecurityKey() {
-    UUID uuid = UUID.nameUUIDFromBytes(org.apache.commons.codec.binary.StringUtils.getBytesUtf8("applechip"));
-    return StringUtils.rightPad(Long.toString(uuid.getMostSignificantBits(), Character.MAX_RADIX), 16, '-');
+    UUID uuid =
+        UUID.nameUUIDFromBytes(org.apache.commons.codec.binary.StringUtils
+            .getBytesUtf8("applechip"));
+    return StringUtils.rightPad(Long.toString(uuid.getMostSignificantBits(), Character.MAX_RADIX),
+        16, '-');
+  }
+
+  public static int identityHashCode(Class<?> clazz) {
+    return System.identityHashCode(clazz);
   }
 }
