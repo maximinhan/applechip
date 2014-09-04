@@ -1,0 +1,71 @@
+﻿STS.ini(UTF-8)
+-vm
+D:/Program Files/Java/jdk1.7.0_45/bin/javaw.exe
+-vmargs
+-Xverify:none
+-XX:+UseParallelGC
+-XX:-UseConcMarkSweepGC
+-XX:+CMSIncrementalMode=true
+-Dhelp.lucene.tokenizer=standard
+-XX:PermSize=2048m
+-XX:MaxPermSize=2048m
+-XX:NewSize=2048m
+-XX:MaxNewSize=2048m
+-Xms2048m
+-Xmx2048m
+-Dfile.encoding=UTF-8
+
+Install
+Help > Eclipse Marketplace > Moreunit, SVN, Gradle
+SVN Connector - http://community.polarion.com/projects/subversive/download/eclipse/3.0/kepler-site/
+Mylyn - http://redmin-mylyncon.sourceforge.net/update-site/N/
+Android - https://dl-ssl.google.com/android/eclipse/
+Android SDK - http://developer.android.com/intl/ko/sdk/index.html#download
+Java Decompiler Eclipse Plug-in - http://jd.benow.ca/jd-eclipse/update
+java -jar "lombok.jar"
+cp "jadclipse\net.sf.jadclipse_3.3.0.jar" "plugins\net.sf.jadclipse_3.3.0.jar"
+
+Setting
+Project > Build Automatically
+Preferences > General > Show heap status
+Preferences > General > Workspace > Text file encoding - UTF-8
+Preferences > Maven > User Settings > "build\settings.xml"
+Preferences > Validation > Disable All
+Preferences > Console > Limit console output
+Preferences > XML > XML Files > Editor > Line width - 200
+Preferences > XML > XML Files > Editor > Indentation using spaces
+Preferences > XML > XML Files > Editor > Indentation size - 2
+Preferences > Java > Code Style > Formatter > "codestyle\eclipse-java-google-style.xml"
+Preferences > Gradle > Gradle Distrubution > Folder "Gradle"
+Preferences > Gradle > Gradle User Home > Directory "dev\.gradle"
+Preferences > General > Editors > File Associations > File types(*.class) > Associated editors(JadClipse)
+Preferences > Java > JadClipse > Path to decompiler > "jadclipse\jad.exe"
+Preferences > Java > Compiler > Errors/Warnings > Annotations > Unhandled token in '@SuppressWarnings' > Ignore
+Preferences > Java > Editor > Content Assist > Enable auto activation
+Preferences > Spring > Dashboard > Dashboard RSS Feed URLs
+Preferences > Spring > Spring UAA > Disable UAA
+
+-Dosgi.requiredJavaVersion=1.6 => JDK 1.6 이상을 설치했을 경우에 1.6으로 설정하면 속도가 빨라진다.
+-Xverify:none => 클래스의 유효성을 검사 생략. (시작 시간이 줄어 빨라진다.)
+-XX:+UseParallelGC => 병렬 가비지 컬렉션 사용. (병렬 처리로 속도 향상)
+-XX:+AggressiveOpts => 컴파일러의 소수점 최적화 기능을 작동시켜 빨라진다.
+-XX:-UseConcMarkSweepGC => 병행 mark-sweep GC 수행하여 이클립스 GUI의 응답을 빠르게한다.
+-XX:+CMSIncrementalMode=true => 점진적인 GC
+-XX:PermSize=128M        => Permanent Generation(영구 영역) 크기(Out Of Memory 에러시 크기 조절)
+-XX:MaxPermSize=128M  => 최대 Permanent Generation 크기
+-XX:NewSize=128M         => New Generation(새 영역) 크기
+-XX:MaxNewSize=128M   => New Generation(새 영역) 의 최대 크기
+-Xms512m : 이클립스가 사용하는 최소 Heap 메모리
+-Xmx512m : 이클립스가 사용하는 최대 Heap 메모리
+최소와 최대를 같은 값으로 설정하면 오르락 내리락 하지않아 빨라진다.
+
+[메모리 정의 예]
+1 기가 이하 메모리인 컴퓨터인 경우	=> -Xms256m -Xmx256m
+2 기가 ~ 3 기가 메모리인 컴퓨터		=> -Xms512m -Xmx512m
+4기가 이상 메모리인 컴퓨터		=> -Xms1024m -Xmx1024m
+
+[ 참고 ]
+JVM 은 3가지 메모리 영역을 관리합니다.
+ 1. Permanent(영구) 영역 : JVM 클래스와 메소드를 위한 공간. = PermSize 설정
+ 2. New/Young 영역 : 새로 생성된 개체들을 위한 공간. = NewSize 설정
+ 3. Old 영역 : 만들어진지 오래된 객체들의 공간.(New 영역에서 이동해 온다)
