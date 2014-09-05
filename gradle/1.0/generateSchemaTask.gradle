@@ -34,8 +34,26 @@ class GenerateSchemaTask extends DefaultTask {
     def jdbcType = System.properties['jdbcType']
     def jdbcUsername = System.properties['jdbcUsername']
     def jdbcPassword = System.properties['jdbcPassword']
-    def jdbcUrl = System.properties['jdbcUrl']
-    
+    def jdbcUrl = String.format(project.properties['jdbcUrl'], project.properties['jdbcName'])
+    /*
+    		Connection connection = DriverManager.getConnection("");
+		Dialect dialect = new MySQL5InnoDBDialect(); // e.g.: new
+														// MySQL5InnoDBDialect();
+		org.hibernate.cfg.Configuration cfg = new org.hibernate.cfg.Configuration();
+		cfg.addAnnotatedClass(CoreConfig.class); //
+		cfg.buildMappings(); // may be unnecessary
+		DatabaseMetadata metadata = new DatabaseMetadata(connection, dialect,
+				config);
+		List<SchemaUpdateScript> updateScritps = cfg
+				.generateSchemaUpdateScriptList(dialect, metadata);
+		String formatted = null;
+		for (SchemaUpdateScript script : updateScritps) {
+			formatted = FormatStyle.DDL.getFormatter().format(
+					script.getScript());
+			formatted += ";";
+			System.out.println(formatted);
+		}
+    */
 	@TaskAction
 	def generateSchemaTask() {
 		println classesDir

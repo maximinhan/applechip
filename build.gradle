@@ -1,3 +1,4 @@
+final String DEFAULT_PROFILE = 'development'
 buildscript {
     repositories {
         maven { url "http://nexus.bywook.com/content/groups/public" }
@@ -8,7 +9,7 @@ buildscript {
 		classpath("org.springframework.build.gradle:propdeps-plugin:0.0.7")
 		//println "$project.rootProject.projectDir/applechip-plugin/build/libs/applechip-plugin-${version}.jar"
 		//classpath files("D:/dev/workspace-applechip/applechip-plugin-${version}.jar")
-		classpath("com.applechip:applechip-plugin:1.0-SNAPSHOT")
+		//classpath("com.applechip:applechip-plugin:1.0-SNAPSHOT")
 	}
 }
 
@@ -21,7 +22,7 @@ ext {
 	linkScmDevConnection = 'scm:git:ssh://git@github.com:maximinhan/applechip.git'
 
 	moduleProjects  = subprojects.findAll {
-		it.name.equals('applechip-core') || !it.name.equals('applechip-plugin')
+		it.name.equals('applechip-core') || it.name.equals('applechip-plugin')
 	}
 	webProjects  = subprojects.findAll {
 		it.name.equals('applechip-api') || it.name.equals('applechip-web')
@@ -52,10 +53,26 @@ List jdbcDrivers = [
 	"com.h2database:h2:1.4.181"
 ]
 
+def qualifyVersionIfNecessary(version) {
+	if (!"${jdbcName}".equals(DEFAULT_PROFILE)) {
+		def qualifier = rootProject.getProperty("BRANCH_NAME")
+		if (qualifier.startsWith("SPR-")) {
+			return version.replace('BUILD', qualifier)
+		}
+	}
+	return version
+}
+
 configure(allprojects) { project ->
 	group = "com.applechip"
 	version = "1.0-SNAPSHOT"
-	gradle.taskGraph.whenReady { taskGraph -> if (taskGraph.hasTask('release')) { version = "${version}".replace("-SNAPSHOT", "") }}
+	if (!project.hasProperty('profile') || !profile) {
+        ext.profile = DEFAULT_PROFILE
+    }
+	ext.jdbcName = String.format("%s_%s", rootProject.name, "${version}".replaceAll("\\.", "_").replaceAll("\\-", "_")).toUpperCase()
+	jdbcUrl = String.format("${jdbcUrl}", "${jdbcName}")
+	//properties['jdbcName', "${jdbcName}"]
+	//gradle.taskGraph.whenReady { taskGraph -> if (taskGraph.hasTask('release')) { version = "${version}".replace("-SNAPSHOT", "") }}
 	
     ext.javaVersion = "1.7"
     ext.javaEncoding = "UTF-8"
@@ -174,7 +191,7 @@ configure(subprojects) { project ->
 		filter(org.apache.tools.ant.filters.ReplaceTokens, 
 	          tokens: [
 	            'jdbcType': System.properties['jdbcType'],
-	            'jdbcUrl': System.properties['jdbcUrl'],
+	            'jdbcUrl': project.properties['jdbcUrl'],
 	            'jdbcUsername': System.properties['jdbcUsername'],
 	            'jdbcPassword': System.properties['jdbcPassword']
 	          ]
@@ -184,7 +201,7 @@ configure(subprojects) { project ->
 		filter(org.apache.tools.ant.filters.ReplaceTokens, 
 	          tokens: [
 	            'jdbcType': System.properties['jdbcType'],
-	            'jdbcUrl': System.properties['jdbcUrl'],
+	            'jdbcUrl': project.properties['jdbcUrl'],
 	            'jdbcUsername': System.properties['jdbcUsername'],
 	            'jdbcPassword': System.properties['jdbcPassword']
 	          ]
