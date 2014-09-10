@@ -1,8 +1,16 @@
 sourceSets {
      generated
 }
-
 sourceSets.generated.java.srcDirs = ['src/main/generated']
+/*
+sourceSets {
+	generated {
+		java {
+			srcDirs 'src/main/generated'
+		}
+	}
+}
+*/
 
 configurations {
 	querydslapt

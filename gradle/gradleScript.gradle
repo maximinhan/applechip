@@ -4,6 +4,7 @@ ext {
     createBuildInfoFileTask = "${rootProject.projectDir}/gradle/${gradleScriptVersion}/createBuildInfoFileTask.gradle"
     generateQueryDSLTask = "${rootProject.projectDir}/gradle/${gradleScriptVersion}/generateQueryDSLTask.gradle"
     uploadArchivesTask = "${rootProject.projectDir}/gradle/${gradleScriptVersion}/uploadArchivesTask.gradle"
+    generateWsdlTask = "${rootProject.projectDir}/gradle/${gradleScriptVersion}/generateWsdlTask.gradle"
     //generateSchemaTask = "http://webdav.bywook.com/resource/${gradleScriptVersion}/generateSchemaTask.gradle"
 }
 

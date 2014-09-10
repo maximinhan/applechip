@@ -231,6 +231,7 @@ configure(subprojects) { project ->
 project(":applechip-core") {
 	apply from: generateSchemaTask
 	apply from: generateQueryDSLTask
+	apply from: generateWsdlTask
 	dependencies {
 		provided("org.springframework.security:spring-security-core:$springframeworksecurityVersion")
 		provided("org.springframework.data:spring-data-commons:${springframeworkdataVersion}")
@@ -289,6 +290,7 @@ project(":applechip-core") {
 	    delete sourceSets.generated.java.srcDirs
 	}
 	jar {
+		dependsOn generateWsdl
 		dependsOn generateSchema
 	}
 //jar.dependsOn << generateSchemaTask
