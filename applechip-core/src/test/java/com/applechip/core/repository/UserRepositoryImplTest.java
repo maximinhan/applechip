@@ -17,7 +17,7 @@ public class UserRepositoryImplTest extends AbstractTransactionTest {
 
   @Test
   public void testGetAll() throws Exception {
-    log.debug("{}", userRepository.getAll());
+    log.debug("{}", userRepository.findAll());
   }
 
   @Test
@@ -26,6 +26,6 @@ public class UserRepositoryImplTest extends AbstractTransactionTest {
     user.setId("vicki");
     user.setUsername("123");
     user.setPassword("123");
-    log.debug("{}", userRepository.merge(user));
+    log.debug("{}", userRepository.save(user));
   }
 }

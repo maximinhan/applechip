@@ -31,7 +31,7 @@ public class CacheServiceImplTest extends AbstractTransactionTest {
     entity.setId("vicki");
     entity.setUsername("123");
     entity.setPassword("123");
-    entity = userRepository.merge(entity);
+    entity = userRepository.save(entity);
     log.debug("{}", entity);
     System.out.println("ttttttttttttttttttttttttttt");
     System.out.println(entity.toString());

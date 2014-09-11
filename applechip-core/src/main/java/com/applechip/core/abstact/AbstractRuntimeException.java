@@ -23,7 +23,7 @@ public abstract class AbstractRuntimeException extends RuntimeException {
   }
 
   public String getMessage(MessageSourceAccessor messageSourceAccessor) {
-    String pattern = messageSourceAccessor.getMessage("error." + getCode());
+    String pattern = messageSourceAccessor.getMessage("error." + this.getCode());
     return MessageFormat.format(pattern, arguments);
   }
 

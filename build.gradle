@@ -290,7 +290,7 @@ project(":applechip-core") {
 	    delete sourceSets.generated.java.srcDirs
 	}
 	jar {
-		dependsOn generateWsdl
+		//dependsOn generateWsdl
 		dependsOn generateSchema
 	}
 //jar.dependsOn << generateSchemaTask

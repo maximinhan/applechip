@@ -37,7 +37,9 @@ public class DatabaseProperties {
 
   private void setTransactionProperties(Properties properties) {
     Properties bean = new Properties();
-    bean.setProperty("exist*", "PROPAGATION_REQUIRED,readOnly");// ISOLATION_READ_UNCOMMITTED,timeout_30,-Exception
+    bean.setProperty("exists*", "PROPAGATION_REQUIRED,readOnly");// ISOLATION_READ_UNCOMMITTED,timeout_30,-Exception
+    bean.setProperty("count*", "PROPAGATION_REQUIRED,readOnly");
+    bean.setProperty("find*", "PROPAGATION_REQUIRED,readOnly");
     bean.setProperty("get*", "PROPAGATION_REQUIRED,readOnly");
     bean.setProperty("*", "PROPAGATION_REQUIRED");
     this.transactionProperties = bean;

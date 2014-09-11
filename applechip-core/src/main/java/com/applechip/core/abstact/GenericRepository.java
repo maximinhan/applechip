@@ -1,23 +1,37 @@
 package com.applechip.core.abstact;
 
 import java.io.Serializable;
-import java.util.List;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 
 public interface GenericRepository<T extends GenericEntity<PK>, PK extends Serializable> {
 
-  public List<T> getAll();
+	public Iterable<T> findAll(Sort sort);
 
-  public List<T> getAllDistinct();
+	public Page<T> findAll(Pageable pageable);
 
-  public long getCount();
+	public <S extends T> S save(S entity);
 
-  public T get(PK id);
+	public <S extends T> Iterable<S> save(Iterable<S> entities);
 
-  public boolean exist(PK id);
+	public T findOne(PK id);
 
-  public T merge(T object);
+	public boolean exists(PK id);
 
-  public void remove(T object);
+	public Iterable<T> findAll();
 
-  public void remove(PK id);
+	public Iterable<T> findAll(Iterable<PK> ids);
+
+	public long count();
+
+	public void delete(PK id);
+
+	public void delete(T entity);
+
+	public void delete(Iterable<? extends T> entities);
+
+	public void deleteAll();
+
 }

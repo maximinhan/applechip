@@ -1,53 +1,81 @@
 package com.applechip.core.abstact;
 
 import java.io.Serializable;
-import java.util.List;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 
 public class GenericServiceImpl<T extends GenericEntity<PK>, PK extends Serializable> implements GenericService<T, PK> {
 
-  protected GenericRepository<T, PK> repository;
+	protected GenericRepository<T, PK> repository;
 
-  public GenericServiceImpl(GenericRepository<T, PK> repository) {
-    this.repository = repository;
-  }
+	public GenericServiceImpl(GenericRepository<T, PK> repository) {
+		this.repository = repository;
+	}
 
-  @Override
-  public List<T> getAll() {
-    return repository.getAll();
-  }
+	@Override
+	public Iterable<T> findAll(Sort sort) {
+		return repository.findAll();
+	}
 
-  @Override
-  public List<T> getAllDistinct() {
-    return repository.getAllDistinct();
-  }
+	@Override
+	public Page<T> findAll(Pageable pageable) {
+		return repository.findAll(pageable);
+	}
 
-  @Override
-  public long getCount() {
-    return repository.getCount();
-  }
+	@Override
+	public <S extends T> S save(S entity) {
+		return repository.save(entity);
+	}
 
-  @Override
-  public T get(PK id) {
-    return repository.get(id);
-  }
+	@Override
+	public <S extends T> Iterable<S> save(Iterable<S> entities) {
+		return repository.save(entities);
+	}
 
-  @Override
-  public boolean exist(PK id) {
-    return repository.exist(id);
-  }
+	@Override
+	public T findOne(PK id) {
+		return repository.findOne(id);
+	}
 
-  @Override
-  public T merge(T object) {
-    return repository.merge(object);
-  }
+	@Override
+	public boolean exists(PK id) {
+		return repository.exists(id);
+	}
 
-  @Override
-  public void remove(T object) {
-    repository.remove(object);
-  }
+	@Override
+	public Iterable<T> findAll() {
+		return repository.findAll();
+	}
 
-  @Override
-  public void remove(PK id) {
-    repository.remove(id);
-  }
+	@Override
+	public Iterable<T> findAll(Iterable<PK> ids) {
+		return repository.findAll(ids);
+	}
+
+	@Override
+	public long count() {
+		return repository.count();
+	}
+
+	@Override
+	public void delete(PK id) {
+		repository.delete(id);
+	}
+
+	@Override
+	public void delete(T entity) {
+		repository.delete(entity);
+	}
+
+	@Override
+	public void delete(Iterable<? extends T> entities) {
+		repository.delete(entities);
+	}
+
+	@Override
+	public void deleteAll() {
+		repository.deleteAll();
+	}
 }

@@ -1,26 +1,17 @@
 package com.applechip.core;
 
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.util.List;
 
 import javax.annotation.PostConstruct;
 
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.commons.configuration.reloading.FileChangedReloadingStrategy;
-import org.hibernate.dialect.Dialect;
-import org.hibernate.dialect.MySQL5InnoDBDialect;
-import org.hibernate.engine.jdbc.internal.FormatStyle;
-import org.hibernate.tool.hbm2ddl.DatabaseMetadata;
-import org.hibernate.tool.hbm2ddl.SchemaUpdateScript;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.Resource;
-import org.springframework.format.Formatter;
 
 import com.applechip.core.exception.SystemException;
 import com.applechip.core.properties.CoreProperties;
@@ -44,15 +35,13 @@ public class CoreConfig {
 	@PostConstruct
 	@Bean
 	public CoreProperties coreProperties() {
-		return new CoreProperties(
-				PropertiesLoaderUtil.loadProperties(coreProperties));
+		return new CoreProperties(PropertiesLoaderUtil.loadProperties(coreProperties));
 	}
 
 	@PostConstruct
 	@Bean
 	public DatabaseProperties databaseProperties() {
-		return DatabaseProperties.getInstance(PropertiesLoaderUtil
-				.loadProperties(databaseProperties));
+		return DatabaseProperties.getInstance(PropertiesLoaderUtil.loadProperties(databaseProperties));
 	}
 
 	// @PostConstruct
@@ -60,18 +49,14 @@ public class CoreConfig {
 	public PropertiesConfiguration propertiesConfiguration() {
 		PropertiesConfiguration propertiesConfiguration = null;
 		try {
-			propertiesConfiguration = new PropertiesConfiguration(
-					runtimeProperties.getFile());
-			propertiesConfiguration.setReloadingStrategy(this
-					.fileChangedReloadingStrategy());
-		} catch (ConfigurationException e) {
-			throw new SystemException(e,
-					"runtimeProperties create fail... message: %s",
-					e.getMessage());
-		} catch (IOException e) {
-			throw new SystemException(
-					e,
-					"runtimeProperties create fail... filename: %s, message: %s",
+			propertiesConfiguration = new PropertiesConfiguration(runtimeProperties.getFile());
+			propertiesConfiguration.setReloadingStrategy(this.fileChangedReloadingStrategy());
+		}
+		catch (ConfigurationException e) {
+			throw new SystemException(e, "runtimeProperties create fail... message: %s", e.getMessage());
+		}
+		catch (IOException e) {
+			throw new SystemException(e, "runtimeProperties create fail... filename: %s, message: %s",
 					runtimeProperties.getFilename(), e.getMessage());
 		}
 		return propertiesConfiguration;
@@ -79,16 +64,14 @@ public class CoreConfig {
 
 	private FileChangedReloadingStrategy fileChangedReloadingStrategy() {
 		FileChangedReloadingStrategy fileChangedReloadingStrategy = new FileChangedReloadingStrategy();
-		fileChangedReloadingStrategy.setRefreshDelay(this.coreProperties()
-				.getRefreshDelay());
+		fileChangedReloadingStrategy.setRefreshDelay(this.coreProperties().getRefreshDelay());
 		return fileChangedReloadingStrategy;
 	}
 
 	@Bean
 	public RuntimeProperties runtimeProperties() {
 		RuntimeProperties runtimeProperties = new RuntimeProperties(
-				PropertiesLoaderUtil.loadProperties(coreProperties),
-				this.propertiesConfiguration());
+				PropertiesLoaderUtil.loadProperties(coreProperties), this.propertiesConfiguration());
 		return runtimeProperties;
 	}
 }

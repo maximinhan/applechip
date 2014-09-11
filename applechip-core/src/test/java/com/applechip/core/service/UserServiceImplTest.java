@@ -29,7 +29,7 @@ public class UserServiceImplTest extends AbstractTest {
       user = getUser();
     }
     user.setPassword("testMerge1");
-    userService.merge(user);
+    userService.save(user);
   }
 
   @Test
@@ -41,12 +41,12 @@ public class UserServiceImplTest extends AbstractTest {
       user = getUser();
     }
     user.setPassword("testMerge2");
-    userService.merge(user);
+    userService.save(user);
   }
 
   @Test
   public void testGet() throws Exception {
-    log.debug("{}", userService.getAll());
+    log.debug("{}", userService.findAll());
   }
 
   private User getUser() {

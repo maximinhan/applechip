@@ -78,6 +78,10 @@ public class CustomTransactionManagementConfigurer implements TransactionManagem
       localContainerEntityManagerFactoryBean.setJpaProperties(databaseProperties.getHibernateProperties());
       localContainerEntityManagerFactoryBean.setPersistenceUnitName(CoreConstant.PERSISTENCE_UNIT_NAME);
       localContainerEntityManagerFactoryBean.setPackagesToScan(User.class.getPackage().getName());
+//      <property name="persistenceProviderClass" value="org.hibernate.ejb.HibernatePersistence" />
+//      <property name="loadTimeWeaver">
+//      <bean class="org.springframework.instrument.classloading.InstrumentationLoadTimeWeaver" />
+//    </property>
       localContainerEntityManagerFactoryBean.afterPropertiesSet();
       bean = localContainerEntityManagerFactoryBean.getObject();
     } catch (Exception e) {

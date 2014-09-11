@@ -1,7 +1,6 @@
 package com.applechip.core.abstact;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -9,73 +8,145 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+
+import org.apache.commons.collections.IteratorUtils;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 
 import com.applechip.core.constant.CoreConstant;
 
-public class GenericRepositoryImpl<T extends GenericEntity<PK>, PK extends Serializable> implements GenericRepository<T, PK> {
+//@RepositoryDefinition(domainClass = Employee.class, idClass = Long.class)
+public class GenericRepositoryImpl<T extends GenericEntity<PK>, PK extends Serializable> implements
+		GenericRepository<T, PK> {
 
-  @PersistenceContext(unitName = CoreConstant.PERSISTENCE_UNIT_NAME)
-  protected EntityManager entityManager;
+	@PersistenceContext(unitName = CoreConstant.PERSISTENCE_UNIT_NAME)
+	protected EntityManager entityManager;
 
-  private Class<T> persistentClass;
+	private Class<T> clazz;
 
-  public GenericRepositoryImpl(final Class<T> persistentClass) {
-    this.persistentClass = persistentClass;
-  }
+	public GenericRepositoryImpl(final Class<T> persistentClass) {
+		this.clazz = persistentClass;
+	}
 
-  @Override
-  public List<T> getAll() {
-    CriteriaQuery<T> query = getCriteriaBuilder().createQuery(this.persistentClass);
-    query.select(query.from(this.persistentClass));
-    return this.entityManager.createQuery(query).getResultList();
-  }
+	@Override
+	public Iterable<T> findAll(Sort sort) {
+		CriteriaQuery<T> criteriaQuery = this.getCriteriaBuilder().createQuery(this.clazz);
+		criteriaQuery.select(criteriaQuery.from(this.clazz));
+		criteriaQuery.orderBy(IteratorUtils.toList(sort.iterator()));// Lists.newArrayList(sort.iterator());
+		return this.entityManager.createQuery(criteriaQuery).getResultList();
+	}
 
-  @Override
-  public List<T> getAllDistinct() {
-    Collection<T> result = new LinkedHashSet<T>(getAll());
-    return new ArrayList<T>(result);
-  }
+	// java8...
+	// public static <T> ArrayList<T> toArrayList(final Iterator<T> iterator) {
+	// return StreamSupport.stream(Spliterators.spliteratorUnknownSize(iterator,
+	// Spliterator.ORDERED), false)
+	// .collect(Collectors.toCollection(ArrayList::new));
+	// }
 
-  @Override
-  public long getCount() {
-    CriteriaBuilder builder = getCriteriaBuilder();
-    CriteriaQuery<Long> query = builder.createQuery(Long.class);
-    query.select(builder.count(query.from(this.persistentClass)));
-    try {
-      return this.entityManager.createQuery(query).getSingleResult();
-    } catch (NoResultException e) {
-      return 0;
-    }
-  }
+	@Override
+	public Page<T> findAll(Pageable pageable) {
+		CriteriaQuery<T> criteriaQuery = this.getCriteriaBuilder().createQuery(this.clazz);
+		criteriaQuery.select(criteriaQuery.from(this.clazz));
+		criteriaQuery.orderBy(IteratorUtils.toList(pageable.getSort().iterator()));
+		TypedQuery<T> typedQuery = this.entityManager.createQuery(criteriaQuery);
+		typedQuery.setFirstResult(pageable.getOffset());
+		typedQuery.setMaxResults((pageable.getOffset() * pageable.getPageNumber()) + pageable.getPageSize());
+		List<T> list = typedQuery.getResultList();
+		return new PageImpl<T>(list, pageable, list.size());
+	}
 
-  @Override
-  public T get(PK id) {
-    return this.entityManager.find(this.persistentClass, id);
-  }
+	@Override
+	public <S extends T> S save(S entity) {
+		return this.entityManager.merge(entity);
+	}
 
-  @Override
-  public boolean exist(PK id) {
-    return get(id) != null;
-  }
+	@Override
+	public <S extends T> Iterable<S> save(Iterable<S> entities) {
+		Collection<S> collection = new LinkedHashSet<S>();
+		for (S entity : entities) {
+			collection.add(this.save(entity));
+		}
+		return collection;// new ArrayList<S>(collection)
+	}
 
-  @Override
-  public T merge(T object) {
-    return this.entityManager.merge(object);
-  }
+	@Override
+	public T findOne(PK id) {
+		return this.entityManager.find(this.clazz, id);
+	}
 
-  @Override
-  public void remove(T object) {
-    this.entityManager.remove(object);
-  }
+	@Override
+	public boolean exists(PK id) {
+		return this.findOne(id) != null;
+	}
 
-  @Override
-  public void remove(PK id) {
-    this.entityManager.remove(get(id));
-  }
+	@Override
+	public Iterable<T> findAll() {
+		CriteriaQuery<T> criteriaQuery = this.getCriteriaBuilder().createQuery(this.clazz);
+		criteriaQuery.select(criteriaQuery.from(this.clazz));
+		return this.entityManager.createQuery(criteriaQuery).getResultList();
+	}
 
-  private CriteriaBuilder getCriteriaBuilder() {
-    return this.entityManager.getCriteriaBuilder();
-  }
+	@Override
+	public Iterable<T> findAll(Iterable<PK> ids) {
+		CriteriaQuery<T> criteriaQuery = this.getCriteriaBuilder().createQuery(this.clazz);
+		Root<T> root = criteriaQuery.from(this.clazz);
+		criteriaQuery.where(getPredicates(root, ids, "id"));
+		criteriaQuery.select(root);
+		return this.entityManager.createQuery(criteriaQuery).getResultList();
+	}
+
+	@Override
+	public long count() {
+		CriteriaBuilder criteriaBuilder = this.getCriteriaBuilder();
+		CriteriaQuery<Long> criteriaQuery = criteriaBuilder.createQuery(Long.class);
+		criteriaQuery.select(criteriaBuilder.count(criteriaQuery.from(this.clazz)));
+		try {
+			return this.entityManager.createQuery(criteriaQuery).getSingleResult();
+			// return ((Long) this.entityManager.createQuery(criteriaQuery).getSingleResult());
+		}
+		catch (NoResultException e) {
+			return 0;
+		}
+	}
+
+	@Override
+	public void delete(PK id) {
+		this.entityManager.remove(this.findOne(id));
+	}
+
+	@Override
+	public void delete(T entity) {
+		this.entityManager.remove(entity);
+
+	}
+
+	@Override
+	public void delete(Iterable<? extends T> entities) {
+		for (T entity : entities) {
+			this.delete(entity);
+		}
+	}
+
+	@Override
+	public void deleteAll() {
+		for (T entity : this.findAll()) {
+			this.delete(entity);
+		}
+	}
+
+	private CriteriaBuilder getCriteriaBuilder() {
+		return this.entityManager.getCriteriaBuilder();
+	}
+
+	private Predicate[] getPredicates(Root<T> root, Iterable<PK> ids, String pk) {
+		Predicate[] predicates = { root.get(pk).in(ids) };
+		return predicates;
+	}
 }
