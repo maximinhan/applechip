@@ -2,6 +2,9 @@ package com.applechip.core.properties;
 
 import java.util.Properties;
 
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Transactional;
+
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
@@ -35,6 +38,8 @@ public class DatabaseProperties {
     this.setTransactionProperties(properties);
   }
 
+  
+//  @Transactional(isolation=Isolation.REPEATABLE_READ)
   private void setTransactionProperties(Properties properties) {
     Properties bean = new Properties();
     bean.setProperty("exists*", "PROPAGATION_REQUIRED,readOnly");// ISOLATION_READ_UNCOMMITTED,timeout_30,-Exception

@@ -70,7 +70,7 @@ configure(allprojects) { project ->
         ext.profile = DEFAULT_PROFILE
     }
 	ext.jdbcName = String.format("%s_%s", rootProject.name, "${version}".replaceAll("\\.", "_").replaceAll("\\-", "_")).toUpperCase()
-	jdbcUrl = String.format("${jdbcUrl}", "${jdbcName}")
+	ext.jdbcUrl = String.format("${jdbcUrl}", "${jdbcName}")
 	//properties['jdbcName', "${jdbcName}"]
 	//gradle.taskGraph.whenReady { taskGraph -> if (taskGraph.hasTask('release')) { version = "${version}".replace("-SNAPSHOT", "") }}
 	
@@ -187,20 +187,20 @@ configure(subprojects) { project ->
 	processResources {
 		filter(org.apache.tools.ant.filters.ReplaceTokens, 
 	          tokens: [
-	            'jdbcType': System.properties['jdbcType'],
+	            'jdbcType': project.properties['jdbcType'],
 	            'jdbcUrl': project.properties['jdbcUrl'],
-	            'jdbcUsername': System.properties['jdbcUsername'],
-	            'jdbcPassword': System.properties['jdbcPassword']
+	            'jdbcUsername': project.properties['jdbcUsername'],
+	            'jdbcPassword': project.properties['jdbcPassword']
 	          ]
 	        )
 		}
 	processTestResources {
 		filter(org.apache.tools.ant.filters.ReplaceTokens, 
 	          tokens: [
-	            'jdbcType': System.properties['jdbcType'],
+	            'jdbcType': project.properties['jdbcType'],
 	            'jdbcUrl': project.properties['jdbcUrl'],
-	            'jdbcUsername': System.properties['jdbcUsername'],
-	            'jdbcPassword': System.properties['jdbcPassword']
+	            'jdbcUsername': project.properties['jdbcUsername'],
+	            'jdbcPassword': project.properties['jdbcPassword']
 	          ]
 	        )
 		}
