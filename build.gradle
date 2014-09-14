@@ -100,26 +100,15 @@ configure(allprojects) { project ->
 }
 
 configure(webProjects) {
-	configurations { jetty9 }
     apply plugin: 'war'
     apply plugin: 'eclipse-wtp'
     apply from: createBuildInfoFileTask
     webAppDirName = 'src/main/webapp'
     dependencies {
-    	jetty9 'org.eclipse.jetty:jetty-ant:9.2.3.v20140905'
-    	jetty9 'org.eclipse.jetty:jetty-webapp:9.2.3.v20140905'
-    	jetty9 'org.eclipse.jetty:jetty-servlet:9.2.3.v20140905'
-    	jetty9 'org.eclipse.jetty:jetty-server:9.2.3.v20140905'
-    	jetty9 'org.eclipse.jetty:jetty-util:9.2.3.v20140905'
-    	jetty9 'org.eclipse.jetty:jetty-security:9.2.3.v20140905'
-    	jetty9 'org.eclipse.jetty:jetty-http:9.2.3.v20140905'
-    	jetty9 'org.eclipse.jetty:jetty-io:9.2.3.v20140905'
-    	jetty9 'org.eclipse.jetty:jetty-plus:9.2.3.v20140905'
-    	jetty9 'org.eclipse.jetty:jetty-jndi:9.2.3.v20140905'
-    	jetty9 'org.eclipse.jetty:jetty-annotations:9.2.3.v20140905'
-    	jetty9 'org.eclipse.jetty:jetty-xml:9.2.3.v20140905'
-        provided 'javax.servlet:javax.servlet-api:3.1.0'
-	    compile(project(":applechip-core"))
+        providedCompile 'javax.servlet:javax.servlet-api:3.0.1'
+        compile 'jstl:jstl:1.2'
+        //providedCompile 'javax.servlet.jsp.jstl:jstl:1.2'
+	    //compile(project(":applechip-core"))
 	    provided("org.springframework.security:spring-security-core:$springframeworksecurityVersion")
 		provided("org.springframework.data:spring-data-commons:${springframeworkdataVersion}")
 		provided("org.springframework:spring-orm:$springframeworkVersion")
@@ -163,38 +152,6 @@ configure(webProjects) {
     		into('WEB-INF/classes')
     	}
     }
-    ant {
-        taskdef(name: 'jettyRun', classname: 'org.eclipse.jetty.ant.JettyRunTask', classpath: configurations.jetty9.asPath)
-        taskdef(name: 'jettyStop', classname: 'org.eclipse.jetty.ant.JettyStopTask', classpath: configurations.jetty9.asPath)
-	}
-	 
-	project.ext {
-	        contextPath = '/'
-	        port = 8080
-	        stopPort = stopKey = 9999
-	}
-	 
-	task jettyRun << {
-	        ant.jettyRun(jettyPort: project.ext.port, scanIntervalSeconds: 3) {
-	                webApp(war: webAppDir, contextPath: project.ext.contextPath, extraClasspath: configurations.compile.asPath)
-	        }
-	}
-	 
-	task jettyRunWar(dependsOn: war) << {
-	        ant.jettyRun(jettyPort: project.ext.port) {
-	                webApp(war: war.archivePath, contextPath: project.ext.contextPath)
-	        }
-	}
-	 
-	task jettyStart(dependsOn: war) << {
-	        ant.jettyRun(daemon: true, jettyPort: project.ext.port, stopPort: project.ext.stopPort, stopKey: project.ext.stopKey) {
-	                webApp(war: war.archivePath, contextPath: project.ext.contextPath)
-	        }
-	}
-	 
-	task jettyStop << {
-	        ant.jettyStop(stopWait: 1, stopPort: project.ext.stopPort, stopKey: project.ext.stopKey)
-	}
 }
 
 configure(rootProject) {
@@ -219,7 +176,7 @@ configure(subprojects) { project ->
 		provided("commons-dbcp:commons-dbcp:1.4")
 		provided("commons-codec:commons-codec:1.9")
 		provided("commons-pool:commons-pool:1.6")
-		provided("org.slf4j:jcl-over-slf4j:${slf4jVersion}")
+        provided("org.slf4j:jcl-over-slf4j:${slf4jVersion}")
 	    provided("org.slf4j:slf4j-api:${slf4jVersion}")
 	    provided("ch.qos.logback:logback-core:1.1.2")
 	    provided("ch.qos.logback:logback-classic:1.1.2")
