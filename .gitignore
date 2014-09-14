@@ -4,6 +4,8 @@ classes
 assets
 gen
 generated
+bower_components
+node_modules
 applechip-*/gradle
 applechip-*/gradlew
 applechip-*/gradlew.bat
@@ -46,3 +48,4 @@ out
 test-output
 atlassian-ide-plugin.xml
 .gradletasknamecache
+/.apt_generated/
