@@ -219,6 +219,7 @@ configure(subprojects) { project ->
 		provided("commons-dbcp:commons-dbcp:1.4")
 		provided("commons-codec:commons-codec:1.9")
 		provided("commons-pool:commons-pool:1.6")
+		provided("org.slf4j:jcl-over-slf4j:${slf4jVersion}")
 	    provided("org.slf4j:slf4j-api:${slf4jVersion}")
 	    provided("ch.qos.logback:logback-core:1.1.2")
 	    provided("ch.qos.logback:logback-classic:1.1.2")
