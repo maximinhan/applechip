@@ -29,12 +29,12 @@ import org.springframework.transaction.interceptor.NameMatchTransactionAttribute
 import org.springframework.transaction.interceptor.TransactionAttributeSource;
 import org.springframework.transaction.interceptor.TransactionInterceptor;
 
+import com.applechip.core.configurer.support.CustomEventListener;
+import com.applechip.core.configurer.support.CustomHibernateJpaVendorAdapter;
 import com.applechip.core.constant.CoreConstant;
 import com.applechip.core.entity.User;
 import com.applechip.core.exception.SystemException;
 import com.applechip.core.properties.DatabaseProperties;
-import com.applechip.core.repository.CustomHibernateJpaVendorAdapter;
-import com.applechip.core.repository.EntityListener;
 
 @Configuration
 @EnableAspectJAutoProxy(proxyTargetClass = true)
@@ -45,7 +45,18 @@ public class CustomTransactionManagementConfigurer implements TransactionManagem
   private DatabaseProperties databaseProperties;
 
   @Autowired
-  private EntityListener entityListener;
+  private CustomEventListener entityListener;
+  
+//  <bean id="performanceMonitor" class="com.rsupport.rc5x.common.util.PerformanceMonitoringInterceptor">
+//  <property name="systemName" value="PA" />
+//  <property name="enabled" value="true" />
+//  <property name="statLogFrequency" value="10" />
+//  <property name="warningThreshold" value="3000" />
+//</bean>
+//<aop:config>
+//  <aop:advisor id="managerPerf" advice-ref="performanceMonitor" pointcut="execution(* com..*.*Manager.*(..))" order="2" />
+//  <aop:advisor id="servicePerf" advice-ref="performanceMonitor" pointcut="execution(* com..*.*Service.*(..))" order="3" />
+//</aop:config>
 
   @Override
   @Bean

@@ -1,5 +1,7 @@
 package com.applechip.api.controller;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,14 +16,18 @@ import java.util.Map;
  */
 @Controller
 public class ExampleContorller {
-  @RequestMapping(value = "/hello/{userName}", method = RequestMethod.GET)
-  @ResponseBody
-  public Map<String, String> helloApi(@PathVariable String userName) {
-    Map<String, String> helloMap = new HashMap<>();
 
-    helloMap.put("ProjectName", "AppleChip");
-    helloMap.put("User", userName);
+	@Autowired
+	private PageableHandlerMethodArgumentResolver pageableHandlerMethodArgumentResolver;
 
-    return helloMap;
-  }
+	@RequestMapping(value = "/hello/{userName}", method = RequestMethod.GET)
+	@ResponseBody
+	public Map<String, String> helloApi(@PathVariable String userName) {
+		Map<String, String> helloMap = new HashMap<>();
+
+		helloMap.put("ProjectName", "AppleChip");
+		helloMap.put("User", userName);
+
+		return helloMap;
+	}
 }

@@ -19,19 +19,19 @@ import com.applechip.core.constant.ColumnSizeConstant;
 
 @Entity
 @Table(name = "mt_role")
-@EqualsAndHashCode(callSuper = false, of = {"id"})
+@EqualsAndHashCode(callSuper = false, of = { "id" })
 @NoArgsConstructor
 @Data
 public class Role extends GenericEntity<String> implements GrantedAuthority {
 
-  private static final long serialVersionUID = -5866977626393453234L;
+	private static final long serialVersionUID = -5866977626393453234L;
 
-  @Id
-  @GeneratedValue(strategy = GenerationType.AUTO, generator = "system-uuid")
-  @GenericGenerator(name = "system-uuid", strategy = "uuid")
-  @Column(name = "id", length = ColumnSizeConstant.UUID)
-  private String id;
+	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO, generator = "system-uuid")
+	@GenericGenerator(name = "system-uuid", strategy = "uuid2")
+	@Column(name = "_id", unique = true, length = ColumnSizeConstant.UUID)
+	private String id;
 
-  @Column(name = "authority", length = 20, unique = true)
-  private String authority;
+	@Column(name = "authority", length = 20, unique = true)
+	private String authority;
 }

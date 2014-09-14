@@ -1,9 +1,9 @@
 package com.applechip.core.repository;
 
+import com.applechip.core.entity.QUser;
 import org.springframework.stereotype.Repository;
 
 import com.applechip.core.abstact.GenericRepositoryImpl;
-import com.applechip.core.entity.QUser;
 import com.applechip.core.entity.User;
 import com.mysema.query.jpa.impl.JPAQuery;
 
