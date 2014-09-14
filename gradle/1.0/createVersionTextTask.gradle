@@ -1,16 +1,14 @@
-ext.build = new Date().format('yyyy-MM-dd HH:mm:ss S')
-version = new ProjectVersion(version, System.env.SOURCE_BUILD_NUMBER)
-class ProjectVersion {
+ext.version = new Version(project.version, System.env.SOURCE_BUILD_NUMBER)
+class Version {
 	String version
 	String build
 	
-	ProjectVersion(String version, String build) {
+	Version(String version, String build) {
 		this.version = version
 		this.build = build
 	}
 	@Override
 	String toString() {
-		String version = version
 		if(build) {
 			version += ".$build"
 		}
@@ -18,11 +16,11 @@ class ProjectVersion {
 	}
 }
 
-task createBuildInfoFile << {
+task createVersionText << {
 	def buildInfoFile = new File("$buildDir/version.txt")
 	Properties properties = new Properties()
 	properties.setProperty('project-name', project.name)
-	properties.setProperty('project-version', project.version.toString())
-	properties.setProperty('project-build', build)
+	properties.setProperty('project-version', version.toString())
+	properties.setProperty('project-date', new Date().format('yyyy-MM-dd HH:mm:ss S'))
 	properties.store(buildInfoFile.newWriter(), null)
 }

@@ -1,0 +1,269 @@
+def qualifyVersionIfNecessary(version) {
+	if (!"${jdbcName}".equals(DEFAULT_PROFILE)) {
+		def qualifier = rootProject.getProperty("BRANCH_NAME")
+		if (qualifier.startsWith("SPR-")) {
+			return version.replace('BUILD', qualifier)
+		}
+	}
+	return version
+}
+
+
+	if (!project.hasProperty('profile') || !profile) {
+        ext.profile = DEFAULT_PROFILE
+    }
+    
+    
+    
+    buildscript {
+    repositories {
+        maven { url "http://nexus.bywook.com/content/groups/public" }
+        mavenCentral()
+        maven { url "http://repo.springsource.org/plugins-release" }
+	}
+	dependencies {
+		classpath("org.springframework.build.gradle:propdeps-plugin:0.0.7")
+		//println "$project.rootProject.projectDir/applechip-plugin/build/libs/applechip-plugin-${version}.jar"
+		//classpath files("D:/dev/workspace-applechip/applechip-plugin-${version}.jar")
+		//classpath("com.applechip:applechip-plugin:1.0-SNAPSHOT")
+	}
+}
+
+
+allproject
+	/*
+	configurations {
+		all {
+			transitive = false
+		}
+	    provided {
+		    dependencies.all { dep ->
+	            exclude group: "*", module: "*"
+	            //configurations.default.exclude group: dep.group, module: dep.name
+	        }
+        }
+	    compile.extendsFrom provided
+	}
+	*/
+	
+	
+	
+		configurations { jetty9 }
+		    	jetty9 'org.eclipse.jetty:jetty-ant:9.2.3.v20140905'
+    	jetty9 'org.eclipse.jetty:jetty-webapp:9.2.3.v20140905'
+    	jetty9 'org.eclipse.jetty:jetty-servlet:9.2.3.v20140905'
+    	jetty9 'org.eclipse.jetty:jetty-server:9.2.3.v20140905'
+    	jetty9 'org.eclipse.jetty:jetty-util:9.2.3.v20140905'
+    	jetty9 'org.eclipse.jetty:jetty-security:9.2.3.v20140905'
+    	jetty9 'org.eclipse.jetty:jetty-http:9.2.3.v20140905'
+    	jetty9 'org.eclipse.jetty:jetty-io:9.2.3.v20140905'
+    	jetty9 'org.eclipse.jetty:jetty-plus:9.2.3.v20140905'
+    	jetty9 'org.eclipse.jetty:jetty-jndi:9.2.3.v20140905'
+    	jetty9 'org.eclipse.jetty:jetty-annotations:9.2.3.v20140905'
+    	jetty9 'org.eclipse.jetty:jetty-xml:9.2.3.v20140905'
+    	
+    	ant {
+        taskdef(name: 'jettyRun', classname: 'org.eclipse.jetty.ant.JettyRunTask', classpath: configurations.jetty9.asPath)
+        taskdef(name: 'jettyStop', classname: 'org.eclipse.jetty.ant.JettyStopTask', classpath: configurations.jetty9.asPath)
+	}
+	 
+	project.ext {
+	        contextPath = '/'
+	        port = 8080
+	        stopPort = stopKey = 9999
+	}
+	 
+	task jettyRun << {
+	        ant.jettyRun(jettyPort: project.ext.port, scanIntervalSeconds: 3) {
+	                webApp(war: webAppDir, contextPath: project.ext.contextPath, extraClasspath: configurations.compile.asPath)
+	        }
+	}
+	 
+	task jettyRunWar(dependsOn: war) << {
+	        ant.jettyRun(jettyPort: project.ext.port) {
+	                webApp(war: war.archivePath, contextPath: project.ext.contextPath)
+	        }
+	}
+	 
+	task jettyStart(dependsOn: war) << {
+	        ant.jettyRun(daemon: true, jettyPort: project.ext.port, stopPort: project.ext.stopPort, stopKey: project.ext.stopKey) {
+	                webApp(war: war.archivePath, contextPath: project.ext.contextPath)
+	        }
+	}
+	 
+	task jettyStop << {
+	        ant.jettyStop(stopWait: 1, stopPort: project.ext.stopPort, stopKey: project.ext.stopKey)
+	}
+	
+	
+	
+	
+	
+	
+	
+	//jar.dependsOn << generateSchemaTask
+	/*
+apply plugin: 'applechip-plugin'
+jar.dependsOn << hibernateTask
+applechipSetting {
+jdbcType = "${jdbcType}".toString()
+jdbcUrl = "${jdbcUrl}".toString()
+jdbcUsername = "${jdbcUsername}".toString()
+jdbcPassword = System.properties['jdbcPassword']
+}
+*/
+
+
+
+plugin
+/*
+sourceSets.main.resources.srcDirs += "src/main/java"
+sourceSets {
+main {
+compileClasspath += configurations.provided
+runtimeClasspath += configurations.provided
+}
+test {
+compileClasspath += configurations.provided
+runtimeClasspath += configurations.provided
+}
+}
+*/
+
+core --소스파일 두개 생기는 에러
+	//sourceSets.main.output.resourcesDir = sourceSets.main.output.classesDir
+	//sourceSets.test.output.resourcesDir = sourceSets.test.output.classesDir
+	
+	
+	
+	
+	
+	
+	wsdl task temp
+	/*
+sourceSets {
+	generated {
+		java {
+			srcDirs 'src/main/generated'
+		}
+	}
+}
+
+
+configurations {
+    apacheCxf
+}
+*/
+/*
+dependencies {
+	def cxfVersion = '3.0.1'
+    apacheCxf(
+        "org.apache.cxf:cxf-tools-common:${cxfVersion}",
+        "org.apache.cxf.services.wsn:cxf-services-wsn-osgi:${cxfVersion}",
+        "org.apache.cxf:cxf-tools-wsdlto-core:${cxfVersion}",
+        "org.apache.cxf:cxf-tools-wsdlto-frontend-jaxws:${cxfVersion}",
+        "org.apache.cxf:cxf-tools-wsdlto-databinding-jaxb:${cxfVersion}"
+        )
+}
+*/
+
+webProject
+    /*
+    clean {
+        delete project.file('/src/main/webapp/WEB-INF/classes'), project.file('/src/main/webapp/WEB-INF/lib')
+    }
+    */
+    
+        /*
+    eclipse {
+        wtp {
+            facet {
+                facet name: 'jst.web', version: '3.0'
+                facet name: 'jst.java', version: '1.7'
+                facet name: 'wst.jsdt.web', version: '1.0'
+            }
+        }
+    }
+    */
+        //webAppDirName = 'src/main/webapp'
+        
+        
+        
+        
+        war option
+        //from 'src/main/webapp/files' into 'files'
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        이클립스 세팅
+        	/*
+	eclipse.classpath.file {
+	    beforeMerged { classpath -> 
+	        classpath.entries.clear()
+	    }
+	    whenMerged {  cp -> 
+	        cp.entries.findAll { it instanceof org.gradle.plugins.ide.eclipse.model.SourceFolder  && it.path.startsWith("src/main/") }*.output = "build/classes/main" 
+	        cp.entries.findAll { it instanceof org.gradle.plugins.ide.eclipse.model.SourceFolder  && it.path.startsWith("src/test/") }*.output = "build/classes/test" 
+	        cp.entries.removeAll { it.kind == "output" }
+	    }
+	}
+	*/
+	
+	/*
+	eclipse.project.file.beforeMerged { project ->
+		project.natures.clear()
+	}*/
+	
+	
+	
+	
+	구식 리소스 파라미터 바꾸기
+	/*
+	processResources {
+		filter(org.apache.tools.ant.filters.ReplaceTokens, 
+	          tokens: [
+	            'jdbcType': project.properties['jdbcType'],
+	            'jdbcUrl': project.properties['jdbcUrl'],
+	            'jdbcUsername': project.properties['jdbcUsername'],
+	            'jdbcPassword': project.properties['jdbcPassword']
+	          ]
+	    )
+	}
+	processTestResources {
+		filter(org.apache.tools.ant.filters.ReplaceTokens, 
+	          tokens: [
+	            'jdbcType': project.properties['jdbcType'],
+	            'jdbcUrl': project.properties['jdbcUrl'],
+	            'jdbcUsername': project.properties['jdbcUsername'],
+	            'jdbcPassword': project.properties['jdbcPassword']
+	          ]
+	    )
+	}
+	*/

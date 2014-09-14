@@ -1,44 +1,19 @@
 sourceSets {
-     generated
+    generated {
+        java {
+            srcDirs = ['src/main/generated']
+        }
+    }
 }
-sourceSets.generated.java.srcDirs = ['src/main/generated']
-/*
-sourceSets {
-	generated {
-		java {
-			srcDirs 'src/main/generated'
-		}
-	}
-}
-*/
-
-configurations {
-    apacheCxf
-}
-
-/*
-dependencies {
-	def cxfVersion = '3.0.1'
-    apacheCxf(
-        "org.apache.cxf:cxf-tools-common:${cxfVersion}",
-        "org.apache.cxf.services.wsn:cxf-services-wsn-osgi:${cxfVersion}",
-        "org.apache.cxf:cxf-tools-wsdlto-core:${cxfVersion}",
-        "org.apache.cxf:cxf-tools-wsdlto-frontend-jaxws:${cxfVersion}",
-        "org.apache.cxf:cxf-tools-wsdlto-databinding-jaxb:${cxfVersion}"
-        )
-}
-*/
 dependencies {
 	def cxfVersion = '3.0.1'
     compile("org.apache.ws.commons.schema:XmlSchema:1.4.7")
     compile("wsdl4j:wsdl4j:1.6.3")
-    compile("com.sun.xml.bind:jaxb-xjc:2.1.16")
-    compile("com.sun.xml.bind:jaxb-impl:2.1.16")
-    //compile("com.sun.xml.bind:jaxb-core:2.1.14")
+    compile("com.sun.xml.bind:jaxb-xjc:2.1.14")
+    compile("com.sun.xml.bind:jaxb-impl:2.1.14")
     compile("org.apache.cxf:cxf-rt-wsdl:${cxfVersion}")
     compile("org.apache.cxf:cxf-tools-common:${cxfVersion}")
     compile("org.apache.cxf:cxf-common-utilities:2.5.11")
-    //compile("org.apache.cxf.services.wsn:cxf-services-wsn-osgi:${cxfVersion}")
     compile("org.apache.cxf:cxf-tools-wsdlto-core:${cxfVersion}")
     compile("org.apache.cxf:cxf-tools-wsdlto-frontend-jaxws:${cxfVersion}")
     compile("org.apache.cxf:cxf-tools-wsdlto-databinding-jaxb:${cxfVersion}")

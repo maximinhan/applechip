@@ -1,31 +1,17 @@
 sourceSets {
-     generated
+    generated {
+        java {
+            srcDirs = ['src/main/generated']
+        }
+    }
 }
-sourceSets.generated.java.srcDirs = ['src/main/generated']
-/*
-sourceSets {
-	generated {
-		java {
-			srcDirs 'src/main/generated'
-		}
-	}
-}
-*/
 
-configurations {
-	querydslapt
-}
 dependencies {
-	def queryDSL = '3.4.2'
-	compile("com.mysema.querydsl:querydsl-core:$queryDSL")
-	compile("com.mysema.querydsl:querydsl-jpa:$queryDSL")
-	compile("com.mysema.querydsl:querydsl-sql:$queryDSL")
-	compile("com.mysema.querydsl:querydsl-codegen:$queryDSL")
-	compile("com.mysema.querydsl:querydsl-apt:$queryDSL")
-	compile("com.mysema.codegen:codegen:0.6.2")
-	compile("com.google.guava:guava-collections:r03")
-	compile("com.google.guava:guava-base:r03")
-	compile("javax.inject:javax.inject:1")
+	compile("com.mysema.querydsl:querydsl-core:$queryDslVersion")
+	compile("com.mysema.querydsl:querydsl-jpa:$queryDslVersion")
+	compile("com.mysema.querydsl:querydsl-sql:$queryDslVersion")
+	compile("com.mysema.querydsl:querydsl-codegen:$queryDslVersion")
+	compile("com.mysema.querydsl:querydsl-apt:$queryDslVersion")
 }
 
 task generateQueryDSL(type: JavaCompile, group: 'build', description: 'Generates the QueryDSL query types') {

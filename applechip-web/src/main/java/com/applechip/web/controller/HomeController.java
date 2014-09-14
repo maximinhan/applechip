@@ -1,4 +1,4 @@
-package com.applechip.apps;
+package com.applechip.web.controller;
 
 import java.text.DateFormat;
 import java.util.Date;
@@ -48,7 +48,7 @@ public class HomeController {
 
     model.addAttribute("serverTime", formattedDate);
 
-    return "app/index.html";
+    return "index";
   }
 
 }

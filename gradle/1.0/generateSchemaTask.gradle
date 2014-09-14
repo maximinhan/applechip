@@ -8,12 +8,12 @@ buildscript {
 	}
 }
 dependencies {
-	compile gradleApi()
+	provided gradleApi()
 }
 
 task generateSchema(type: GenerateSchemaTask, group: 'build', description: 'Generates the QueryDSL query types', dependsOn: [compileJava, processResources])
 
-task generateSchemaTask(type: GenerateSchemaTask, dependsOn: [compileJava, processResources])
+//task generateSchemaTask(type: GenerateSchemaTask, dependsOn: [compileJava, processResources])
 
 class GenerateSchemaTask extends DefaultTask {
 	def Map<String, String> dialectMap = [
