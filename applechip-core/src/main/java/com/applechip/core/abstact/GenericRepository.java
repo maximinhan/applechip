@@ -5,8 +5,9 @@ import java.io.Serializable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.repository.PagingAndSortingRepository;
 
-public interface GenericRepository<T extends GenericEntity<PK>, PK extends Serializable> {
+public interface GenericRepository<T extends GenericEntity<PK>, PK extends Serializable> extends PagingAndSortingRepository<T, PK> {
 
 	public Iterable<T> findAll(Sort sort);
 

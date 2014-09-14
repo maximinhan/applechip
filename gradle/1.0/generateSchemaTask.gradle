@@ -31,10 +31,11 @@ class GenerateSchemaTask extends DefaultTask {
 		SQLSERVER: "com.microsoft.sqlserver.jdbc.SQLServerDriver"
 	]
 	def classesDir = project.sourceSets.main.output.classesDir
-    def jdbcType = System.properties['jdbcType']
-    def jdbcUsername = System.properties['jdbcUsername']
-    def jdbcPassword = System.properties['jdbcPassword']
-    def jdbcUrl = String.format(project.properties['jdbcUrl'], project.properties['jdbcName'])
+    def jdbcType = project.properties['jdbcType']
+    def jdbcUsername = project.properties['jdbcUsername']
+    def jdbcPassword = project.properties['jdbcPassword']
+    def jdbcUrl = project.properties['jdbcUrl']
+
     /*
     		Connection connection = DriverManager.getConnection("");
 		Dialect dialect = new MySQL5InnoDBDialect(); // e.g.: new
@@ -57,7 +58,11 @@ class GenerateSchemaTask extends DefaultTask {
 	@TaskAction
 	def generateSchemaTask() {
 		println classesDir
-		println 'testschema!!!-start'
+		println 'GenerateSchemaTask'
+		println 'jdbcType : ' + jdbcType
+		println 'jdbcUsername : ' + jdbcUsername
+		println 'jdbcPassword : ' + jdbcPassword
+		println 'jdbcUrl : ' + jdbcUrl
 		assert classesDir.isDirectory()
 		def urlList = []
 		urlList.add(classesDir.toURI().toURL())
@@ -100,6 +105,5 @@ class GenerateSchemaTask extends DefaultTask {
 		} finally {
 			Thread.currentThread().setContextClassLoader(classLoader)
 		}
-		println 'testschema!!!-end'
 	}
 }

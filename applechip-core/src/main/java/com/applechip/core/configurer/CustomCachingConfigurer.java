@@ -1,6 +1,5 @@
 package com.applechip.core.configurer;
 
-
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.CacheManager;
@@ -18,35 +17,34 @@ import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 
 import com.applechip.core.properties.CoreProperties;
 
+//@Configuration
+//@EnableCaching(proxyTargetClass = true, mode = AdviceMode.PROXY, order = Ordered.LOWEST_PRECEDENCE)
+public class CustomCachingConfigurer {// implements CachingConfigurer {
 
-@Configuration
-@EnableCaching(proxyTargetClass = true, mode = AdviceMode.PROXY, order = Ordered.LOWEST_PRECEDENCE)
-public class CustomCachingConfigurer implements CachingConfigurer {
-
-  @Autowired
-  private CoreProperties coreProperties;
-
-  @Override
-  @Bean
-  public CacheManager cacheManager() {
-    return new EhCacheCacheManager(ehCacheManagerFactoryBean().getObject());
-  }
-
-  @Bean
-  public EhCacheManagerFactoryBean ehCacheManagerFactoryBean() {
-    EhCacheManagerFactoryBean bean = new EhCacheManagerFactoryBean();
-    bean.setShared(coreProperties.isCacheShared());
-    String configLocation = coreProperties.getCacheConfigLocation();
-    if (StringUtils.isNotBlank(configLocation)) {
-      bean.setConfigLocation(new PathMatchingResourcePatternResolver().getResource(configLocation));
-    }
-    return bean;
-  }
-
-  @Override
-  @Bean
-  public KeyGenerator keyGenerator() {
-    return new SimpleKeyGenerator();
-  }
+	// @Autowired
+	// private CoreProperties coreProperties;
+	//
+	// @Override
+	// @Bean
+	// public CacheManager cacheManager() {
+	// return new EhCacheCacheManager(ehCacheManagerFactoryBean().getObject());
+	// }
+	//
+	// @Bean
+	// public EhCacheManagerFactoryBean ehCacheManagerFactoryBean() {
+	// EhCacheManagerFactoryBean bean = new EhCacheManagerFactoryBean();
+	// bean.setShared(coreProperties.isCacheShared());
+	// String configLocation = coreProperties.getCacheConfigLocation();
+	// if (StringUtils.isNotBlank(configLocation)) {
+	// bean.setConfigLocation(new PathMatchingResourcePatternResolver().getResource(configLocation));
+	// }
+	// return bean;
+	// }
+	//
+	// @Override
+	// @Bean
+	// public KeyGenerator keyGenerator() {
+	// return new SimpleKeyGenerator();
+	// }
 
 }
