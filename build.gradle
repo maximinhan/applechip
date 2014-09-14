@@ -118,8 +118,10 @@ configure(webProjects) {
     	jetty9 'org.eclipse.jetty:jetty-jndi:9.2.3.v20140905'
     	jetty9 'org.eclipse.jetty:jetty-annotations:9.2.3.v20140905'
     	jetty9 'org.eclipse.jetty:jetty-xml:9.2.3.v20140905'
-        provided 'javax.servlet:javax.servlet-api:3.1.0'
-	    compile(project(":applechip-core"))
+    	providedCompile 'javax.servlet:javax.servlet-api:3.1.0'
+		compile project(':applechip-core')
+        //provided 'javax.servlet:javax.servlet-api:3.1.0'
+	    //compile(project(":applechip-core"))
 	    provided("org.springframework.security:spring-security-core:$springframeworksecurityVersion")
 		provided("org.springframework.data:spring-data-commons:${springframeworkdataVersion}")
 		provided("org.springframework:spring-orm:$springframeworkVersion")

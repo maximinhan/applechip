@@ -5,10 +5,9 @@ import org.springframework.context.annotation.ComponentScan.Filter;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Controller;
 
-import com.applechip.core.CoreConfig;
-
 @Configuration
-@ComponentScan(basePackageClasses = { CoreConfig.class, ApiConfig.class }, excludeFilters = @Filter({ Controller.class,
+@ComponentScan(basePackageClasses = { ApiConfig.class }, excludeFilters = @Filter({ Controller.class,
 		Configuration.class }))
+//@Import(CoreConfig.class)
 public class ApiConfig {
 }
