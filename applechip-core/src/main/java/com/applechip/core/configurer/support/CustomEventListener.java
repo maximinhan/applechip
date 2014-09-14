@@ -1,4 +1,4 @@
-package com.applechip.core.repository;
+package com.applechip.core.configurer.support;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -17,7 +17,7 @@ import com.applechip.core.entity.User;
 
 @Component
 @Slf4j
-public class EntityListener implements PostInsertEventListener, PostUpdateEventListener {
+public class CustomEventListener implements PostInsertEventListener, PostUpdateEventListener {
 
   private static final long serialVersionUID = 2714692810503179272L;
 
