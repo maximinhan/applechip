@@ -269,6 +269,8 @@ project(":applechip-core") {
         provided("org.javassist:javassist:3.18.2-GA")
         provided("dom4j:dom4j:1.6")
             //compile gradleApi()
+	    compile("com.maxmind.geoip2:geoip2:0.9.0")
+	    compile("org.hibernate:hibernate-envers:$hibernateVersion")
 	    compile("com.mysema.querydsl:querydsl-core:$queryDslVersion")
 	    compile("com.mysema.querydsl:querydsl-apt:$queryDslVersion")
 	    compile("com.mysema.querydsl:querydsl-jpa:$queryDslVersion")

@@ -46,6 +46,17 @@ public class CustomTransactionManagementConfigurer implements TransactionManagem
 
   @Autowired
   private EntityListener entityListener;
+  
+//  <bean id="performanceMonitor" class="com.rsupport.rc5x.common.util.PerformanceMonitoringInterceptor">
+//  <property name="systemName" value="PA" />
+//  <property name="enabled" value="true" />
+//  <property name="statLogFrequency" value="10" />
+//  <property name="warningThreshold" value="3000" />
+//</bean>
+//<aop:config>
+//  <aop:advisor id="managerPerf" advice-ref="performanceMonitor" pointcut="execution(* com..*.*Manager.*(..))" order="2" />
+//  <aop:advisor id="servicePerf" advice-ref="performanceMonitor" pointcut="execution(* com..*.*Service.*(..))" order="3" />
+//</aop:config>
 
   @Override
   @Bean
