@@ -1,0 +1,51 @@
+apply plugin: 'war' apply plugin: 'tomcat' apply plugin: 'cargo' 
+// tomcat과 cargo plugin에 대한 repository 설정입니다. 
+buildscript { repositories { mavenCentral() jcenter() } 
+dependencies { classpath 'org.gradle.api.plugins:gradle-tomcat-plugin:1.0' classpath 'org.gradle.api.plugins:gradle-cargo-plugin:1.4' } }
+
+
+ dependencies { // tomcat plugin 설정입니다. 
+ String tomcatVersion = '7.0.47' 
+ tomcat "org.apache.tomcat.embed:tomcat-embed-core:${tomcatVersion}" 
+ tomcat "org.apache.tomcat.embed:tomcat-embed-logging-juli:${tomcatVersion}" 
+ tomcat("org.apache.tomcat.embed:tomcat-embed-jasper:${tomcatVersion}") { 
+ exclude group: 'org.eclipse.jdt.core.compiler', module: 'ecj' 
+ } 
+ providedCompile 'javax.servlet:javax.servlet-api:3.1.0' 
+ providedCompile 'javax.websocket:javax.websocket-api:1.0' 
+ providedCompile 'javax.servlet:jsp-api:2.0'
+  providedCompile "org.apache.tomcat:tomcat-servlet-api:${tomcatVersion}" 
+  
+  // cargo에 대한 설정입니다. 
+  def cargoVersion = '1.4.5' 
+  cargo "org.codehaus.cargo:cargo-core-uberjar:$cargoVersion", "org.codehaus.cargo:cargo-ant:$cargoVersion" 
+  def springVersion = "4.0.1.RELEASE" 
+  compile "org.springframework:spring-webmvc:${springVersion}" 
+  compile 'jstl:jstl:1.2' 
+  compile 'org.apache.tiles:tiles-jsp:3.0.3' 
+  compile 'org.slf4j:slf4j-api:1.7.6' 
+  compile 'org.slf4j:jcl-over-slf4j:1.7.6' 
+  compile 'ch.qos.logback:logback-classic:1.0.13' 
+  compile 'ch.qos.logback:logback-core:1.0.13' 
+  compile 'org.apache.velocity:velocity:1.7' 
+  compile 'org.freemarker:freemarker:2.3.20' 
+  compile 'com.ctlok:spring-webmvc-rythm:1.4.4' 
+  compile project(':bookstoreHibernate') } // tomcarRun을 실행시키기 위해서 war에 대한 dependency를 주입합니다. 
+  tomcatRun { contextPath = "" URIEncoding = 'UTF-8' dependsOn war } 
+  tomcatRunWar { dependsOn war } // cargo를 이용한 배포를 위해서 war에 대한 dependency를 주입합니다. 
+  cargoRedeployRemote { dependsOn war } 
+  cargoDeployRemote { dependsOn war } 
+  cargo { 
+  containerId = 'tomcat7x' 
+  port = 8080 
+  deployable { 
+  context = "${project.name}"
+   }
+   
+    // remoteDeploy 되는 target의 tomcat 정보 
+    remote { 
+    hostname = '192.168.13.209' 
+    username = 'ykyoon' 
+    password = 'qwer12#$' 
+    } 
+    }

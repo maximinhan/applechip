@@ -1,0 +1,82 @@
+//https://github.com/xyzlast/study-spring-bookstore.git
+import org.apache.tools.ant.taskdefs.condition.Os
+import groovy.json.JsonSlurper 
+
+task bowerInstall(type:Exec, description : 'copy js files dependencies that is defined in Bower.js') { 
+	if(Os.isFamily(Os.FAMILY_WINDOWS)) { 
+		commandLine 'cmd', 'bower', 'install' 
+		} 
+		else { 
+		commandLine 'bower', 'install' 
+		} 
+		
+		
+		def jsonHandler = new JsonSlurper() 
+		def jsonFile = file("bower.json") 
+		def conf = jsonHandler.parseText(jsonFile.getText("UTF-8")) 
+		def pathMap = [:] 
+		
+		
+		conf.install.path.each { 
+			pathMap.put(it.key, it.value) 
+		} 
+		
+		conf.install.sources.each { 
+			it.value.each { f -> 
+				def sourceFile = file(f) 
+				String sourceName = sourceFile.name
+				 int dotPos = sourceName.lastIndexOf(".")
+				 String ext = sourceName.substring(dotPos + 1, sourceName.length()) 
+				 
+				 if(pathMap.containsKey(ext)) { 
+				 	copy { 
+				 		from f 
+				 		into pathMap.get(ext)
+				 	 } 
+				 } 
+			} 
+		}
+} 
+
+war { 
+	dependsOn bowerInstall
+}
+
+/*
+bower.json
+{ 
+	"name" : "bookstore-web", 
+	"version" : "0.0.0.1", 
+	"dependencies" : { 
+		"jquery" : "1.11.0", 
+		"bootstrap" : "3.1.1" 
+	}, 
+	
+	"install" : { 
+		"path" : { 
+			"css" : "src/main/webapp/lib/css", 
+			"js" : "src/main/webapp/lib/js", 
+			"eot" : "src/main/webapp/lib/fonts", 
+			"svg" : "src/main/webapp/lib/fonts", 
+			"ttf" : "src/main/webapp/lib/fonts", 
+			"woff" : "src/main/webapp/lib/fonts", 
+			"map" : "src/main/webapp/lib/js" 
+		}, 
+		"sources" : { 
+			"jquery" : [ 
+				"bower_components/jquery/dist/jquery.min.js", 
+				"bower_components/jquery/dist/jquery.min.map" 
+			],
+			"bootstrap" : [ 
+				"bower_components/bootstrap/dist/css/bootstrap.min.css", 
+				"bower_components/bootstrap/dist/css/bootstrap-theme.min.css", 
+				"bower_components/bootstrap/dist/fonts/glyphicons-halflings-regular.eot", 
+				"bower_components/bootstrap/dist/fonts/glyphicons-halflings-regular.svg", 
+				"bower_components/bootstrap/dist/fonts/glyphicons-halflings-regular.ttf", 
+				"bower_components/bootstrap/dist/fonts/glyphicons-halflings-regular.woff", 
+				"bower_components/bootstrap/dist/js/bootstrap.min.js" 
+			] 
+		} 
+	} 
+}
+*/

@@ -130,12 +130,4 @@ public class NetworkGroupServer extends GenericByUpdated<NetworkGroupServer.Id> 
 		@Column(name = "server_id", length = ColumnSizeConstant.UUID)
 		private String serverId;
 	}
-
-	public Integer getChangedPriority() {
-		return changedPriority;
-	}
-
-	public void setChangedPriority(Integer changedPriority) {
-		this.changedPriority = changedPriority;
-	}
 }

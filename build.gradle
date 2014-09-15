@@ -67,6 +67,10 @@ configure(allprojects) { project ->
 	ext.javaVersion = "1.7"
     ext.javaEncoding = "UTF-8"
     
+    //sourceCompatibility = 1.8
+    //targetCompatibility = 1.8
+    [compileJava, compileTestJava]*.options*.encoding = "${javaEncoding}"
+    
     //properties
     ext.jdbcDrivers = [ "mysql:mysql-connector-java:5.1.31", "com.microsoft.sqlserver:sqljdbc4:4.0", "com.oracle:ojdbc7:12.1.0.2", "org.hsqldb:hsqldb:2.3.2", "com.h2database:h2:1.4.181" ] 
 	ext.jdbcName = String.format("%s_%s", rootProject.name, "${version}".replaceAll("\\.", "_").replaceAll("\\-", "_")).toUpperCase()
@@ -86,7 +90,7 @@ configure(webProjects) {
     apply plugin: 'eclipse-wtp'
     apply from: createVersionTextTask
     dependencies {
-		//compile project(':applechip-core')
+		provided project(':applechip-core')
     	providedCompile 'javax.servlet:javax.servlet-api:3.1.0'
     	providedCompile 'javax.servlet:jstl:1.2'
 		provided jdbcDrivers
@@ -99,13 +103,16 @@ configure(webProjects) {
 		provided("org.springframework:spring-context:$springframeworkVersion")
 		provided("org.springframework:spring-expression:$springframeworkVersion")
 		provided("org.hibernate:hibernate-entitymanager:$hibernateVersion")
+		provided("com.fasterxml.jackson.core:jackson-databind:2.4.1")
+	    provided("com.fasterxml.jackson.core:jackson-annotations:2.4.1")
+	    provided("com.fasterxml.jackson.core:jackson-core:2.4.1")
 		//provided("org.hibernate:hibernate-core:$hibernateVersion")
 		//provided("net.sf.ehcache:ehcache:2.8.3")
 		provided("org.springframework:spring-webmvc:$springframeworkVersion")
-		//provided("org.springframework:spring-web:$springframeworkVersion")
-		//provided("org.springframework:spring-beans:$springframeworkVersion")
-		//provided("org.springframework:spring-core:$springframeworkVersion")
-		//provided("org.springframework:spring-aop:$springframeworkVersion")
+		provided("org.springframework:spring-web:$springframeworkVersion")
+		provided("org.springframework:spring-beans:$springframeworkVersion")
+		provided("org.springframework:spring-core:$springframeworkVersion")
+		provided("org.springframework:spring-aop:$springframeworkVersion")
 		//provided("aopalliance:aopalliance:1.0")
 		//provided("edu.uci.ics:crawler4j:3.5")
 	    //provided("com.fasterxml.jackson.core:jackson-databind:2.4.1")
@@ -113,7 +120,25 @@ configure(webProjects) {
 	    //provided("com.mysema.querydsl:querydsl-jpa:3.4.0")
 	    //provided("org.hibernate.javax.persistence:hibernate-jpa-2.1-api:1.0.0.Final")
     }
+    configurations.all {
+	    transitive = false
+	}
     war {
+    /*
+    	manifest = osgiManifest { 
+			instruction 'Private-Package', 'com.applechip' 
+			instruction 'Bundle-Classpath', 'WEB-INF/classes' 
+			instruction 'Import-Package', '''groovy.''' 
+			instruction 'Created-By', 'yyy' 
+			instruction 'Bundle Description', "${project.description}" 
+			vendor = "yyy" 
+			symbolicName = "${project.group}" + "-" + "${project.name}" 
+			version = strippedVersion() 
+			classesDir = new File( "${buildDir}/classes" ) 
+			classpath = configurations.runtime 
+			instruction 'Web-ContextPath', "${name}"
+		}
+		*/
     	dependsOn createVersionText
     	from(buildDir) {
     		include 'version.txt'

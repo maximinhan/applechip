@@ -1,0 +1,62 @@
+import groovy.sql.Sql
+import org.dbunit.database.DatabaseConnection;
+import org.dbunit.database.IDatabaseConnection;
+import org.dbunit.dataset.IDataSet;
+import org.dbunit.dataset.xml.FlatXmlDataSet;
+import org.dbunit.operation.DatabaseOperation;
+
+
+
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath 'dbunit:dbunit:2.2', 'junit:junit:4.11'
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+configurations {
+   mysql    
+}
+
+dependencies {
+   mysql 'mysql:mysql-connector-java:5.1.25'
+}
+
+URLClassLoader loader = GroovyObject.class.classLoader
+configurations.mysql.each { File file -> loader.addURL(file.toURL()) }
+
+task listJars << {    
+    configurations.mysql.each { File file -> println file.name }
+}
+
+task listTables << {    
+    getConnection().eachRow('show tables') { row -> println row[0] }
+}
+
+task exportData << {
+    def IDatabaseConnection conn = new DatabaseConnection(getConnection().connection)
+    def IDataSet dataSet = conn.createDataSet()
+    FlatXmlDataSet.write(dataSet, new FileOutputStream("export_data.xml"))
+    conn.close()
+}
+
+task importData << {
+  def IDatabaseConnection conn = new DatabaseConnection(getConnection().connection)
+  def IDataSet dataSet = new FlatXmlDataSet(new FileInputStream("import_data.xml"))
+  DatabaseOperation.CLEAN_INSERT.execute(conn, dataSet) 
+  conn.close()
+}
+
+static Sql getConnection() {
+   def props = [user: 'root', password: "123456", allowMultiQueries: 'true'] as Properties
+   def url = 'jdbc:mysql://localhost:3306/test_bxn'
+   def driver = 'com.mysql.jdbc.Driver'
+   Sql.newInstance(url, props, driver)
+}

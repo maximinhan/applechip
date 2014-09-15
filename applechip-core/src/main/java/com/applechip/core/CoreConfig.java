@@ -23,6 +23,12 @@ import com.applechip.core.util.PropertiesLoaderUtil;
 @ComponentScan(basePackageClasses = { CoreConfig.class })
 public class CoreConfig {
 
+	/*
+	 * use.. <util:map id="loginCheckErrorCodes" key-type="java.lang.Integer" value-type="java.lang.String"
+	 * map-class="java.util.HashMap"> <entry key="3102" value="NET_ERR_SESSION_NOT_FOUND" /> <entry key="3100"
+	 * value="NET_ERR_SESSION_TIME_OUT" /> </util:map>
+	 */
+
 	@Value("${runtimeProperties}")
 	private Resource runtimeProperties;
 

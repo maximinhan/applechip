@@ -33,6 +33,7 @@ public class CustomConfigurer {
 	@Bean
 	public MappingJackson2HttpMessageConverter mappingJackson2HttpMessageConverter() {
 		MappingJackson2HttpMessageConverter bean = new MappingJackson2HttpMessageConverter();
+		// bean.
 		List<MediaType> list = new ArrayList<MediaType>();
 		list.add(MediaType.APPLICATION_JSON);
 		bean.setSupportedMediaTypes(list);
@@ -76,4 +77,26 @@ public class CustomConfigurer {
 		return bean;
 	}
 
+	/*
+	 * 추가 되어야 할 것 <bean name="handlerAdapter"
+	 * class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter"> <property
+	 * name="webBindingInitializer"> <bean
+	 * class="org.springframework.web.bind.support.ConfigurableWebBindingInitializer"> <property
+	 * name="conversionService" ref="conversionService"></property> <property name="validator"> <bean
+	 * class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean"> <property name="providerClass"
+	 * value="org.hibernate.validator.HibernateValidator"></property> </bean> </property> </bean> </property> <property
+	 * name="messageConverters"> <list> <bean
+	 * class="org.springframework.http.converter.ByteArrayHttpMessageConverter"></bean> <bean
+	 * class="org.springframework.http.converter.StringHttpMessageConverter"></bean> <bean
+	 * class="org.springframework.http.converter.ResourceHttpMessageConverter"></bean> <bean
+	 * class="org.springframework.http.converter.xml.SourceHttpMessageConverter"></bean> <bean
+	 * class="org.springframework.http.converter.xml.XmlAwareFormHttpMessageConverter"></bean> <bean
+	 * class="org.springframework.http.converter.xml.Jaxb2RootElementHttpMessageConverter"></bean> <bean
+	 * class="org.springframework.http.converter.json.MappingJacksonHttpMessageConverter"></bean> </list> </property>
+	 * </bean>
+	 * 
+	 * <bean name="handlerMapping"
+	 * class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping"> <property
+	 * name="order" value="2"></property> </bean>
+	 */
 }

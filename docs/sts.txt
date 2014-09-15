@@ -15,8 +15,12 @@ D:/Program Files/Java/jdk1.7.0_45/bin/javaw.exe
 -Xmx2048m
 -Dfile.encoding=UTF-8
 
+Tip
+CTRL + SHIFT + T : jar 파일 내 class 찾기
+CTRL + SHIFT + R : 프로젝트 내 java 팢기
+
 Install
-Help > Eclipse Marketplace > Moreunit, SVN, Gradle
+Help > Eclipse Marketplace > Moreunit, SVN, Gradle, Properties Editor
 SVN Connector - http://community.polarion.com/projects/subversive/download/eclipse/3.0/kepler-site/
 Mylyn - http://redmin-mylyncon.sourceforge.net/update-site/N/
 Android - https://dl-ssl.google.com/android/eclipse/
