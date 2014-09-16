@@ -1,29 +1,32 @@
 package com.applechip.core.util;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.List;
 
 import lombok.extern.slf4j.Slf4j;
 
-import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.reflect.FieldUtils;
 
 @Slf4j
 public class ReflectUtil {
 
-	public static Object readField(Field field, Class<?>... classes) {
-		Object object = null;
-		try {
-			if (ArrayUtils.contains(classes, field.getType())) {
-				object = FieldUtils.readField(field, field, Boolean.TRUE);
+	@SuppressWarnings("unchecked")
+	public static <T> T readField(Field field, Class<T> clazz) {
+		return (T) readField(field);
+	}
+
+	public static <T> List<T> readFieldList(Class<?> clazz, Class<T> result) {
+		List<T> list = new ArrayList<T>();
+		for (Field field : clazz.getDeclaredFields()) {
+			if (field.getType().isAssignableFrom(result)) {
+				// T object = readField(field, result);
+				// if (object != null && result.isAssignableFrom(object.getClass())) {
+				list.add(readField(field, result));
+				// }
 			}
 		}
-		catch (IllegalAccessException e) {
-			log.error("readField fail... field: {}, classes: {}, message: {}", field, classes, e.getMessage());
-		}
-		catch (NullPointerException e) {
-			log.error("readField fail... field: {}, classes: {}, message: {}", field, classes, e.getMessage());
-		}
-		return object;
+		return list;
 	}
 
 	public static Object readField(Field field) {

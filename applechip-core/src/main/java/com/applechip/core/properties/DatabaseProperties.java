@@ -8,7 +8,6 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 import com.applechip.core.constant.DatabaseConstant;
-import com.applechip.core.entity.User;
 import com.applechip.core.util.CryptoUtil;
 
 @Getter
@@ -46,7 +45,7 @@ public class DatabaseProperties {
 	private void setPackagesToScan(Properties properties) {
 		List<String> list = new ArrayList<String>();
 		list.add("com.applechip.core.entity");
-//		User.class.getPackage().getName()
+		// User.class.getPackage().getName()
 		this.packagesToScan = list.toArray(new String[list.size()]);
 	}
 
