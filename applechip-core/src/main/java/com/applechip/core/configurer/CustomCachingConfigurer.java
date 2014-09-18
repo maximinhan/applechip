@@ -15,7 +15,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 
-import com.applechip.core.properties.CoreProperties;
+import com.applechip.core.properties.ApplicationProperties;
 
 //@Configuration
 //@EnableCaching(proxyTargetClass = true, mode = AdviceMode.PROXY, order = Ordered.LOWEST_PRECEDENCE)

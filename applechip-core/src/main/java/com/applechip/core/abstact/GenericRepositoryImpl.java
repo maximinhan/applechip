@@ -20,13 +20,13 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
-import com.applechip.core.constant.CoreConstant;
+import com.applechip.core.constant.ApplicationConstant;
 
 //@RepositoryDefinition(domainClass = Employee.class, idClass = Long.class)
 public class GenericRepositoryImpl<T extends GenericEntity<PK>, PK extends Serializable> implements
 		GenericRepository<T, PK> {
 
-	@PersistenceContext(unitName = CoreConstant.PERSISTENCE_UNIT_NAME)
+	@PersistenceContext(unitName = ApplicationConstant.PERSISTENCE_UNIT_NAME)
 	protected EntityManager entityManager;
 
 	private Class<T> clazz;

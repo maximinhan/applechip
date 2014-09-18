@@ -7,6 +7,7 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
@@ -37,9 +38,9 @@ public class NetworkGroup extends GenericByUpdated<String> {
 	private static final long serialVersionUID = -1515057292914459397L;
 
 	@Id
-	@GeneratedValue(generator = "system-uuid")
-	@GenericGenerator(name = "system-uuid", strategy = "uuid")
-	@Column(name = "network_group_id", length = ColumnSizeConstant.UUID)
+	@GeneratedValue(strategy = GenerationType.AUTO, generator = "system-uuid")
+	@GenericGenerator(name = "system-uuid", strategy = "uuid2")
+	@Column(name = "_id", unique = true, length = ColumnSizeConstant.UUID)
 	private String id;
 
 	@Column(name = "name", length = ColumnSizeConstant.NAME)

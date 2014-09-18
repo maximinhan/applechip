@@ -4,6 +4,8 @@ import java.io.IOException;
 
 import javax.annotation.PostConstruct;
 
+import lombok.extern.slf4j.Slf4j;
+
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.commons.configuration.reloading.FileChangedReloadingStrategy;
@@ -14,11 +16,12 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.Resource;
 
 import com.applechip.core.exception.SystemException;
-import com.applechip.core.properties.CoreProperties;
+import com.applechip.core.properties.ApplicationProperties;
 import com.applechip.core.properties.DatabaseProperties;
 import com.applechip.core.properties.RuntimeProperties;
 import com.applechip.core.util.PropertiesLoaderUtil;
 
+@Slf4j
 @Configuration
 @ComponentScan(basePackageClasses = { CoreConfig.class })
 public class CoreConfig {
@@ -32,34 +35,35 @@ public class CoreConfig {
 	@Value("${runtimeProperties}")
 	private Resource runtimeProperties;
 
-	@Value("${coreProperties}")
-	private Resource coreProperties;
-
 	@Value("${databaseProperties}")
 	private Resource databaseProperties;
 
 	@PostConstruct
 	@Bean
-	public CoreProperties coreProperties() {
-		return new CoreProperties(PropertiesLoaderUtil.loadProperties(coreProperties));
+	public ApplicationProperties applicationProperties() {
+		return new ApplicationProperties();
 	}
 
 	@PostConstruct
 	@Bean
 	public DatabaseProperties databaseProperties() {
-		return DatabaseProperties.getInstance(PropertiesLoaderUtil.loadProperties(databaseProperties));
+		return DatabaseProperties.getInstance(PropertiesLoaderUtil.loadProperty(databaseProperties));
 	}
 
-	// @PostConstruct
 	@Bean
-	public PropertiesConfiguration propertiesConfiguration() {
+	public RuntimeProperties runtimeProperties() {
+		RuntimeProperties runtimeProperties = new RuntimeProperties(this.propertiesConfiguration());
+		return runtimeProperties;
+	}
+
+	private PropertiesConfiguration propertiesConfiguration() {
 		PropertiesConfiguration propertiesConfiguration = null;
 		try {
 			propertiesConfiguration = new PropertiesConfiguration(runtimeProperties.getFile());
 			propertiesConfiguration.setReloadingStrategy(this.fileChangedReloadingStrategy());
 		}
 		catch (ConfigurationException e) {
-			throw new SystemException(e, "runtimeProperties create fail... message: %s", e.getMessage());
+			throw new SystemException(e, "getPropertiesConfiguration create fail... message: %s", e.getMessage());
 		}
 		catch (IOException e) {
 			throw new SystemException(e, "runtimeProperties create fail... filename: %s, message: %s",
@@ -70,14 +74,7 @@ public class CoreConfig {
 
 	private FileChangedReloadingStrategy fileChangedReloadingStrategy() {
 		FileChangedReloadingStrategy fileChangedReloadingStrategy = new FileChangedReloadingStrategy();
-		fileChangedReloadingStrategy.setRefreshDelay(this.coreProperties().getRefreshDelay());
+		fileChangedReloadingStrategy.setRefreshDelay(this.applicationProperties().getRefreshDelay());
 		return fileChangedReloadingStrategy;
-	}
-
-	@Bean
-	public RuntimeProperties runtimeProperties() {
-		RuntimeProperties runtimeProperties = new RuntimeProperties(
-				PropertiesLoaderUtil.loadProperties(coreProperties), this.propertiesConfiguration());
-		return runtimeProperties;
 	}
 }

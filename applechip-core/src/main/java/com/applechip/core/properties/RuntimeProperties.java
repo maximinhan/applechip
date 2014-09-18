@@ -1,25 +1,37 @@
 package com.applechip.core.properties;
 
-import java.util.Properties;
-
-import lombok.Getter;
-
 import org.apache.commons.configuration.PropertiesConfiguration;
 
+public class RuntimeProperties extends ApplicationProperties {
 
-@Getter
-public class RuntimeProperties extends CoreProperties {
+	private PropertiesConfiguration propertiesConfiguration;
 
-  private String[] serverAddress;
+	public RuntimeProperties(PropertiesConfiguration propertiesConfiguration) {
+		super();
+		this.propertiesConfiguration = propertiesConfiguration;
+	}
 
-  private PropertiesConfiguration propertiesConfiguration;
+	@Override
+	public String getServerAddress() {
+		return propertiesConfiguration.getString("server.address", super.getServerAddress());
+	}
 
-  public RuntimeProperties(Properties properties, PropertiesConfiguration propertiesConfiguration) {
-    super(properties);
-    this.setProperties(propertiesConfiguration);
-  }
+	@Override
+	public String getPushMdmKey() {
+		return propertiesConfiguration.getString("push.mdm.signKey", super.getPushMdmKey());
+	}
 
-  private void setProperties(PropertiesConfiguration propertiesConfiguration) {
-    this.serverAddress = propertiesConfiguration.getStringArray("server.address");
-  }
+	@Override
+	public String getPushWpParam() {
+		return propertiesConfiguration.getString("push.wp.param", super.getPushWpParam());
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("RuntimeProperties [getServerAddress()=").append(getServerAddress())
+				.append(", getPushMdmKey()=").append(getPushMdmKey()).append(", getPushWpParam()=")
+				.append(getPushWpParam()).append(", toString()=").append(super.toString()).append("]");
+		return builder.toString();
+	}
 }

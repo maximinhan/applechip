@@ -9,8 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.reflect.FieldUtils;
 
 @Slf4j
-public class ReflectUtil {
-
+public class FieldUtil extends FieldUtils {
 	@SuppressWarnings("unchecked")
 	public static <T> T readField(Field field, Class<T> clazz) {
 		return (T) readField(field);
@@ -20,10 +19,7 @@ public class ReflectUtil {
 		List<T> list = new ArrayList<T>();
 		for (Field field : clazz.getDeclaredFields()) {
 			if (field.getType().isAssignableFrom(result)) {
-				// T object = readField(field, result);
-				// if (object != null && result.isAssignableFrom(object.getClass())) {
 				list.add(readField(field, result));
-				// }
 			}
 		}
 		return list;
@@ -32,7 +28,7 @@ public class ReflectUtil {
 	public static Object readField(Field field) {
 		Object object = null;
 		try {
-			object = FieldUtils.readField(field, field, Boolean.TRUE);
+			object = readField(field, field, Boolean.TRUE);
 		}
 		catch (IllegalAccessException e) {
 			log.error("readField fail... field: {}, message: {}", field, e.getMessage());

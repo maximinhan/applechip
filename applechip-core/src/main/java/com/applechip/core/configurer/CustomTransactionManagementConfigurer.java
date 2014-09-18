@@ -4,7 +4,6 @@ import javax.annotation.PostConstruct;
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 
-import org.apache.commons.dbcp.BasicDataSource;
 import org.apache.commons.dbcp.BasicDataSourceFactory;
 import org.hibernate.SessionFactory;
 import org.hibernate.event.service.spi.EventListenerRegistry;
@@ -32,8 +31,7 @@ import org.springframework.transaction.interceptor.TransactionInterceptor;
 
 import com.applechip.core.configurer.support.CustomEventListener;
 import com.applechip.core.configurer.support.CustomHibernateJpaVendorAdapter;
-import com.applechip.core.constant.CoreConstant;
-import com.applechip.core.entity.User;
+import com.applechip.core.constant.ApplicationConstant;
 import com.applechip.core.exception.SystemException;
 import com.applechip.core.properties.DatabaseProperties;
 
@@ -93,7 +91,7 @@ public class CustomTransactionManagementConfigurer implements TransactionManagem
 			localContainerEntityManagerFactoryBean.setJpaVendorAdapter(CustomHibernateJpaVendorAdapter.getInstance());
 			localContainerEntityManagerFactoryBean.setDataSource(this.dataSource());
 			localContainerEntityManagerFactoryBean.setJpaProperties(databaseProperties.getHibernateProperties());
-			localContainerEntityManagerFactoryBean.setPersistenceUnitName(CoreConstant.PERSISTENCE_UNIT_NAME);
+			localContainerEntityManagerFactoryBean.setPersistenceUnitName(ApplicationConstant.PERSISTENCE_UNIT_NAME);
 			localContainerEntityManagerFactoryBean.setPackagesToScan(databaseProperties.getPackagesToScan());
 			// <property name="persistenceProviderClass" value="org.hibernate.ejb.HibernatePersistence" />
 			// <property name="loadTimeWeaver">

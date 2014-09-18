@@ -8,12 +8,12 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 import com.applechip.core.constant.DatabaseConstant;
+import com.applechip.core.entity.User;
 import com.applechip.core.util.CryptoUtil;
 
 @Getter
 @Slf4j
 public class DatabaseProperties {
-	// private String jdbcType;
 	private Properties hibernateProperties;
 
 	private Properties dataSourceProperties;
@@ -36,51 +36,49 @@ public class DatabaseProperties {
 		// HibernateConstant.JDBC_DRIVER_CLASS_MAP.get(this.jdbcType));
 		// properties.put("validationQuery",
 		// HibernateConstant.JDBC_VALIDATION_QUERY_MAP.get(this.jdbcType));
+		this.setPackagesToScan();
+		this.setTransactionProperties();
 		this.setDataSourceProperties(properties);
 		this.setHibernateProperties(properties);
-		this.setTransactionProperties(properties);
-		this.setPackagesToScan(properties);
 	}
 
-	private void setPackagesToScan(Properties properties) {
+	private void setPackagesToScan() {
 		List<String> list = new ArrayList<String>();
-		list.add("com.applechip.core.entity");
-		// User.class.getPackage().getName()
+		list.add(User.class.getPackage().getName());
 		this.packagesToScan = list.toArray(new String[list.size()]);
 	}
 
-	// @Transactional(isolation=Isolation.REPEATABLE_READ)
-	private void setTransactionProperties(Properties properties) {
-		Properties bean = new Properties();
-		bean.setProperty("exists*", "PROPAGATION_REQUIRED,readOnly");// ISOLATION_READ_UNCOMMITTED,timeout_30,-Exception
-		bean.setProperty("count*", "PROPAGATION_REQUIRED,readOnly");
-		bean.setProperty("find*", "PROPAGATION_REQUIRED,readOnly");
-		bean.setProperty("get*", "PROPAGATION_REQUIRED,readOnly");
-		bean.setProperty("*", "PROPAGATION_REQUIRED");
-		this.transactionProperties = bean;
-	}
-
-	private void setHibernateProperties(Properties properties) {
-		Properties bean = new Properties();
-		for (String string : DatabaseConstant.HIBERNATE_PROPERTIES_SET) {
-			if (properties.containsKey(string)) {
-				bean.put(string, properties.getProperty(string));
-				log.info("setHibernateProperties put finish... key: {}, value: {}", string,
-						properties.getProperty(string));
-			}
-		}
-		this.hibernateProperties = bean;
+	private void setTransactionProperties() {
+		Properties properties = new Properties();
+		properties.setProperty("exists*", "PROPAGATION_REQUIRED,readOnly");// ISOLATION_READ_UNCOMMITTED,timeout_30,-Exception
+		properties.setProperty("count*", "PROPAGATION_REQUIRED,readOnly");
+		properties.setProperty("find*", "PROPAGATION_REQUIRED,readOnly");
+		properties.setProperty("get*", "PROPAGATION_REQUIRED,readOnly");
+		properties.setProperty("*", "PROPAGATION_REQUIRED");
+		this.transactionProperties = properties;
 	}
 
 	private void setDataSourceProperties(Properties properties) {
-		Properties bean = new Properties();
+		Properties result = new Properties();
 		for (String string : DatabaseConstant.DATA_SOURCE_PROPERTIES_SET) {
 			if (properties.containsKey(string)) {
 				String value = properties.getProperty(string);
-				bean.put(string, CryptoUtil.forceDecrypt(value));
+				result.put(string, CryptoUtil.forceDecrypt(value));
 				log.info("setDataSourceProperties put finish... key: {}, value: {}", string, value);
 			}
 		}
-		this.dataSourceProperties = bean;
+		this.dataSourceProperties = result;
+	}
+
+	private void setHibernateProperties(Properties properties) {
+		Properties result = new Properties();
+		for (String string : DatabaseConstant.HIBERNATE_PROPERTIES_SET) {
+			if (properties.containsKey(string)) {
+				String value = properties.getProperty(string);
+				result.put(string, value);
+				log.info("setHibernateProperties put finish... key: {}, value: {}", string, value);
+			}
+		}
+		this.hibernateProperties = result;
 	}
 }

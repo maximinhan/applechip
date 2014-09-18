@@ -12,14 +12,14 @@ import org.springframework.scheduling.config.CronTask;
 import org.springframework.scheduling.config.ScheduledTaskRegistrar;
 import org.springframework.scheduling.support.CronTrigger;
 
-import com.applechip.core.properties.CoreProperties;
+import com.applechip.core.properties.ApplicationProperties;
 
 @Configuration
 @EnableScheduling
 public class CustomSchedulingConfigurer implements SchedulingConfigurer {
 
   @Autowired
-  private CoreProperties coreProperties;
+  private ApplicationProperties applicationProperties;
 
 //  @Autowired
 //  private ClearData clearData;
@@ -27,12 +27,12 @@ public class CustomSchedulingConfigurer implements SchedulingConfigurer {
   @Override
   public void configureTasks(ScheduledTaskRegistrar taskRegistrar) {
     TimeZone timeZone = TimeZone.getDefault();
-    String timeZoneId = coreProperties.getScheduleTimeZoneId();
+    String timeZoneId = applicationProperties.getScheduleTimeZoneId();
     if (StringUtils.isNotBlank(timeZoneId)) {
       timeZone = TimeZone.getTimeZone(timeZoneId);
     }
-    CronTrigger cronTrigger = new CronTrigger(coreProperties.getScheduleCronExpression(), timeZone);
-    taskRegistrar.setScheduler(Executors.newScheduledThreadPool(Integer.parseInt(coreProperties.getScheduleThreadPool())));
+    CronTrigger cronTrigger = new CronTrigger(applicationProperties.getScheduleCronExpression(), timeZone);
+    taskRegistrar.setScheduler(Executors.newScheduledThreadPool(Integer.parseInt(applicationProperties.getScheduleThreadPool())));
     taskRegistrar.addCronTask(new CronTask(new Runnable() {
       public void run() {
 //        clearData.clearClient(baseProperties.getClearClientBeforeMinute());

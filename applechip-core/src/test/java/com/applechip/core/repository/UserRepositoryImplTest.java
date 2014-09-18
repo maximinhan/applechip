@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.applechip.core.AbstractTransactionTest;
 import com.applechip.core.entity.User;
+import com.applechip.core.properties.ApplicationProperties;
+import com.applechip.core.properties.RuntimeProperties;
 
 @Slf4j
 public class UserRepositoryImplTest extends AbstractTransactionTest {
@@ -14,8 +16,16 @@ public class UserRepositoryImplTest extends AbstractTransactionTest {
 	@Autowired
 	private UserRepository userRepository;
 
+	@Autowired
+	private ApplicationProperties applicationProperties;
+
+	@Autowired
+	private RuntimeProperties runtimeProperties;
+
 	@Test
 	public void testGetAll() throws Exception {
+		log.debug("{}", applicationProperties);
+		log.debug("{}", runtimeProperties);
 		log.debug("{}", userRepository.findAll());
 	}
 

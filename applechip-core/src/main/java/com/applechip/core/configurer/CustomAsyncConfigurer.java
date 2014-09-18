@@ -12,25 +12,25 @@ import org.springframework.scheduling.annotation.AsyncConfigurer;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
-import com.applechip.core.properties.CoreProperties;
+import com.applechip.core.properties.ApplicationProperties;
 
 @Configuration
 @EnableAsync(proxyTargetClass = true, mode = AdviceMode.PROXY, order = Ordered.LOWEST_PRECEDENCE, annotation = Async.class)
 public class CustomAsyncConfigurer implements AsyncConfigurer {
 
   @Autowired
-  private CoreProperties coreProperties;
+  private ApplicationProperties applicationProperties;
 
   @Override
   @Bean
   public Executor getAsyncExecutor() {
     Executor executor = null;
     ThreadPoolTaskExecutor threadPoolTaskExecutor = new ThreadPoolTaskExecutor();
-    threadPoolTaskExecutor.setCorePoolSize(coreProperties.getExecutorCorePoolSize());
-    threadPoolTaskExecutor.setMaxPoolSize(coreProperties.getExecutorMaxPoolSize());
-    threadPoolTaskExecutor.setQueueCapacity(coreProperties.getExecutorQueueCapacity());
-    threadPoolTaskExecutor.setKeepAliveSeconds(coreProperties.getExecutorKeepAliveSeconds());
-    threadPoolTaskExecutor.setThreadNamePrefix(coreProperties.getExecutorThreadNamePrefix());
+    threadPoolTaskExecutor.setCorePoolSize(applicationProperties.getExecutorCorePoolSize());
+    threadPoolTaskExecutor.setMaxPoolSize(applicationProperties.getExecutorMaxPoolSize());
+    threadPoolTaskExecutor.setQueueCapacity(applicationProperties.getExecutorQueueCapacity());
+    threadPoolTaskExecutor.setKeepAliveSeconds(applicationProperties.getExecutorKeepAliveSeconds());
+    threadPoolTaskExecutor.setThreadNamePrefix(applicationProperties.getExecutorThreadNamePrefix());
     threadPoolTaskExecutor.initialize();
     executor = threadPoolTaskExecutor;
     return executor;

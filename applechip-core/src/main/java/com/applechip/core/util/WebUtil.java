@@ -9,10 +9,11 @@ import javax.xml.bind.Marshaller;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.util.WebUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-public class WebUtil {
+public class WebUtil extends WebUtils {
 	public static String toJsonString(Object object) {
 		ObjectMapper mapper = new ObjectMapper();
 		String jsonString = "{}";

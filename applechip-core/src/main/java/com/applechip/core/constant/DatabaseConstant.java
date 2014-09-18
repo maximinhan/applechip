@@ -8,7 +8,7 @@ import java.util.Set;
 
 import org.apache.commons.dbcp.BasicDataSourceFactory;
 
-import com.applechip.core.util.ReflectUtil;
+import com.applechip.core.util.FieldUtil;
 
 public class DatabaseConstant {
 
@@ -48,31 +48,15 @@ public class DatabaseConstant {
 	public static Set<String> DATA_SOURCE_PROPERTIES_SET = Collections.unmodifiableSet(new HashSet<String>() {
 		private static final long serialVersionUID = -5954861215952396300L;
 		{
-			addAll(ReflectUtil.readFieldList(BasicDataSourceFactory.class, String.class));
-			// for (Field field : BasicDataSourceFactory.class.getDeclaredFields()) {
-			// if (!field.getType().equals(String.class)) {
-			// continue;
-			// }
-			// add(ReflectUtil.readField(field, String.class));
-			// }
+			addAll(FieldUtil.readFieldList(BasicDataSourceFactory.class, String.class));
 		}
 	});
 
 	public static Set<String> HIBERNATE_PROPERTIES_SET = Collections.unmodifiableSet(new HashSet<String>() {
 		private static final long serialVersionUID = -5954861215952396300L;
 		{
-			addAll(ReflectUtil.readFieldList(org.hibernate.cfg.AvailableSettings.class, String.class));
-			addAll(ReflectUtil.readFieldList(org.hibernate.jpa.AvailableSettings.class, String.class));
-			// Field[] cfg = org.hibernate.cfg.AvailableSettings.class.getDeclaredFields();
-			// Field[] jpa = org.hibernate.jpa.AvailableSettings.class.getDeclaredFields();
-			// Field[] fields = Arrays.copyOf(cfg, cfg.length + jpa.length);
-			// System.arraycopy(jpa, 0, fields, cfg.length, jpa.length);
-			// for (Field field : fields) {
-			// Object object = ReflectUtil.readField(field, String.class);
-			// if (object != null) {
-			// add(object.toString());
-			// }
-			// }
+			addAll(FieldUtil.readFieldList(org.hibernate.cfg.AvailableSettings.class, String.class));
+			addAll(FieldUtil.readFieldList(org.hibernate.jpa.AvailableSettings.class, String.class));
 		}
 	});
 }
