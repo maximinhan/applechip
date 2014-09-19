@@ -15,41 +15,52 @@ import org.springframework.web.multipart.MultipartFile;
 import com.applechip.core.constant.SystemConstant;
 
 public class FileUtil extends FileUtils {
-	public static File upload(MultipartFile multipartFile, String uploadDir, String saveFileName) {
-		File file = new File(String.format("%s%s%s", uploadDir + File.separator + saveFileName));
+	private FileUtil() {
+	}
+
+	public static File upload(MultipartFile multipartFile, String uploadDir,
+			String saveFileName) {
+		File file = new File(String.format("%s%s%s", uploadDir + File.separator
+				+ saveFileName));
 		try {
 			forceMkdir(file.getParentFile());
 			multipartFile.transferTo(file);
-		}
-		catch (IOException ex) {
-			throw new RuntimeException(String.format("file upload error:%s", file), ex);
+		} catch (IOException ex) {
+			throw new RuntimeException(String.format("file upload error:%s",
+					file), ex);
 		}
 		return file;
 	}
 
-	public static void download(File file, String filename, HttpServletRequest request, HttpServletResponse response) {
+	public static void download(File file, String filename,
+			HttpServletRequest request, HttpServletResponse response) {
 		FileInputStream fileInputStream = null;
 		OutputStream outputStream = null;
-		String userAgent = StringUtil.defaultString(request.getHeader("User-Agent"));
+		String userAgent = StringUtil.defaultString(request
+				.getHeader("User-Agent"));
 		try {
 			String header = "";
 			if (StringUtil.contains(userAgent, "MSIE 5.5")) {
-				header = String.format("filename=%s;", URLEncoder.encode(filename, SystemConstant.CHARSET.toString()));
+				header = String.format(
+						"filename=%s;",
+						URLEncoder.encode(filename,
+								SystemConstant.CHARSET.toString()));
 				response.setHeader("Cache-Control", "no-cache");
 				response.setHeader("Pragma", "no-cache");
-			}
-			else if (StringUtil.contains(userAgent, "MSIE")) {
-				header = String.format("attachment; filename=%s;",
-						URLEncoder.encode(filename, SystemConstant.CHARSET.toString()).replace("+", " "));
+			} else if (StringUtil.contains(userAgent, "MSIE")) {
+				header = String.format("attachment; filename=%s;", URLEncoder
+						.encode(filename, SystemConstant.CHARSET.toString())
+						.replace("+", " "));
 				response.setHeader("Cache-Control", null);
 				response.setHeader("Pragma", null);
-			}
-			else {
+			} else {
 				header = String.format("attachment; filename=\"%s\";",
-						new String(filename.getBytes(SystemConstant.CHARSET), SystemConstant.CHARSET));
+						new String(filename.getBytes(SystemConstant.CHARSET),
+								SystemConstant.CHARSET));
 			}
 
-			response.setContentType(String.format("application/octet-stream; charset=%s",
+			response.setContentType(String.format(
+					"application/octet-stream; charset=%s",
 					SystemConstant.CHARSET.toString()));
 			response.setHeader("Content-Disposition", header);
 			response.setHeader("Content-Transfer-Encoding", "binary");
@@ -60,12 +71,11 @@ public class FileUtil extends FileUtils {
 
 			IOUtil.copy(fileInputStream, outputStream);
 			outputStream.flush();
-		}
-		catch (IOException e) {
-			throw new RuntimeException(String.format("file(%s) download error.., message:%s", file.getAbsolutePath(),
-					e.getMessage()), e);
-		}
-		finally {
+		} catch (IOException e) {
+			throw new RuntimeException(String.format(
+					"file(%s) download error.., message:%s",
+					file.getAbsolutePath(), e.getMessage()), e);
+		} finally {
 			IOUtil.closeQuietly(fileInputStream, outputStream);
 		}
 	}
