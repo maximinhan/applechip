@@ -10,7 +10,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 
 import lombok.Data;
@@ -66,17 +65,12 @@ public class Server extends GenericByUpdated<String> {
 	@JsonProperty("port2")
 	private int port2;
 
+	@JsonProperty("usable")
+	private int usable;
+
 	@Column(name = "alive", nullable = false)
 	@JsonProperty("alive")
 	private boolean alive;
-
-	@Transient
-	private boolean oldAlive;
-
-	@Column(name = "usable")
-	@JsonProperty("usable")
-	@NotAudited
-	private Long usable;
 
 	@Column(name = "enabled", nullable = false)
 	@JsonProperty("enabled")
@@ -87,28 +81,17 @@ public class Server extends GenericByUpdated<String> {
 	@NotAudited
 	private Set<NetworkGroupServer> networkGroupServers = new HashSet<NetworkGroupServer>();
 
-	// @ManyToMany
-	// @JoinTable(name = "nt_server_monitoring", joinColumns = { @JoinColumn(name = "server_id", referencedColumnName =
-	// "server_id") })
-	// @AuditJoinTable
-	// @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
-	// @JsonIgnore
-	// private Set<Server> serverMonitorings = new HashSet<Server>();
-
-	@Transient
-	private long useCount;
-
-	public String getServerUrl(String serverAddress, boolean usessl) {
-		String u = "";
-		String p = "";
+	public String getUrl(String host, boolean usessl) {
+		String schema = "";
+		String port = "";
 		if (usessl) {
-			u = "https://";
-			p = getPort2() == 443 ? "" : ":" + getPort2();
+			schema = "https://";
+			port = this.port2 == 443 ? "" : String.format(":%s", this.port2);
 		}
 		else {
-			u = "http://";
-			p = getPort1() == 80 ? "" : ":" + getPort1();
+			schema = "http://";
+			port = this.port1 == 80 ? "" : String.format(":%s", this.port1);
 		}
-		return u.concat(serverAddress).concat(p);
+		return String.format("%s%s%s", schema, host, port);
 	}
 }

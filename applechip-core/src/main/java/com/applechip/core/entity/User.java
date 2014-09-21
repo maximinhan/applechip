@@ -3,17 +3,20 @@ package com.applechip.core.entity;
 import java.util.Collection;
 import java.util.Date;
 import java.util.LinkedHashSet;
+import java.util.Map;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.MapKey;
+import javax.persistence.OneToMany;
 import javax.persistence.PrePersist;
 import javax.persistence.Table;
 import javax.persistence.Transient;
@@ -24,6 +27,8 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.envers.NotAudited;
 import org.springframework.security.core.GrantedAuthority;
@@ -32,6 +37,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import com.applechip.core.abstact.GenericByUpdated;
 import com.applechip.core.constant.ColumnSizeConstant;
 import com.applechip.core.util.BitwisePermissions;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name = "mt_user")
@@ -57,53 +63,48 @@ public class User extends GenericByUpdated<String> implements UserDetails {
 	@Column(name = "_id", unique = true, length = ColumnSizeConstant.UUID)
 	private String id;
 
-	@ManyToMany(fetch = FetchType.EAGER)
+	@ManyToMany
 	@JoinTable(name = "mt_user_role", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
-	private Set<Role> roles;// = Collections.emptySet();
+	private Set<Role> roles;
 
-	// @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, optional =
-	// true)
-	// @PrimaryKeyJoinColumn
-	// @OneToOne(fetch = FetchType.LAZY, mappedBy = "user", cascade = CascadeType.ALL, optional =
-	// true)
-	// @PrimaryKeyJoinColumn
-	// private Client client;
+	@OneToMany(mappedBy = "user", cascade = { CascadeType.MERGE, CascadeType.REMOVE }, orphanRemoval = true)
+	@Fetch(FetchMode.SUBSELECT)
+	@JsonIgnore
+	private Set<Client> clients;
 
-	@FormParam("device")
-	@Column(name = "device", length = 50)
-	private String device;
-
-	@FormParam("token")
-	@Column(name = "token", length = 255)
-	private String token;
+	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+	@NotAudited
+	@JsonIgnore
+	@MapKey(name = "id.optionCodeId")
+	private Map<Integer, UserPreferOption> userPreferOptionMap;
 
 	@FormParam("username")
-	@Column(name = "username", length = 50, nullable = false, unique = true)
+	@Column(name = "username", length = ColumnSizeConstant.NAME, nullable = false, unique = true)
 	private String username;
 
 	@FormParam("password")
-	@Column(name = "password", length = 50, nullable = false)
+	@Column(name = "password", length = ColumnSizeConstant.PASSWORD, nullable = false)
 	private String password;
 
 	@Column(name = "status")
 	private long status;
 
-	@Column(name = "password_update_dt")
-	private Date passwordUpdateDt;
+	@Column(name = "password_updated_dt")
+	private Date passwordUpdatedDt;
 
-	@Column(name = "initial_password_yn", nullable = false)
-	private boolean initialPassword;
+	@Column(name = "password_initial", nullable = false)
+	private boolean passwordInitial;
 
-	@Column(name = "account_lock_dt")
-	private Date accountLockDt;
+	@Column(name = "account_locked_dt")
+	private Date accountLockedDt;
 
-	@Column(name = "last_login_dt")
+	@Column(name = "login_succeed_dt")
 	@NotAudited
-	private Date lastLoginDt;
+	private Date lastSucceedDt;
 
-	@Column(name = "login_fail_count")
+	@Column(name = "login_failed_count")
 	@NotAudited
-	private Integer loginFailcount;
+	private int loginFailcount;
 
 	@Transient
 	private String confirmPassword;

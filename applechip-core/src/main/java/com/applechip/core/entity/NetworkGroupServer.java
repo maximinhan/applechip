@@ -1,6 +1,5 @@
 package com.applechip.core.entity;
 
-import java.io.Serializable;
 import java.util.Comparator;
 
 import javax.persistence.Column;
@@ -38,7 +37,7 @@ public class NetworkGroupServer extends GenericByUpdated<NetworkGroupServer.Id> 
 	private Id id = new Id();
 
 	@Audited
-	private Integer priority;
+	private int priority;
 
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "network_group_id", insertable = false, updatable = false)
@@ -51,59 +50,44 @@ public class NetworkGroupServer extends GenericByUpdated<NetworkGroupServer.Id> 
 	private Server server;
 
 	@Transient
-	private Integer changedPriority; // 변경순서 저장 파라메터
+	private int changedPriority;
 
 	public NetworkGroupServer(NetworkGroup networkGroup, Server server) {
-		// 필드 설정
 		this.networkGroup = networkGroup;
 		this.server = server;
 
-		// 식별자 값 설정
-		this.id.networkGroupId = networkGroup.getId();
-		this.id.serverId = server.getId();
+		this.id.networkGroupId = this.networkGroup.getId();
+		this.id.serverId = this.server.getId();
 
-		// 참조 무결성
 		networkGroup.getNetworkGroupServers().add(this);
 		server.getNetworkGroupServers().add(this);
 	}
 
-	public NetworkGroupServer(String networkGroupId, String serverId, Integer priority) {
+	public NetworkGroupServer(String networkGroupId, String serverId, int priority) {
 		this.id.networkGroupId = networkGroupId;
 		this.id.serverId = serverId;
 		this.priority = priority;
 	}
 
-	public static class NetworkGroupServerComparator implements Comparator<NetworkGroupServer>, Serializable {
-
-		private static final long serialVersionUID = -3529968288458173958L;
+	public static class NetworkGroupServerComparator implements Comparator<NetworkGroupServer> {
 
 		@Override
-		public int compare(NetworkGroupServer netServer1, NetworkGroupServer netServer2) {
-			if (netServer1.getServer() == null && netServer2.getServer() == null) {
+		public int compare(NetworkGroupServer networkGroupServer1, NetworkGroupServer networkGroupServer2) {
+			if (networkGroupServer1.getServer() == null && networkGroupServer2.getServer() == null) {
 				return 0;
 			}
-			else if (netServer1.getServer() == null) {
+			else if (networkGroupServer1.getServer() == null) {
 				return -1;
 			}
-			else if (netServer2.getServer() == null) {
+			else if (networkGroupServer2.getServer() == null) {
 				return 1;
 			}
 
-			if (netServer1.getServer().getType().compareTo(netServer2.getServer().getType()) == 0) {
-				if (netServer1.getPriority() == null && netServer2.getPriority() == null) {
+			if (networkGroupServer1.getServer().getType().compareTo(networkGroupServer2.getServer().getType()) == 0) {
+				if (networkGroupServer1.getPriority() == networkGroupServer2.getPriority()) {
 					return 0;
 				}
-				else if (netServer1.getPriority() == null) {
-					return -1;
-				}
-				else if (netServer2.getPriority() == null) {
-					return 1;
-				}
-
-				if (netServer1.getPriority().equals(netServer2.getPriority())) {
-					return netServer1.getServer().getUsable().compareTo(netServer2.getServer().getUsable());
-				}
-				else if (netServer1.getPriority() > netServer2.getPriority()) {
+				else if (networkGroupServer1.getPriority() > networkGroupServer2.getPriority()) {
 					return 1;
 				}
 				else {
@@ -111,7 +95,7 @@ public class NetworkGroupServer extends GenericByUpdated<NetworkGroupServer.Id> 
 				}
 			}
 			else {
-				return netServer1.getServer().getType().compareTo(netServer2.getServer().getType());
+				return networkGroupServer1.getServer().getType().compareTo(networkGroupServer2.getServer().getType());
 			}
 		}
 	}
