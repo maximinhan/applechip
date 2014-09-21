@@ -25,7 +25,6 @@ import com.applechip.core.constant.ColumnSizeConstant;
 @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
 @SuppressWarnings(value = { "PMD.UnusedPrivateField", "PMD.SingularField" })
 @EqualsAndHashCode(callSuper = false, of = { "id" })
-@NoArgsConstructor
 @ToString(exclude = { "codeCategory" })
 @Data
 public class Code extends GenericByUpdated<Code.Id> {
@@ -54,7 +53,6 @@ public class Code extends GenericByUpdated<Code.Id> {
 
 	@Embeddable
 	@EqualsAndHashCode(callSuper = false, of = { "codeCategoryId", "codeId" })
-	@NoArgsConstructor
 	@Data
 	public static class Id extends AbstractObject {
 

@@ -1,0 +1,125 @@
+assert delegate = project.dependencies
+delegate.compile('junit:junit:4.11')
+
+jar {
+manifest{
+attributes ////
+}
+}
+test{
+jvmArgs = ['-ea', '-Xmx256m']
+logging.captureStandardOutput(LogLevel.INFO)
+reports.html.enabled=true //
+testReport = false
+}
+
+configurations {
+compile {
+description = 'compile classpath'
+transitive = false
+}
+runtime {
+extendsFrom compile
+}
+}
+	
+compile project(':applechip-core@jar')
+			
+			
+[configurations.rumtime, configurations.default]*.exclude(module: 'commons-logging')
+
+sourceSets {
+main {
+//default build/classes/main
+output.classDir = 'build/classes'
+output.resourcesDir = 'build/classes'
+}
+test {
+output.classesDir = 'build/test-classes'
+output.resourcesDir = 'build/test-classes'
+}
+} 
+
+system -D
+project -P
+
+test.includes = [
+List<String> list = 
+list.add('org/gradle/internal/**')
+test.includes = list
+
+def Map<String, String> dialectMap = [
+	MYSQL: "org.hibernate.dialect.MySQL5InnoDBDialect",
+	ORACLE: "org.hibernate.dialect.Oracle10gDialect",
+	HSQL: "org.hibernate.dialect.HSQLDialect",
+	H2: "org.hibernate.dialect.H2Dialect",
+	SQLSERVER: "org.hibernate.dialect.SQLServer2008Dialect"
+]
+def Map<String, String> driverClassMap = [
+	MYSQL: "com.mysql.jdbc.Driver",
+	ORACLE: "oracle.jdbc.OracleDriver",
+	HSQL: "org.hsqldb.jdbcDriver",
+	H2: "org.h2.Driver",
+	SQLSERVER: "com.microsoft.sqlserver.jdbc.SQLServerDriver"
+]
+map.put('plugin', 'java')
+apply(map)
+
+
+4.The Gradle Command Line 명령창에서 gradle [option...] [task...]를 입력하여 Gradle build를 수행할 수 있으며, 대표적인 option 및 Help task는 다음과 같다.  -?, -h, --help : help message 출력  -q : 로그 출력 안함  -x, --exclude-task : 특정 task는 실행하지 않음  --continue : 빌드 실패 시 즉시 종료하지 않고, 독립적인 태스크들은 모두 수행  -d, --debug : stacktrace를 포함한 debug 정보 출력  -i, --info : Log Level을 INFO로 변경  -b, --build-file : build.gradle이 아닌 다른 빌드 파일을 선택하여 실행  -D, --system-prop : JVM의 System Property를 설정  --gui : Gradle GUI를 실행  projects : sub-project 목록을 표시  properties : properties 목록을 표시  tasks : 빌드 스크립트의 실행 가능한 모든 task 목록을 표시 4 - Internal Use Only -
+
+
+
+
+eclipse.classpath.file {
+    beforeMerged { classpath -> 
+        classpath.entries.clear()
+    }
+    whenMerged {  cp -> 
+        cp.entries.findAll { it instanceof org.gradle.plugins.ide.eclipse.model.SourceFolder  && it.path.startsWith("src/main/") }*.output = "build/classes/main" 
+        cp.entries.findAll { it instanceof org.gradle.plugins.ide.eclipse.model.SourceFolder  && it.path.startsWith("src/test/") }*.output = "build/classes/test" 
+        cp.entries.removeAll { it.kind == "output" }
+    }
+}
+
+eclipse {
+classpath {
+defaultOutputDir = file("build/classes")
+file {
+whenMerged { cp ->
+cp.entries.findAll { entry -> 
+entry.kind == 'src' && entry.path.startsWith('src/tet/')
+}*.output = "build/test-classes"
+}
+}
+}
+
+
+
+processResources {
+from('src/main/java') {
+excluded '**/*.java'
+}
+into 'build/classes'
+includeEmptyDirs = true
+}
+
+processTestResources {
+from('src/test/java') {
+excluded '**/*.java'
+}
+into 'build/test-classes'
+includeEmptyDirs = true
+}
+
+
+
+[processResources, processTestResources]*.filter(org.apache.tools.ant.filters.ReplaceTokens,
+	tokens: [
+		'jdbcType': project.properties['jdbcType'],
+		'jdbcUrl': project.properties['jdbcUrl'],
+		'jdbcUsername': project.properties['jdbcUsername'],
+		'jdbcPassword': project.properties['jdbcPassword']
+	]
+) 
+
