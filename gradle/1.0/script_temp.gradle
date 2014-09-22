@@ -82,34 +82,50 @@ eclipse.classpath.file {
     }
 }
 
+	eclipse {
+		classpath {
+			defaultOutputDir = file('build/classes')
+			file {
+			    beforeMerged { classpath -> 
+			        classpath.entries.clear()
+			    }
+				whenMerged { cp ->
+					cp.entries.findAll { it instanceof org.gradle.plugins.ide.eclipse.model.SourceFolder  && it.path.startsWith("src/main/") }*.output = "build/classes" 
+			        cp.entries.findAll { it instanceof org.gradle.plugins.ide.eclipse.model.SourceFolder  && it.path.startsWith("src/test/") }*.output = "build/test-classes" 
+			        cp.entries.removeAll { it.kind == "output" }
+				}
+			}
+		}
+	}
+
 eclipse {
-classpath {
-defaultOutputDir = file("build/classes")
-file {
-whenMerged { cp ->
-cp.entries.findAll { entry -> 
-entry.kind == 'src' && entry.path.startsWith('src/tet/')
-}*.output = "build/test-classes"
-}
-}
+	classpath {
+		defaultOutputDir = file("build/classes")
+		file {
+			whenMerged { cp ->
+				cp.entries.findAll { entry -> 
+				entry.kind == 'src' && entry.path.startsWith('src/tet/')
+			}*.output = "build/test-classes"
+		}
+	}
 }
 
 
 
 processResources {
-from('src/main/java') {
-excluded '**/*.java'
-}
-into 'build/classes'
-includeEmptyDirs = true
+	from('src/main/java') {
+		excluded '**/*.java'
+	}
+	into 'build/classes'
+	includeEmptyDirs = true
 }
 
 processTestResources {
-from('src/test/java') {
-excluded '**/*.java'
-}
-into 'build/test-classes'
-includeEmptyDirs = true
+	from('src/test/java') {
+		excluded '**/*.java'
+	}
+	into 'build/test-classes'
+	includeEmptyDirs = true
 }
 
 

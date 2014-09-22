@@ -14,14 +14,14 @@ import com.applechip.core.util.SecurityUtil;
 @SuppressWarnings("serial")
 @MappedSuperclass
 @Getter
-public abstract class GenericByCreated<PK extends Serializable> extends
-		GenericDtUpdated<PK> {
+public abstract class GenericIpCreated<PK extends Serializable> extends
+		GenericByUpdated<PK> {
 
-	@Column(name = "created_by", insertable = true, updatable = false, length = ColumnSizeConstant.UUID)
-	protected String createdBy;
+	@Column(name = "created_ip", insertable = true, updatable = false, length = ColumnSizeConstant.UUID)
+	protected String createdIp;
 
 	@PrePersist
-	private void setCreatedBy() {
-		this.createdBy = SecurityUtil.getCurrentUserId();
+	private void setCreatedIp() {
+		this.createdIp = SecurityUtil.getCurrentRemoteAddr();
 	}
 }

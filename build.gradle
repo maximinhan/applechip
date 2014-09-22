@@ -166,6 +166,33 @@ configure(subprojects) { project ->
 		testCompile("junit:junit:4.11")
 		testCompile("org.mockito:mockito-all:1.9.5")
 	}
+	
+    sourceSets {
+		main {
+			output.classesDir = 'build/classes'
+			output.resourcesDir = 'build/classes'
+		}
+		test {
+			output.classesDir = 'build/test-classes'
+			output.resourcesDir = 'build/test-classes'
+		}
+	}
+	eclipse {
+		classpath {
+			defaultOutputDir = file('build/classes')
+			file {
+			    beforeMerged { classpath -> 
+			        classpath.entries.clear()
+			    }
+				whenMerged { cp ->
+					cp.entries.findAll { it instanceof org.gradle.plugins.ide.eclipse.model.SourceFolder  && it.path.startsWith("src/main/") }*.output = "build/classes" 
+			        cp.entries.findAll { it instanceof org.gradle.plugins.ide.eclipse.model.SourceFolder  && it.path.startsWith("src/test/") }*.output = "build/test-classes" 
+			        cp.entries.removeAll { it.kind == "output" }
+				}
+			}
+		}
+	}
+	
 	[processResources, processTestResources]*.filter(org.apache.tools.ant.filters.ReplaceTokens,
 		tokens: [
 			'jdbcType': project.properties['jdbcType'],
@@ -174,6 +201,21 @@ configure(subprojects) { project ->
 			'jdbcPassword': project.properties['jdbcPassword']
 		]
 	)
+	processResources {
+		//from('src/main/java') {
+		//	excluded '**/*.java'
+		//}
+		into 'build/classes'
+		includeEmptyDirs = true
+	}
+	
+	processTestResources {
+		//from('src/test/java') {
+		//	excluded '**/*.java'
+		//}
+		into 'build/test-classes'
+		includeEmptyDirs = true
+	}
 }
 
 project(":applechip-core") {

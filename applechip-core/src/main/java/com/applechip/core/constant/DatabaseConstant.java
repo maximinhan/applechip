@@ -57,6 +57,7 @@ public class DatabaseConstant {
 		{
 			addAll(FieldUtil.readFieldList(org.hibernate.cfg.AvailableSettings.class, String.class));
 			addAll(FieldUtil.readFieldList(org.hibernate.jpa.AvailableSettings.class, String.class));
+			addAll(FieldUtil.readFieldList(org.hibernate.envers.configuration.EnversSettings.class, String.class));
 		}
 	});
 }
