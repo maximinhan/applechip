@@ -10,7 +10,10 @@ import org.hibernate.event.service.spi.EventListenerRegistry;
 import org.hibernate.event.spi.EventType;
 import org.hibernate.internal.SessionFactoryImpl;
 import org.hibernate.jpa.HibernateEntityManagerFactory;
+import org.springframework.aop.Advisor;
+import org.springframework.aop.aspectj.AspectJExpressionPointcut;
 import org.springframework.aop.aspectj.AspectJExpressionPointcutAdvisor;
+import org.springframework.aop.support.DefaultPointcutAdvisor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.AdviceMode;
 import org.springframework.context.annotation.Bean;
@@ -34,6 +37,7 @@ import com.applechip.core.configurer.support.CustomHibernateJpaVendorAdapter;
 import com.applechip.core.constant.ApplicationConstant;
 import com.applechip.core.exception.SystemException;
 import com.applechip.core.properties.DatabaseProperties;
+import com.applechip.core.util.MonitoringInterceptor;
 
 @Configuration
 @EnableAspectJAutoProxy(proxyTargetClass = true)
@@ -46,18 +50,22 @@ public class CustomTransactionManagementConfigurer implements TransactionManagem
 	@Autowired
 	private CustomEventListener entityListener;
 
-	// <bean id="performanceMonitor" class="com.applechip.core.util.PerformanceMonitoringInterceptor">
-	// <property name="systemName" value="PA" />
-	// <property name="enabled" value="true" />
-	// <property name="statLogFrequency" value="10" />
-	// <property name="warningThreshold" value="3000" />
-	// </bean>
-	// <aop:config>
-	// <aop:advisor id="managerPerf" advice-ref="performanceMonitor" pointcut="execution(* com..*.*Manager.*(..))"
-	// order="2" />
-	// <aop:advisor id="servicePerf" advice-ref="performanceMonitor" pointcut="execution(* com..*.*Service.*(..))"
-	// order="3" />
-	// </aop:config>
+	@Bean
+	public Advisor advisor() {
+		AspectJExpressionPointcut aspectJExpressionPointcut = new AspectJExpressionPointcut();
+		aspectJExpressionPointcut
+				.setExpression(CustomAspectJConfigurer.class.getCanonicalName() + ".servicePointcut()");
+		return new DefaultPointcutAdvisor(aspectJExpressionPointcut, this.monitoringInterceptor());
+	}
+
+	@Bean
+	public MonitoringInterceptor monitoringInterceptor() {
+		MonitoringInterceptor bean = new MonitoringInterceptor();
+		bean.setEnabled(Boolean.TRUE);
+		bean.setFrequency(3);
+		bean.setThreshold(100);
+		return bean;
+	}
 
 	@Override
 	@Bean
@@ -134,7 +142,8 @@ public class CustomTransactionManagementConfigurer implements TransactionManagem
 		try {
 			bean = new AspectJExpressionPointcutAdvisor();
 			// bean.setExpression("execution(* *..service.*Manager.*(..))");
-			bean.setExpression("execution(* com..*.*Service.*(..))");
+			bean.setExpression(CustomAspectJConfigurer.class.getCanonicalName() + ".servicePointcut()");
+//			bean.setExpression("execution(* com..*.*Service.*(..))");
 			bean.setAdvice(new TransactionInterceptor(this.annotationDrivenTransactionManager(), this
 					.transactionAttributeSource()));
 			bean.setOrder(Ordered.HIGHEST_PRECEDENCE);

@@ -1,0 +1,35 @@
+def Map<String, String> hibernateDialectMap = [
+	MYSQL: "org.hibernate.dialect.MySQL5InnoDBDialect",
+	ORACLE: "org.hibernate.dialect.Oracle10gDialect",
+	HSQL: "org.hibernate.dialect.HSQLDialect",
+	H2: "org.hibernate.dialect.H2Dialect",
+	SQLSERVER: "org.hibernate.dialect.SQLServer2008Dialect"
+]
+def Map<String, String> jdbcDriverClassMap = [
+	MYSQL: "com.mysql.jdbc.Driver",
+	ORACLE: "oracle.jdbc.OracleDriver",
+	HSQL: "org.hsqldb.jdbcDriver",
+	H2: "org.h2.Driver",
+	SQLSERVER: "com.microsoft.sqlserver.jdbc.SQLServerDriver"
+]
+
+def Map<String, String> jdbcValidationQueryMap = [
+	MYSQL: "SELECT 1",
+	MYSQL_REPLICATION: "/* ping */ SELECT 1",
+	ORACLE: "SELECT 1 FROM DUAL",
+	SQLSERVER: "SELECT 1"
+]
+
+task settingProperties(type: JavaCompile, group: 'build', description: 'Generates the QueryDSL query types') {
+	def jdbcDriver = jdbcDriverClassMap.get(project.properties['jdbcType'])
+	project.ext.jdbcDriver = "${jdbcDriver}"
+	[processResources, processTestResources]*.filter(org.apache.tools.ant.filters.ReplaceTokens,
+		tokens: [
+			'jdbcType': project.properties['jdbcType'],
+			'jdbcUrl': project.properties['jdbcUrl'],
+			'jdbcUsername': project.properties['jdbcUsername'],
+			'jdbcPassword': project.properties['jdbcPassword'],
+			'jdbcDriver': jdbcDriver
+		]
+	)
+}

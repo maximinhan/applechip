@@ -21,9 +21,9 @@ public class UserServiceImplTest extends AbstractTest {
 	private BasicDataSource dataSource;
 
 	@Test(expected = UsernameNotFoundException.class)
-	@Ignore
+//	@Ignore
 	public void testLoadUserByUsername() throws Exception {
-		log.debug("{}", userService.loadUserByUsername("username"));
+		log.debug("{}", userService.loadUserByUsername("usernameZx"));
 	}
 
 	@Test

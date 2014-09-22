@@ -223,6 +223,7 @@ project(":applechip-core") {
 	apply from: generateSchemaTask
 	apply from: generateQueryDSLTask
 	apply from: generateWsdlTask
+	apply from: settingPropertiesTask
 	dependencies {
 		provided("org.springframework.security:spring-security-core:$springframeworkSecurityVersion")
 		provided("org.springframework.data:spring-data-commons:${springframeworkDataVersion}")
@@ -262,7 +263,9 @@ project(":applechip-core") {
 	    provided("com.maxmind.geoip2:geoip2:0.9.0")
 	    provided("org.hibernate:hibernate-envers:$hibernateVersion")
 	}
-	
+	processResources {
+		dependsOn settingProperties
+	}
 	compileJava {
 	    dependsOn generateQueryDSL
 	    source generateQueryDSL.destinationDir
@@ -277,6 +280,7 @@ project(":applechip-core") {
 	    delete sourceSets.generated.java.srcDirs
 	}
 	jar {
+		println 'ssssssssssssssssssssssssssssss' + jdbcDriver
 		dependsOn generateSchema
 	}
 }

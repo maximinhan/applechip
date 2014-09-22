@@ -15,64 +15,69 @@ import org.aopalliance.intercept.MethodInvocation;
 @Setter
 public class MonitoringInterceptor implements MethodInterceptor {
 
-	private static Map<String, MethodStats> methodStats = new ConcurrentHashMap<String, MethodStats>();
+	private static Map<String, MethodState> methodStateMap = new ConcurrentHashMap<String, MethodState>();
 
 	private boolean enabled;
 
-	private long statLogFrequency = 10;
+	private long frequency = 10;
 
-	private long warningThreshold = 1000;
+	private long threshold = 1000;
 
-	private String systemName = "";
-
-	public Object invoke(MethodInvocation invocation) throws Throwable {
+	public Object invoke(MethodInvocation methodInvocation) throws Throwable {
 		if (this.enabled) {
-			return invokeUnderTrace(invocation);
+			return methodInvocationTrace(methodInvocation);
 		}
 		else {
-			return invocation.proceed();
+			return methodInvocation.proceed();
 		}
 
 	}
 
-	private Object invokeUnderTrace(MethodInvocation invocation) throws Throwable {
+	private Object methodInvocationTrace(MethodInvocation methodInvocation) throws Throwable {
 		long start = System.currentTimeMillis();
 		try {
-			return invocation.proceed();
+			log.info("methodInvocationTrace start:{}", start);
+			return methodInvocation.proceed();
 		}
 		finally {
-			traceMethod(invocation.getMethod().getName(), System.currentTimeMillis() - start);
+			methodInvocationTraceMethod(methodInvocation.getMethod().getName(), System.currentTimeMillis() - start);
 		}
 	}
 
-	private void traceMethod(String methodName, long elapsedTime) {
-		MethodStats stats = methodStats.get(methodName);
-		if (stats == null) {
-			stats = new MethodStats();
-			methodStats.put(methodName, stats);
-		}
-		stats.count++;
-		stats.totalTime += elapsedTime;
-		if (elapsedTime > stats.maxTime) {
-			stats.maxTime = elapsedTime;
+	private void methodInvocationTraceMethod(String method, long elapsedTime) {
+		MethodState methodState = getMethodState(method);
+		methodState.setCount(methodState.getCount() + 1);
+		methodState.setTotalTime(methodState.getTotalTime() + elapsedTime);
+		if (elapsedTime > methodState.getMaxTime()) {
+			methodState.setMaxTime(elapsedTime);
 		}
 
-		if (elapsedTime > warningThreshold) {
-			log.warn(String.format("[%s]method warning:%s, count=%d, lastTime=%d, maxTime=%d", this.systemName,
-					methodName, stats.count, elapsedTime, stats.maxTime));
+		if (elapsedTime > threshold) {
+			log.warn("method warning:{}, count={}, lastTime={}, maxTime={}", method, methodState.getCount(),
+					elapsedTime, methodState.getMaxTime());
 		}
 
-		if (stats.count % statLogFrequency == 0) {
-			long avgTime = stats.totalTime / stats.count;
-			long runningAvg = (stats.totalTime - stats.lastTotalTime) / statLogFrequency;
-			log.info(String.format("[%s]method:%s, count=%d, lastTime=%d, avgTime=%d, runningAvg=%d, maxTime=%d",
-					this.systemName, methodName, stats.count, elapsedTime, avgTime, runningAvg, stats.maxTime));
-
-			stats.lastTotalTime = stats.totalTime;
+		if (methodState.getCount() % frequency == 0) {
+			long avgTime = methodState.getTotalTime() / methodState.getCount();
+			long runningAvg = (methodState.getTotalTime() - methodState.getLastTotalTime()) / frequency;
+			log.info("method:{}, count={}, lastTime={}, avgTime={}, runningAvg={}, maxTime={}", method,
+					methodState.getCount(), elapsedTime, avgTime, runningAvg, methodState.getMaxTime());
+			methodState.setLastTotalTime(methodState.getTotalTime());
 		}
 	}
 
-	private static class MethodStats {
+	private MethodState getMethodState(String method) {
+		MethodState methodState = methodStateMap.get(method);
+		if (methodState == null) {
+			methodState = new MethodState();
+			methodStateMap.put(method, methodState);
+		}
+		return methodState;
+	}
+
+	@Getter
+	@Setter
+	private static class MethodState {
 
 		private long count;
 
