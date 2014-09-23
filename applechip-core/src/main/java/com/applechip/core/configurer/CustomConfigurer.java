@@ -3,6 +3,7 @@ package com.applechip.core.configurer;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.pool.impl.GenericKeyedObjectPool;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,8 +17,19 @@ import org.springframework.http.converter.json.MappingJackson2HttpMessageConvert
 import org.springframework.http.converter.xml.Jaxb2RootElementHttpMessageConverter;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter;
 
+import com.applechip.core.socket.CustomBaseKeyedPoolableObjectFactory;
+import com.applechip.core.socket.CustomSocketClient;
+import com.applechip.core.socket.SocketClientUtil;
+
 @Configuration
 public class CustomConfigurer {
+
+	@Bean
+	public SocketClientUtil socketClientUtil() {
+		SocketClientUtil bean = new SocketClientUtil(new GenericKeyedObjectPool<String, CustomSocketClient>(
+				new CustomBaseKeyedPoolableObjectFactory()));
+		return bean;
+	}
 
 	@Bean
 	public RequestMappingHandlerAdapter requestMappingHandlerAdapter() {

@@ -7,6 +7,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.servlet.http.HttpServletRequest;
@@ -54,20 +56,27 @@ public class UploadFile extends GenericDtUpdated<String> {
 	@Column(name = "file_size")
 	private Long fileSize;
 
+	@ManyToOne(optional = true)
+	@JoinColumn(name = "server_id")
+	private Server server;
+
 	@Transient
 	private transient MultipartFile multipartFile;
 
 	public UploadFile(MultipartFile multipartFile, String uploadDir) {
-		super();
-		this.multipartFile = multipartFile;
-		this.uploadDir = uploadDir;
+		this(multipartFile, uploadDir, null, null);
 	}
 
 	public UploadFile(MultipartFile multipartFile, String uploadDir, String saveFileName) {
+		this(multipartFile, uploadDir, saveFileName, null);
+	}
+
+	public UploadFile(MultipartFile multipartFile, String uploadDir, String saveFileName, Server server) {
 		super();
 		this.multipartFile = multipartFile;
 		this.uploadDir = uploadDir;
 		this.saveFileName = saveFileName;
+		this.server = server;
 	}
 
 	public File upload(String basePath) {

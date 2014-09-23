@@ -81,6 +81,11 @@ public class Server extends GenericByUpdated<String> {
 	@NotAudited
 	private Set<NetworkGroupServer> networkGroupServers = new HashSet<NetworkGroupServer>();
 
+	@OneToMany(mappedBy = "server")
+	@JsonIgnore
+	@NotAudited
+	private Set<UploadFile> uploadFiles = new HashSet<UploadFile>();
+
 	public String getUrl(String host, boolean usessl) {
 		String schema = "";
 		String port = "";
