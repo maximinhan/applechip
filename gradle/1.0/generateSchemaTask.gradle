@@ -30,6 +30,8 @@ class GenerateSchemaTask extends DefaultTask {
 		H2: "org.h2.Driver",
 		SQLSERVER: "com.microsoft.sqlserver.jdbc.SQLServerDriver"
 	]
+	//@OutputDirectory
+	//def File classesDir
 	def classesDir = project.sourceSets.main.output.classesDir
     def jdbcType = project.properties['jdbcType']
     def jdbcUsername = project.properties['jdbcUsername']

@@ -1,3 +1,42 @@
+/**
+ext {
+    lombokVersion = '1.12.4'}
+ 
+configurations {
+    lombok
+}
+ 
+dependencies {
+    lombok "org.projectlombok:lombok:${lombokVersion}"}
+ 
+task delombok {
+    ext.srcJava = 'src/main/java'
+    ext.srcDelomboked = "${buildDir}/src-delomboked"
+ 
+    inputs.files file(srcJava)
+    outputs.dir file(srcDelomboked)
+    doLast {
+        // 보통은 configurations.runtime만으로 충분하지만, 가끔 provided 등의 사용자정의 configuration이
+        // 존재 할 경우 classpath에 존재하지 않는 라이브러리라서 경고를 보여줄 수 있으므로
+        // 모든 configurations의 의존성을 하나로 모아서 classpath로 지정한다.
+        def allDependencies = configurations.lombok.asFileTree
+        configurations.all { configuration -> allDependencies = allDependencies + configuration.asFileTree }
+ 
+        ant.taskdef(name: 'delombok', classname: 'lombok.delombok.ant.DelombokTask',
+            classpath: configurations.lombok.asPath)
+        ant.delombok(from: srcJava, to: srcDelomboked, verbose: true,
+            encoding: 'UTF-8', classpath: allDependencies.asPath)
+    }}
+
+javadoc {
+    dependsOn delombok
+    source = fileTree(dir: delombok.srcDelomboked, includes: ['**/*.java', '**/*.html'])
+    options.encoding = 'utf-8'}
+}
+**/
+
+
+
 def qualifyVersionIfNecessary(version) {
 	if (!"${jdbcName}".equals(DEFAULT_PROFILE)) {
 		def qualifier = rootProject.getProperty("BRANCH_NAME")
