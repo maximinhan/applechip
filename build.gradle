@@ -84,7 +84,8 @@ configure(allprojects) { project ->
     ext.hibernateVersion = '4.3.5.Final'
     ext.hibernateCommonsVersion = '4.0.5.Final'
     ext.queryDslVersion = '3.4.3'
-    
+    ext.aspectjVersion = '1.8.1'
+   
     //dependencies-common
     ext.commonsConfigurationVersion = '1.10'
     ext.commonsLangVersion = '2.6'
@@ -102,11 +103,12 @@ configure(allprojects) { project ->
     ext.generatedSrcDir = file("${buildDir}/generated")
     ext.mainSrcDir = 'src/main'
     ext.testSrcDir = 'src/test'
-    
+   
     //java
     ext.javaxServletApiVersion = '3.1.0'
     ext.javaxServletJstlVersion = '1.2'
-    
+    ext.javaxWsVersion = '1.1.1'
+   
     //util
     ext.jacksonVersion = '2.4.1'
     ext.geoIpVersion = '0.9.0'
@@ -261,20 +263,13 @@ project(":applechip-core") {
 	    provided("com.maxmind.geoip2:geoip2:${geoIpVersion}")
 		provided("edu.uci.ics:crawler4j:${crawlerVersion}")
 		
-		provided("net.sf.ehcache:ehcache:2.8.3")
-		provided("aopalliance:aopalliance:1.0")
-    	provided 'javax.servlet:javax.servlet-api:3.1.0'
-    	provided 'javax.servlet:jstl:1.2'
-        provided("javax.ws.rs:jsr311-api:1.1.1")
-        provided("javax.transaction:javax.transaction-api:1.2")
-        provided("org.javassist:javassist:3.18.2-GA")
-        provided("dom4j:dom4j:1.6")
-	    
+		provided("org.aspectj:aspectjweaver:${aspectjVersion}")
+		provided("javax.servlet:javax.servlet-api:${javaxServletApiVersion}")
+		provided("javax.ws.rs:jsr311-api:${javaxWsVersion}")
 	}
 	compileJava {
 	    dependsOn generateQueryDSL
 	}
-	//tasks.eclipse.dependsOn processResources
 	jar {
 		dependsOn generateSchema
 	}
