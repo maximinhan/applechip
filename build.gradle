@@ -32,7 +32,6 @@ ext {
 	}
 }
 
-//gradle.taskGraph.beforeTask {Task task -> println "excuting $task ..."}
 gradle.taskGraph.afterTask {Task task, TaskState state -> if (state.failure) { println "excuting $task Failure" } else { println "excuting $task Done" }}
 
 configure(rootProject) {
@@ -57,10 +56,10 @@ configure(allprojects) { project ->
 	apply plugin: 'propdeps-maven'
 	apply plugin: 'propdeps-idea'
     apply plugin: 'idea'
+    
+	//system
 	ext.gradleScriptDir = "${rootProject.projectDir}/gradle"
     apply from: "${gradleScriptDir}/gradleScript.gradle"
-
-	//system
 	ext.javaVersion = "1.7"
     ext.javaEncoding = "UTF-8"
     ext.generatedSrcDir = file("${buildDir}/generated/java")
@@ -202,7 +201,7 @@ configure(subprojects) { project ->
 	eclipse {
 		classpath {
 			downloadSources = true
-			//defaultOutputDir = file("${buildDir}/classes")
+			defaultOutputDir = file("${buildDir}/classes")
 			file {
 			    beforeMerged { classpath -> 
 			        classpath.entries.clear()
