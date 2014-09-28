@@ -19,7 +19,7 @@ import org.hibernate.envers.Audited;
 import org.hibernate.envers.RelationTargetAuditMode;
 
 import com.applechip.core.abstact.AbstractObject;
-import com.applechip.core.abstact.GenericByUpdated;
+import com.applechip.core.abstact.GenericUpdatedBy;
 import com.applechip.core.constant.ColumnSizeConstant;
 
 @Getter
@@ -31,7 +31,7 @@ import com.applechip.core.constant.ColumnSizeConstant;
 @Entity
 @Table(name = "mt_user_prefer_option")
 @Audited
-public class UserPreferOption extends GenericByUpdated<UserPreferOption.Id> {
+public class UserPreferOption extends GenericUpdatedBy<UserPreferOption.Id> {
 	private static final long serialVersionUID = -6006862108744697176L;
 
 	@EmbeddedId

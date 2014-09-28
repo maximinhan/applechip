@@ -17,7 +17,7 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import com.applechip.core.abstact.AbstractObject;
-import com.applechip.core.abstact.GenericByUpdated;
+import com.applechip.core.abstact.GenericUpdatedBy;
 import com.applechip.core.constant.ColumnSizeConstant;
 
 @Entity
@@ -27,7 +27,7 @@ import com.applechip.core.constant.ColumnSizeConstant;
 @EqualsAndHashCode(callSuper = false, of = { "id" })
 @ToString(exclude = { "codeCategory" })
 @Data
-public class Code extends GenericByUpdated<Code.Id> {
+public class Code extends GenericUpdatedBy<Code.Id> {
 
 	private static final long serialVersionUID = -621758281942377622L;
 

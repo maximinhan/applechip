@@ -22,7 +22,7 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.NotAudited;
 
-import com.applechip.core.abstact.GenericByUpdated;
+import com.applechip.core.abstact.GenericUpdatedBy;
 import com.applechip.core.constant.ColumnSizeConstant;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -33,7 +33,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 @ToString(exclude = { "networkGroupServers" })
 @NoArgsConstructor
 @Data
-public class NetworkGroup extends GenericByUpdated<String> {
+public class NetworkGroup extends GenericUpdatedBy<String> {
 
 	private static final long serialVersionUID = -1515057292914459397L;
 

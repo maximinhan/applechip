@@ -20,7 +20,7 @@ import org.hibernate.envers.Audited;
 import org.hibernate.envers.RelationTargetAuditMode;
 
 import com.applechip.core.abstact.AbstractObject;
-import com.applechip.core.abstact.GenericByUpdated;
+import com.applechip.core.abstact.GenericUpdatedBy;
 import com.applechip.core.constant.ColumnSizeConstant;
 
 @Entity
@@ -29,7 +29,7 @@ import com.applechip.core.constant.ColumnSizeConstant;
 @ToString(exclude = { "networkGroup", "server" })
 @NoArgsConstructor
 @Data
-public class NetworkGroupServer extends GenericByUpdated<NetworkGroupServer.Id> {
+public class NetworkGroupServer extends GenericUpdatedBy<NetworkGroupServer.Id> {
 
 	private static final long serialVersionUID = -7378879232923520275L;
 

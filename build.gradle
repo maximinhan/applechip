@@ -32,12 +32,12 @@ ext {
 	}
 }
 
-gradle.taskGraph.beforeTask {Task task -> println "excuting $task ..."}
-gradle.taskGraph.afterTask {Task task, TaskState state -> if (state.failure) { println "Failure" } else { println "Done" }}
+//gradle.taskGraph.beforeTask {Task task -> println "excuting $task ..."}
+gradle.taskGraph.afterTask {Task task, TaskState state -> if (state.failure) { println "excuting $task Failure" } else { println "excuting $task Done" }}
 
 configure(rootProject) {
 	tasks.withType(JavaCompile){
-		def warnLogFile = file("$buildDir/${name}Warnings.log")
+		def warnLogFile = file("${buildDir}/${name}Warnings.log")
 		logging.addStandardErrorListener(new StandardOutputListener(){ void onOutput(CharSequence output){ warnLogFile << output }})
 	}
 	task wrapper(type: Wrapper) {
@@ -54,39 +54,22 @@ configure(allprojects) { project ->
 	apply plugin: 'eclipse'
 	apply plugin: 'propdeps'
 	apply plugin: 'propdeps-eclipse'
-	//apply plugin: 'propdeps-maven'
-	//apply plugin: 'propdeps-idea'
-    //apply plugin: 'idea'
+	apply plugin: 'propdeps-maven'
+	apply plugin: 'propdeps-idea'
+    apply plugin: 'idea'
 	ext.gradleScriptDir = "${rootProject.projectDir}/gradle"
     apply from: "${gradleScriptDir}/gradleScript.gradle"
-	//Todo: web
-	
+
 	//system
 	ext.javaVersion = "1.7"
     ext.javaEncoding = "UTF-8"
+    ext.generatedSrcDir = file("${buildDir}/generated/java")
+    ext.mainSrcDir = 'src/main'
+    ext.testSrcDir = 'src/test'
     
-    //sourceCompatibility = 1.8
-    //targetCompatibility = 1.8
-    [compileJava, compileTestJava]*.options*.encoding = "${javaEncoding}"
-
-	//tasks.eclipse.dependsOn cleanEclipse
-	//tasks.build.dependsOn processResources
-
-    //properties
-    ext.jdbcDrivers = [ "mysql:mysql-connector-java:5.1.31", "com.microsoft.sqlserver:sqljdbc4:4.0", "com.oracle:ojdbc7:12.1.0.2", "org.hsqldb:hsqldb:2.3.2", "com.h2database:h2:1.4.181" ] 
-	ext.jdbcName = String.format("%s_%s", rootProject.name, "${version}".replaceAll("\\.", "_").replaceAll("\\-", "_")).toUpperCase()
-	ext.jdbcUrl = String.format("${jdbcUrl}", "${jdbcName}")
-
-	//dependencies
-	ext.springframeworkVersion = '4.0.6.RELEASE'
-    ext.springframeworkDataVersion = '1.8.0.RELEASE'
-    ext.springframeworkSecurityVersion = '3.2.5.RELEASE'
-    ext.hibernateVersion = '4.3.5.Final'
-    ext.hibernateCommonsVersion = '4.0.5.Final'
-    ext.queryDslVersion = '3.4.3'
-    ext.aspectjVersion = '1.8.1'
-   
     //dependencies-common
+    ext.jdbcDrivers = [ "mysql:mysql-connector-java:5.1.31", "com.microsoft.sqlserver:sqljdbc4:4.0", "com.oracle:ojdbc7:12.1.0.2", "org.hsqldb:hsqldb:2.3.2", "com.h2database:h2:1.4.181" ] 
+    ext.lombokVersion = '1.14.4'
     ext.commonsConfigurationVersion = '1.10'
     ext.commonsLangVersion = '2.6'
     ext.commonsIoVersion = '2.4'
@@ -96,18 +79,23 @@ configure(allprojects) { project ->
     ext.commonsPoolVersion = '1.6'
     ext.commonsDbcpVersion = '1.4'
     ext.commonsNetVersion = '3.3'
-    ext.lombokVersion = '1.14.4'
     ext.slf4jVersion = '1.7.7'
     ext.junitVersion = '4.11'
     ext.mockitoVersion = '1.9.5'
-    ext.generatedSrcDir = file("${buildDir}/generated")
-    ext.mainSrcDir = 'src/main'
-    ext.testSrcDir = 'src/test'
    
     //java
     ext.javaxServletApiVersion = '3.1.0'
     ext.javaxServletJstlVersion = '1.2'
     ext.javaxWsVersion = '1.1.1'
+    
+	//dependencies
+	ext.springframeworkVersion = '4.0.6.RELEASE'
+    ext.springframeworkDataVersion = '1.8.0.RELEASE'
+    ext.springframeworkSecurityVersion = '3.2.5.RELEASE'
+    ext.hibernateVersion = '4.3.5.Final'
+    ext.hibernateCommonsVersion = '4.0.5.Final'
+    ext.queryDslVersion = '3.4.3'
+    ext.aspectjVersion = '1.8.1'
    
     //util
     ext.jacksonVersion = '2.4.1'
@@ -171,8 +159,9 @@ configure(webProjects) {
 
 configure(subprojects) { project ->
     apply from: uploadArchivesTask
+    apply from: settingPropertiesTask
+    
 	dependencies {
-		provided("org.projectlombok:lombok:$lombokVersion")
 		provided("commons-configuration:commons-configuration:$commonsConfigurationVersion")
 		provided("commons-lang:commons-lang:$commonsLangVersion")
 		provided("commons-io:commons-io:$commonsIoVersion")
@@ -184,16 +173,21 @@ configure(subprojects) { project ->
 		provided("net.lingala.zip4j:zip4j:$zipVersion")
 		provided("org.slf4j:jcl-over-slf4j:$slf4jVersion")
 	    provided("org.slf4j:slf4j-api:$slf4jVersion")
+		provided("org.projectlombok:lombok:$lombokVersion")
 		testCompile("org.springframework:spring-test:$springframeworkVersion")
 		testCompile("junit:junit:$junitVersion")
 		testCompile("org.mockito:mockito-all:$mockitoVersion")
 	}
 	
-	    
+	[compileJava, compileTestJava]*.options*.encoding = "${javaEncoding}"
+	tasks.eclipse.dependsOn processResources
+	[processResources, processTestResources]*.dependsOn settingProperties
+	//sourceCompatibility = 1.8
+    //targetCompatibility = 1.8
     sourceSets {
 		main {
 			output.classesDir = output.resourcesDir = "${buildDir}/classes"
-			java.srcDirs = [ "${mainSrcDir}/java", generatedSrcDir ]
+			java.srcDirs = [ "${mainSrcDir}/java", "${mainSrcDir}/webapp",  generatedSrcDir ]
 			//java.srcDir = "${mainSrcDir}/java"
 			resources.srcDirs = [ "${mainSrcDir}/resources" ]
 			//compileClasspath = file("${buildDir}/classes") runtimeClasspath = output + compileClasspath
@@ -208,7 +202,7 @@ configure(subprojects) { project ->
 	eclipse {
 		classpath {
 			downloadSources = true
-			defaultOutputDir = file("${buildDir}/classes")
+			//defaultOutputDir = file("${buildDir}/classes")
 			file {
 			    beforeMerged { classpath -> 
 			        classpath.entries.clear()
@@ -221,14 +215,6 @@ configure(subprojects) { project ->
 			}
 		}
 	}
-	[processResources, processTestResources]*.filter(org.apache.tools.ant.filters.ReplaceTokens,
-		tokens: [
-			'jdbcType': project.properties['jdbcType'],
-			'jdbcUrl': project.properties['jdbcUrl'],
-			'jdbcUsername': project.properties['jdbcUsername'],
-			'jdbcPassword': project.properties['jdbcPassword']
-		]
-	)
 }
 
 project(":applechip-core") {
@@ -236,7 +222,6 @@ project(":applechip-core") {
 	apply from: generateSchemaTask
 	apply from: generateQueryDSLTask
 	apply from: generateWsdlTask
-	apply from: settingPropertiesTask
 	dependencies {
 		provided jdbcDrivers
 		provided("org.springframework:spring-orm:$springframeworkVersion")
@@ -262,10 +247,8 @@ project(":applechip-core") {
 	    provided("com.fasterxml.jackson.core:jackson-core:${jacksonVersion}")
 	    provided("com.maxmind.geoip2:geoip2:${geoIpVersion}")
 		provided("edu.uci.ics:crawler4j:${crawlerVersion}")
-		
 		provided("org.aspectj:aspectjweaver:${aspectjVersion}")
 		provided("javax.servlet:javax.servlet-api:${javaxServletApiVersion}")
-		provided("javax.ws.rs:jsr311-api:${javaxWsVersion}")
 	}
 	compileJava {
 	    dependsOn generateQueryDSL

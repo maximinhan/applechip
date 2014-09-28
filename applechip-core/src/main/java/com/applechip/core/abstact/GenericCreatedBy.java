@@ -14,8 +14,8 @@ import com.applechip.core.util.SecurityUtil;
 @SuppressWarnings("serial")
 @MappedSuperclass
 @Getter
-public abstract class GenericByCreated<PK extends Serializable> extends
-		GenericDtUpdated<PK> {
+public abstract class GenericCreatedBy<PK extends Serializable> extends
+		GenericUpdatedDt<PK> {
 
 	@Column(name = "created_by", insertable = true, updatable = false, length = ColumnSizeConstant.UUID)
 	protected String createdBy;

@@ -1,33 +1,21 @@
 package com.applechip.core.util;
 
-import org.apache.commons.dbcp.BasicDataSourceFactory;
+import lombok.extern.slf4j.Slf4j;
+
 import org.junit.Test;
 
-import com.applechip.core.constant.DatabaseConstant;
+import com.applechip.core.properties.DatabaseProperties;
 
+@Slf4j
 public class FieldUtilTest {
 
 	@Test
 	public void testReadFieldList() throws Exception {
-		for (String str : FieldUtil.readFieldList(BasicDataSourceFactory.class, String.class)) {
-			System.out.println(str);
+		for (String str : DatabaseProperties.DATA_SOURCE_PROPERTIES_SET) {
+			log.debug("DatabaseProperties.DATA_SOURCE_PROPERTIES_SET... source: {}", str);
 		}
-		System.out.println("BasicDataSourceFactory.class\nend\n");
-		for (String str : FieldUtil.readFieldList(org.hibernate.cfg.AvailableSettings.class, String.class)) {
-			System.out.println(str);
-		}
-		System.out.println("org.hibernate.cfg.AvailableSettings.class\nend\n");
-		for (String str : FieldUtil.readFieldList(org.hibernate.jpa.AvailableSettings.class, String.class)) {
-			System.out.println(str);
-		}
-		System.out.println("org.hibernate.jpa.AvailableSettings.class\nend\n");
-	}
-
-	@Test
-	public void testReadField() {
-		for (String str : DatabaseConstant.HIBERNATE_PROPERTIES_SET) {
-			System.out.println(str);
+		for (String str : DatabaseProperties.HIBERNATE_PROPERTIES_SET) {
+			log.debug("DatabaseProperties.HIBERNATE_PROPERTIES_SET... source: {}", str);
 		}
 	}
-
 }

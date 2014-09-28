@@ -14,8 +14,8 @@ import com.applechip.core.util.SecurityUtil;
 @SuppressWarnings("serial")
 @MappedSuperclass
 @Getter
-public abstract class GenericIpUpdated<PK extends Serializable> extends
-		GenericIpCreated<PK> {
+public abstract class GenericUpdatedIp<PK extends Serializable> extends
+		GenericCreatedIp<PK> {
 
 	@Column(name = "updated_ip", insertable = true, updatable = true, length = ColumnSizeConstant.UUID)
 	protected String updatedIp;

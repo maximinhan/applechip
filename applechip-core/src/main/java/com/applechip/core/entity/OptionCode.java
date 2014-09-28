@@ -16,7 +16,7 @@ import lombok.ToString;
 
 import org.hibernate.envers.NotAudited;
 
-import com.applechip.core.abstact.GenericByUpdated;
+import com.applechip.core.abstact.GenericUpdatedBy;
 import com.applechip.core.constant.ColumnSizeConstant;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -26,7 +26,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 @ToString
 @NoArgsConstructor
 @Data
-public class OptionCode extends GenericByUpdated<Integer> {
+public class OptionCode extends GenericUpdatedBy<Integer> {
 
 	private static final long serialVersionUID = -1514733598944448583L;
 

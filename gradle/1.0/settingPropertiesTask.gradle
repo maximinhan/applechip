@@ -1,35 +1,70 @@
+def Map<String, String> hibernateHbm2ddlAutoMap = [
+	MYSQL: "update",
+	MARIA: "update",
+	MYSQL_REPLICATION: "update",
+	ORACLE: "update",
+	SQLSERVER: "update"
+]
 def Map<String, String> hibernateDialectMap = [
 	MYSQL: "org.hibernate.dialect.MySQL5InnoDBDialect",
+	MARIA: "org.hibernate.dialect.MySQL5InnoDBDialect",
+	MYSQL_REPLICATION: "org.hibernate.dialect.MySQL5InnoDBDialect",
 	ORACLE: "org.hibernate.dialect.Oracle10gDialect",
+	SQLSERVER: "org.hibernate.dialect.SQLServer2008Dialect",
 	HSQL: "org.hibernate.dialect.HSQLDialect",
-	H2: "org.hibernate.dialect.H2Dialect",
-	SQLSERVER: "org.hibernate.dialect.SQLServer2008Dialect"
+	H2: "org.hibernate.dialect.H2Dialect"
 ]
-def Map<String, String> jdbcDriverClassMap = [
+def Map<String, String> driverClassNameMap = [
 	MYSQL: "com.mysql.jdbc.Driver",
+	MARIA: "org.mariadb.jdbc.Driver",
+	MYSQL_REPLICATION: "com.mysql.jdbc.ReplicationDriver",
 	ORACLE: "oracle.jdbc.OracleDriver",
+	SQLSERVER: "com.microsoft.sqlserver.jdbc.SQLServerDriver",
 	HSQL: "org.hsqldb.jdbcDriver",
-	H2: "org.h2.Driver",
-	SQLSERVER: "com.microsoft.sqlserver.jdbc.SQLServerDriver"
+	H2: "org.h2.Driver"
 ]
-
-def Map<String, String> jdbcValidationQueryMap = [
+def Map<String, String> validationQueryMap = [
 	MYSQL: "SELECT 1",
+	MARIA: "SELECT 1",
 	MYSQL_REPLICATION: "/* ping */ SELECT 1",
 	ORACLE: "SELECT 1 FROM DUAL",
-	SQLSERVER: "SELECT 1"
+	SQLSERVER: "SELECT 1",
+	MARIA: "SELECT 1",
+]
+def Map<String, String> dbunitDataTypeFactoryNameMap = [
+	MYSQL: "org.dbunit.ext.mysql.MySqlDataTypeFactory",
+	MARIA: "org.dbunit.ext.mysql.MySqlDataTypeFactory",
+	MYSQL_REPLICATION: "org.dbunit.ext.mysql.MySqlDataTypeFactory",
+	ORACLE: "org.dbunit.ext.oracle.OracleDataTypeFactory",
+	SQLSERVER: "org.dbunit.ext.mssql.MsSqlDataTypeFactory"
+]
+def Map<String, String> dbunitOperationTypeMap = [
+	MYSQL: "CLEAN_INSERT",
+	MARIA: "CLEAN_INSERT",
+	MYSQL_REPLICATION: "CLEAN_INSERT",
+	ORACLE: "SELECT 1 FROM DUAL",
+	SQLSERVER: "MSSQL_CLEAN_INSERT"
 ]
 
 task settingProperties(type: JavaCompile, group: 'build', description: 'Generates the QueryDSL query types') {
-	def jdbcDriver = jdbcDriverClassMap.get(project.properties['jdbcType'])
-	project.ext.jdbcDriver = "${jdbcDriver}"
+	project.ext.dbVersion = String.format("%s_%s", rootProject.name, "${version}".replaceAll("\\.", "_").replaceAll("\\-", "_")).toUpperCase()
+	project.ext.dbUrl = String.format(project.properties['dbUrl'], project.properties['dbVersion'])
+	project.ext.dbDriverClassName = driverClassNameMap.get(project.properties['dbType'])
+	project.ext.dbValidationQuery = validationQueryMap.get(project.properties['dbType'])
+	project.ext.dbHibernateDialect = hibernateDialectMap.get(project.properties['dbType'])
+	project.ext.dbHibernateHbm2ddlAuto = hibernateHbm2ddlAutoMap.get(project.properties['dbType'])
+	
 	[processResources, processTestResources]*.filter(org.apache.tools.ant.filters.ReplaceTokens,
 		tokens: [
-			'jdbcType': project.properties['jdbcType'],
-			'jdbcUrl': project.properties['jdbcUrl'],
-			'jdbcUsername': project.properties['jdbcUsername'],
-			'jdbcPassword': project.properties['jdbcPassword'],
-			'jdbcDriver': jdbcDriver
+			'dbType': project.properties['dbType'],
+			'dbUrl': project.properties['dbUrl'],
+			'dbUsername': project.properties['dbUsername'],
+			'dbPassword': project.properties['dbPassword'],
+			'dbDriverClassName': project.properties['dbDriverClassName'],
+			'dbValidationQuery': project.properties['dbValidationQuery'],
+			'dbHibernateDialect': project.properties['dbHibernateDialect'],
+			'dbHibernateHbm2ddlAuto': project.properties['dbHibernateHbm2ddlAuto'],
+			'dbVersion': project.properties['dbVersion']
 		]
 	)
 }

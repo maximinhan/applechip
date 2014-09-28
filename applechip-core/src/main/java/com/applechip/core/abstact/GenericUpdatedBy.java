@@ -15,7 +15,7 @@ import com.applechip.core.util.SecurityUtil;
 @MappedSuperclass
 @Getter
 // @EntityListeners({ AuditingEntityListener.class })
-public abstract class GenericByUpdated<PK extends Serializable> extends GenericByCreated<PK> {
+public abstract class GenericUpdatedBy<PK extends Serializable> extends GenericCreatedBy<PK> {
 
   // @CreatedDate
   // @LastModifiedDate

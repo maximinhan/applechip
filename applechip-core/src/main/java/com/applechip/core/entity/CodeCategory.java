@@ -11,7 +11,7 @@ import lombok.EqualsAndHashCode;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
-import com.applechip.core.abstact.GenericByUpdated;
+import com.applechip.core.abstact.GenericUpdatedBy;
 import com.applechip.core.constant.ColumnSizeConstant;
 
 @Entity
@@ -20,7 +20,7 @@ import com.applechip.core.constant.ColumnSizeConstant;
 @SuppressWarnings(value = { "PMD.UnusedPrivateField", "PMD.SingularField" })
 @EqualsAndHashCode(callSuper = false, of = { "id" })
 @Data
-public class CodeCategory extends GenericByUpdated<String> {
+public class CodeCategory extends GenericUpdatedBy<String> {
 
 	private static final long serialVersionUID = -3166875807686855167L;
 

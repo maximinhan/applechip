@@ -12,7 +12,7 @@ import lombok.Getter;
 @SuppressWarnings("serial")
 @MappedSuperclass
 @Getter
-public abstract class GenericDtCreated<PK extends Serializable> extends GenericEntity<PK> {
+public abstract class GenericCreatedDt<PK extends Serializable> extends GenericEntity<PK> {
 
   @Column(name = "created_dt", insertable = true, updatable = false)
   protected Date createdDt;

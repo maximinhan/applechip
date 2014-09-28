@@ -20,7 +20,6 @@ import javax.persistence.OneToMany;
 import javax.persistence.PrePersist;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-import javax.ws.rs.FormParam;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -34,7 +33,7 @@ import org.hibernate.envers.NotAudited;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import com.applechip.core.abstact.GenericByUpdated;
+import com.applechip.core.abstact.GenericUpdatedBy;
 import com.applechip.core.constant.ColumnSizeConstant;
 import com.applechip.core.util.BitwisePermissions;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -45,7 +44,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 @ToString(exclude = { "roles" })
 @NoArgsConstructor
 @Data
-public class User extends GenericByUpdated<String> implements UserDetails {
+public class User extends GenericUpdatedBy<String> implements UserDetails {
 
 	private static final long serialVersionUID = 1920694340054206260L;
 
@@ -78,11 +77,9 @@ public class User extends GenericByUpdated<String> implements UserDetails {
 	@MapKey(name = "id.optionCodeId")
 	private Map<Integer, UserPreferOption> userPreferOptionMap;
 
-	@FormParam("username")
 	@Column(name = "username", length = ColumnSizeConstant.NAME, nullable = false, unique = true)
 	private String username;
 
-	@FormParam("password")
 	@Column(name = "password", length = ColumnSizeConstant.PASSWORD, nullable = false)
 	private String password;
 

@@ -24,7 +24,7 @@ import org.apache.commons.lang.StringUtils;
 import org.hibernate.annotations.GenericGenerator;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.applechip.core.abstact.GenericDtUpdated;
+import com.applechip.core.abstact.GenericUpdatedDt;
 import com.applechip.core.constant.ColumnSizeConstant;
 import com.applechip.core.util.FileUtil;
 
@@ -34,7 +34,7 @@ import com.applechip.core.util.FileUtil;
 @Data
 @Entity
 @Table(name = "zt_upload_file")
-public class UploadFile extends GenericDtUpdated<String> {
+public class UploadFile extends GenericUpdatedDt<String> {
 
 	private static final long serialVersionUID = -7837313689981801628L;
 

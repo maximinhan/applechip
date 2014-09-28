@@ -1,19 +1,40 @@
 package com.applechip.core.properties;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Properties;
+import java.util.Set;
 
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
-import com.applechip.core.constant.DatabaseConstant;
+import org.apache.commons.dbcp.BasicDataSourceFactory;
+
 import com.applechip.core.entity.User;
 import com.applechip.core.util.CryptoUtil;
+import com.applechip.core.util.FieldUtil;
 
 @Getter
 @Slf4j
 public class DatabaseProperties {
+	public static Set<String> DATA_SOURCE_PROPERTIES_SET = Collections.unmodifiableSet(new HashSet<String>() {
+		private static final long serialVersionUID = 7526702150204237983L;
+		{
+			addAll(FieldUtil.readFieldList(BasicDataSourceFactory.class, String.class));
+		}
+	});
+
+	public static Set<String> HIBERNATE_PROPERTIES_SET = Collections.unmodifiableSet(new HashSet<String>() {
+		private static final long serialVersionUID = 533898394580130849L;
+		{
+			addAll(FieldUtil.readFieldList(org.hibernate.cfg.AvailableSettings.class, String.class));
+			addAll(FieldUtil.readFieldList(org.hibernate.jpa.AvailableSettings.class, String.class));
+			addAll(FieldUtil.readFieldList(org.hibernate.envers.configuration.EnversSettings.class, String.class));
+		}
+	});
+
 	private Properties hibernateProperties;
 
 	private Properties dataSourceProperties;
@@ -27,15 +48,6 @@ public class DatabaseProperties {
 	}
 
 	private DatabaseProperties(Properties properties) {
-		// this.jdbcType = properties.getProperty("type");
-		// properties.put(Environment.DRIVER,
-		// HibernateConstant.JDBC_DRIVER_CLASS_MAP.get(this.jdbcType));
-		// properties.put(Environment.DIALECT,
-		// HibernateConstant.HIBERNATE_DIALECT_MAP.get(this.jdbcType));
-		// properties.put("driverClassName",
-		// HibernateConstant.JDBC_DRIVER_CLASS_MAP.get(this.jdbcType));
-		// properties.put("validationQuery",
-		// HibernateConstant.JDBC_VALIDATION_QUERY_MAP.get(this.jdbcType));
 		this.setPackagesToScan();
 		this.setTransactionProperties();
 		this.setDataSourceProperties(properties);
@@ -60,7 +72,8 @@ public class DatabaseProperties {
 
 	private void setDataSourceProperties(Properties properties) {
 		Properties result = new Properties();
-		for (String string : DatabaseConstant.DATA_SOURCE_PROPERTIES_SET) {
+		// this.jdbcType = properties.getProperty("type");
+		for (String string : DATA_SOURCE_PROPERTIES_SET) {
 			if (properties.containsKey(string)) {
 				String value = properties.getProperty(string);
 				result.put(string, CryptoUtil.forceDecrypt(value));
@@ -72,10 +85,10 @@ public class DatabaseProperties {
 
 	private void setHibernateProperties(Properties properties) {
 		Properties result = new Properties();
-		for (String string : DatabaseConstant.HIBERNATE_PROPERTIES_SET) {
+		for (String string : HIBERNATE_PROPERTIES_SET) {
 			if (properties.containsKey(string)) {
 				String value = properties.getProperty(string);
-				result.put(string, value);
+				result.put(string, CryptoUtil.forceDecrypt(value));
 				log.info("setHibernateProperties put finish... key: {}, value: {}", string, value);
 			}
 		}
