@@ -25,15 +25,15 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 @JsonInclude(Include.NON_EMPTY)
 public abstract class AbstractObject implements Serializable {
 
-  public String toString() {
-    return "\n" + ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
-  }
+	public String toString() {
+		return "\n" + ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
+	}
 
-  public int hashCode() {
-    return HashCodeBuilder.reflectionHashCode(this);
-  }
+	public int hashCode() {
+		return HashCodeBuilder.reflectionHashCode(this);
+	}
 
-  public boolean equals(Object obj) {
-    return EqualsBuilder.reflectionEquals(this, obj);
-  }
+	public boolean equals(Object obj) {
+		return EqualsBuilder.reflectionEquals(this, obj);
+	}
 }

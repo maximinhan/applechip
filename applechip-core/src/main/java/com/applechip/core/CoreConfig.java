@@ -63,11 +63,12 @@ public class CoreConfig {
 			propertiesConfiguration.setReloadingStrategy(this.fileChangedReloadingStrategy());
 		}
 		catch (ConfigurationException e) {
-			throw new SystemException(e, "getPropertiesConfiguration create fail... message: %s", e.getMessage());
+			throw new SystemException(String.format("propertiesConfiguration create fail... message: %s",
+					e.getMessage()), e);
 		}
 		catch (IOException e) {
-			throw new SystemException(e, "runtimeProperties create fail... filename: %s, message: %s",
-					runtimeProperties.getFilename(), e.getMessage());
+			throw new SystemException(String.format("propertiesConfiguration create fail... message: %s",
+					e.getMessage()), e);
 		}
 		return propertiesConfiguration;
 	}

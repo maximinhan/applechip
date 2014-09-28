@@ -20,13 +20,13 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang.StringUtils;
 import org.hibernate.annotations.GenericGenerator;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.applechip.core.abstact.GenericUpdatedDt;
 import com.applechip.core.constant.ColumnSizeConstant;
 import com.applechip.core.util.FileUtil;
+import com.applechip.core.util.StringUtil;
 
 @EqualsAndHashCode(callSuper = false, of = { "id" })
 @ToString(exclude = { "multipartFile" })
@@ -83,8 +83,8 @@ public class UploadFile extends GenericUpdatedDt<String> {
 		if (!existsFileToUpload())
 			return null;
 		String uploadPath = getUploadPath(basePath);
-		if (StringUtils.isBlank(saveFileName)) {
-			if (StringUtils.isBlank(id)) {
+		if (StringUtil.isBlank(saveFileName)) {
+			if (StringUtil.isBlank(id)) {
 				throw new RuntimeException("set filename or save before upload file...");
 			}
 			this.saveFileName = id;
@@ -114,7 +114,7 @@ public class UploadFile extends GenericUpdatedDt<String> {
 	}
 
 	private String getUploadPath(String basePath) {
-		return StringUtils.isBlank(uploadDir) ? basePath : String.format("%s/%s", basePath, uploadDir);
+		return StringUtil.isBlank(uploadDir) ? basePath : String.format("%s/%s", basePath, uploadDir);
 	}
 
 	@Transient

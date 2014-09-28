@@ -75,7 +75,8 @@ public class CustomTransactionManagementConfigurer implements TransactionManagem
 			bean = new JpaTransactionManager(this.entityManagerFactory());
 		}
 		catch (Exception e) {
-			throw new SystemException(e, "annotationDrivenTransactionManager create fail.. %s", e.getMessage());
+			throw new SystemException(String.format("annotationDrivenTransactionManager create fail.. %s",
+					e.getMessage()), e);
 		}
 		return bean;
 	}
@@ -93,25 +94,16 @@ public class CustomTransactionManagementConfigurer implements TransactionManagem
 
 	@Bean
 	public EntityManagerFactory entityManagerFactory() {
-		EntityManagerFactory bean = null;
-		try {
-			LocalContainerEntityManagerFactoryBean localContainerEntityManagerFactoryBean = new LocalContainerEntityManagerFactoryBean();
-			localContainerEntityManagerFactoryBean.setJpaVendorAdapter(CustomHibernateJpaVendorAdapter.getInstance());
-			localContainerEntityManagerFactoryBean.setDataSource(this.dataSource());
-			localContainerEntityManagerFactoryBean.setJpaProperties(databaseProperties.getHibernateProperties());
-			localContainerEntityManagerFactoryBean.setPersistenceUnitName(ApplicationConstant.PERSISTENCE_UNIT_NAME);
-			localContainerEntityManagerFactoryBean.setPackagesToScan(databaseProperties.getPackagesToScan());
-			// <property name="persistenceProviderClass" value="org.hibernate.ejb.HibernatePersistence" />
-			// <property name="loadTimeWeaver">
-			// <bean class="org.springframework.instrument.classloading.InstrumentationLoadTimeWeaver" />
-			// </property>
-			localContainerEntityManagerFactoryBean.afterPropertiesSet();
-			bean = localContainerEntityManagerFactoryBean.getObject();
-		}
-		catch (Exception e) {
-			throw new SystemException(e, "entityManagerFactory create fail.. %s", e.getMessage());
-		}
-		return bean;
+		LocalContainerEntityManagerFactoryBean localContainerEntityManagerFactoryBean = new LocalContainerEntityManagerFactoryBean();
+		localContainerEntityManagerFactoryBean.setJpaVendorAdapter(CustomHibernateJpaVendorAdapter.getInstance());
+		localContainerEntityManagerFactoryBean.setDataSource(this.dataSource());
+		localContainerEntityManagerFactoryBean.setJpaProperties(databaseProperties.getHibernateProperties());
+		localContainerEntityManagerFactoryBean.setPersistenceUnitName(ApplicationConstant.PERSISTENCE_UNIT_NAME);
+		localContainerEntityManagerFactoryBean.setPackagesToScan(databaseProperties.getPackagesToScan());
+		// localContainerEntityManagerFactoryBean.setLoadTimeWeaver(new InstrumentationLoadTimeWeaver());
+		// localContainerEntityManagerFactoryBean.setPersistenceProviderClass(HibernatePersistence.class);
+		localContainerEntityManagerFactoryBean.afterPropertiesSet();
+		return localContainerEntityManagerFactoryBean.getObject();
 	}
 
 	// @Bean(name = "jpaVendorAdapter")
@@ -131,42 +123,29 @@ public class CustomTransactionManagementConfigurer implements TransactionManagem
 			bean = BasicDataSourceFactory.createDataSource(databaseProperties.getDataSourceProperties());
 		}
 		catch (Exception e) {
-			throw new SystemException(e, "entityManagerFactory create fail.. %s", e.getMessage());
+			throw new SystemException(String.format("dataSource create fail.. %s", e.getMessage()), e);
 		}
 		return bean;
 	}
 
 	@Bean
 	public AspectJExpressionPointcutAdvisor aspectJExpressionPointcutAdvisor() {
-		AspectJExpressionPointcutAdvisor bean = null;
-		try {
-			bean = new AspectJExpressionPointcutAdvisor();
-			// bean.setExpression("execution(* *..service.*Manager.*(..))");
-			bean.setExpression(CustomAspectJConfigurer.class.getCanonicalName() + ".servicePointcut()");
-//			bean.setExpression("execution(* com..*.*Service.*(..))");
-			bean.setAdvice(new TransactionInterceptor(this.annotationDrivenTransactionManager(), this
-					.transactionAttributeSource()));
-			bean.setOrder(Ordered.HIGHEST_PRECEDENCE);
-		}
-		catch (Exception e) {
-			throw new SystemException(e, "advisorManager create fail.. %s", e.getMessage());
-		}
+		AspectJExpressionPointcutAdvisor bean = new AspectJExpressionPointcutAdvisor();
+		// bean.setExpression("execution(* *..service.*Manager.*(..))");
+		bean.setExpression(CustomAspectJConfigurer.class.getCanonicalName() + ".servicePointcut()");
+		// bean.setExpression("execution(* com..*.*Service.*(..))");
+		bean.setAdvice(new TransactionInterceptor(this.annotationDrivenTransactionManager(), this
+				.transactionAttributeSource()));
+		bean.setOrder(Ordered.HIGHEST_PRECEDENCE);
 		return bean;
 	}
 
 	private TransactionAttributeSource transactionAttributeSource() {
-		TransactionAttributeSource bean = null;
-		try {
-			NameMatchTransactionAttributeSource nameMatchTransactionAttributeSource = new NameMatchTransactionAttributeSource();
-			nameMatchTransactionAttributeSource.setProperties(databaseProperties.getTransactionProperties());
-			AnnotationTransactionAttributeSource annotationTransactionAttributeSource = new AnnotationTransactionAttributeSource();
-			bean = new CompositeTransactionAttributeSource(new TransactionAttributeSource[] {
-					annotationTransactionAttributeSource, nameMatchTransactionAttributeSource });
-		}
-		catch (Exception e) {
-			throw new SystemException(e, "transactionAttributeSource create fail.. %s", e.getMessage());
-		}
-		return bean;
+		NameMatchTransactionAttributeSource nameMatchTransactionAttributeSource = new NameMatchTransactionAttributeSource();
+		nameMatchTransactionAttributeSource.setProperties(databaseProperties.getTransactionProperties());
+		AnnotationTransactionAttributeSource annotationTransactionAttributeSource = new AnnotationTransactionAttributeSource();
+		return new CompositeTransactionAttributeSource(new TransactionAttributeSource[] {
+				annotationTransactionAttributeSource, nameMatchTransactionAttributeSource });
 	}
 
 	@Bean

@@ -1,32 +1,55 @@
 package com.applechip.core.abstact;
 
-import java.text.MessageFormat;
+import java.util.MissingResourceException;
 
 import org.springframework.context.support.MessageSourceAccessor;
+
+import com.applechip.core.util.ArrayUtil;
 
 @SuppressWarnings("serial")
 public abstract class AbstractRuntimeException extends RuntimeException {
 
-  public Object[] arguments;
+	private static final String ERROR_FORMAT = "error.%s";
 
-  public AbstractRuntimeException() {
-    super();
-  }
+	private final Object[] objects;
 
-  public AbstractRuntimeException(Throwable cause, String message) {
-    super(message, cause);
-  }
+	private final String code;
 
-  public AbstractRuntimeException(Throwable cause, String format, Object... arguments) {
-    super(String.format(format, arguments), cause);
-    this.arguments = arguments;
-  }
+	public AbstractRuntimeException(String code) {
+		this(code, null);
+	}
 
-  public String getMessage(MessageSourceAccessor messageSourceAccessor) {
-    String pattern = messageSourceAccessor.getMessage("error." + this.getCode());
-    return MessageFormat.format(pattern, arguments);
-  }
+	public AbstractRuntimeException(String code, Object[] objects) {
+		this(code, objects, null);
+	}
 
-  public abstract String getCode();
+	public AbstractRuntimeException(String code, Object[] objects, String message) {
+		this(code, objects, message, null);
+	}
 
+	public AbstractRuntimeException(String code, Object[] objects, String message, Throwable throwable) {
+		super(message, throwable);
+		this.code = code;
+		this.objects = objects;
+	}
+
+	public String getDebugMessage() {
+		return this.toString();
+	}
+
+	public String getMessage(MessageSourceAccessor messageSourceAccessor) {
+		String result = String.format(ERROR_FORMAT, code);
+		try {
+			if (ArrayUtil.isEmpty(objects)) {
+				result = messageSourceAccessor.getMessage(code);
+			}
+			else {
+				result = messageSourceAccessor.getMessage(code, objects);
+			}
+		}
+		catch (MissingResourceException e) {
+			return super.getMessage();
+		}
+		return result;
+	}
 }

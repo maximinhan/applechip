@@ -8,10 +8,10 @@ import java.nio.ByteOrder;
 
 import lombok.extern.slf4j.Slf4j;
 
-import org.apache.commons.codec.binary.Hex;
-import org.apache.commons.codec.binary.StringUtils;
 import org.apache.commons.io.EndianUtils;
 import org.apache.commons.net.SocketClient;
+
+import com.applechip.core.util.StringUtil;
 
 @Slf4j
 public class CustomSocketClient extends SocketClient {
@@ -42,7 +42,7 @@ public class CustomSocketClient extends SocketClient {
 		dataInputStream = new DataInputStream(_input_);
 		dataOutputStream = new DataOutputStream(_output_);
 		ByteBuffer byteBuffer = ByteBuffer.allocate(1024).order(ByteOrder.LITTLE_ENDIAN);
-		byte[] socket = StringUtils.getBytesUtf8(SOCKET_CLIENT_STRING);
+		byte[] socket = StringUtil.getBytesUtf8(SOCKET_CLIENT_STRING);
 		try {
 			byteBuffer.putInt(PACKET_52060);
 			byteBuffer.putInt(socket.length);
@@ -56,7 +56,7 @@ public class CustomSocketClient extends SocketClient {
 			System.arraycopy(ByteBuffer.allocate(padding).putInt(Integer.reverseBytes(byteBuffer.limit() - padding))
 					.array(), 0, bytes, 0, padding);
 			System.arraycopy(byteBuffer.array(), 0, bytes, padding, byteBuffer.limit());
-			log.debug("size: {}, send: {}", bytes.length, Hex.encodeHexString(bytes));
+			log.debug("size: {}, send: {}", bytes.length, StringUtil.encodeHexString(bytes));
 			byteBuffer.clear();
 			dataOutputStream.write(bytes);
 			dataOutputStream.flush();

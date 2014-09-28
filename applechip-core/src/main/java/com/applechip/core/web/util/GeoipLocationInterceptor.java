@@ -38,16 +38,16 @@ public class GeoipLocationInterceptor extends HandlerInterceptorAdapter {
 	// Map<String, String> countryNeworkGroupMap = (Map<String, String>) session.getServletContext().getAttribute(
 	// BaseConstants.COUNTRY_NETWORK_GROUP_MAP);
 	// if (countryNeworkGroupMap != null && geoipLocation != null) {
-	// if (StringUtils.isBlank(geoipLocation.getCountryCode()))
+	// if (StringUtil.isBlank(geoipLocation.getCountryCode()))
 	// return;
-	// String countryCode = StringUtils.lowerCase(geoipLocation.getCountryCode());
-	// if (StringUtils.isBlank(countryCode))
+	// String countryCode = StringUtil.lowerCase(geoipLocation.getCountryCode());
+	// if (StringUtil.isBlank(countryCode))
 	// return;
-	// String region = StringUtils.lowerCase(geoipLocation.getRegion());
-	// region = StringUtils.defaultString(region, "*");
+	// String region = StringUtil.lowerCase(geoipLocation.getRegion());
+	// region = StringUtil.defaultString(region, "*");
 	// String key = countryCode + "_" + region;
 	// String networkgroupId = countryNeworkGroupMap.get(key);
-	// if (StringUtils.isBlank(networkgroupId))
+	// if (StringUtil.isBlank(networkgroupId))
 	// networkgroupId = countryNeworkGroupMap.get(countryCode + "_*");
 	// session.setAttribute(BaseConstants.GEOIP_LOCATION_NETWORK_GROUP_ID, networkgroupId);
 	// }

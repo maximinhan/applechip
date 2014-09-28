@@ -12,15 +12,14 @@ import org.springframework.core.io.support.PropertiesLoaderUtils;
 import com.applechip.core.exception.SystemException;
 
 public class PropertiesLoaderUtil extends PropertiesLoaderUtils {
-
 	public static Properties loadProperty(Resource resource) {
 		Properties properties = null;
 		try {
 			properties = loadProperties(resource);
 		}
 		catch (IOException e) {
-			throw new SystemException(e, "loadProperties fail... filename: %s, message: %s", resource.getFilename(),
-					e.getMessage());
+			throw new SystemException(String.format("loadProperties fail... filename: %s, message: %s",
+					resource.getFilename(), e.getMessage()), e);
 		}
 		return properties;
 	}

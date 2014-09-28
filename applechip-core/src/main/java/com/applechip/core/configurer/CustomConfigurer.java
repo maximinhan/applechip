@@ -8,15 +8,19 @@ import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.AbstractApplicationContext;
-import org.springframework.context.support.ResourceBundleMessageSource;
+import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.http.converter.xml.Jaxb2RootElementHttpMessageConverter;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.web.servlet.LocaleResolver;
+import org.springframework.web.servlet.i18n.SessionLocaleResolver;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter;
 
+import com.applechip.core.constant.ApplicationConstant;
 import com.applechip.core.socket.CustomBaseKeyedPoolableObjectFactory;
 import com.applechip.core.socket.CustomSocketClient;
 import com.applechip.core.socket.SocketClientUtil;
@@ -79,14 +83,22 @@ public class CustomConfigurer {
 
 	@Bean(name = AbstractApplicationContext.MESSAGE_SOURCE_BEAN_NAME)
 	public MessageSource messageSource() {
-		ResourceBundleMessageSource bean = new ResourceBundleMessageSource();
-		// ReloadableResourceBundleMessageSource bean = new
-		// ReloadableResourceBundleMessageSource();
-		bean.setBasenames("message.ApplicationResources");
+		ReloadableResourceBundleMessageSource bean = new ReloadableResourceBundleMessageSource();
+		bean.setBasenames(ApplicationConstant.MESSAGE_APPLICATION_RESOURCE);
 		bean.setUseCodeAsDefaultMessage(true);
 		bean.setDefaultEncoding("UTF-8");
 		bean.setCacheSeconds(0);
 		return bean;
+	}
+
+	@Bean
+	public LocaleResolver localeResolver() {
+		return new SessionLocaleResolver();
+	}
+
+	@Bean
+	public BCryptPasswordEncoder passwordEncoder() {
+		return new BCryptPasswordEncoder();
 	}
 
 	/*

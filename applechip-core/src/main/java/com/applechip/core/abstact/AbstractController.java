@@ -1,7 +1,6 @@
 package com.applechip.core.abstact;
 
 import java.io.IOException;
-import java.util.Locale;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletResponse;
@@ -10,17 +9,12 @@ import lombok.Getter;
 import lombok.Setter;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.MessageSource;
-import org.springframework.context.i18n.LocaleContextHolder;
-import org.springframework.context.support.MessageSourceAccessor;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.http.converter.xml.Jaxb2RootElementHttpMessageConverter;
 import org.springframework.http.server.ServletServerHttpResponse;
 import org.springframework.validation.Validator;
 import org.springframework.web.context.ServletContextAware;
-import org.springframework.web.context.request.RequestAttributes;
-import org.springframework.web.context.request.RequestContextHolder;
 
 import com.applechip.core.exception.SystemException;
 
@@ -39,38 +33,23 @@ public abstract class AbstractController implements ServletContextAware {
 	@Autowired
 	private Jaxb2RootElementHttpMessageConverter jaxb2RootElementHttpMessageConverter;
 
-	private MessageSourceAccessor messageSourceAccessor;
-
-	@Autowired
-	public void setMessageSourceAccessor(MessageSource messageSource) {
-		messageSourceAccessor = new MessageSourceAccessor(messageSource);
-	}
-
-	protected String getText(String code, Locale locale) {
-		return messageSourceAccessor.getMessage(code, locale);
-	}
-
-	protected String getText(String code, Object[] args, Locale locale) {
-		return messageSourceAccessor.getMessage(code, args, locale);
-	}
-
-	protected void writeJson(Object obj, HttpServletResponse response) {
+	protected void writeJson(Object object, HttpServletResponse response) {
 		try {
-			mappingJackson2HttpMessageConverter.write(obj, MediaType.APPLICATION_JSON, new ServletServerHttpResponse(
+			mappingJackson2HttpMessageConverter.write(object, MediaType.APPLICATION_JSON,
+					new ServletServerHttpResponse(response));
+		}
+		catch (IOException e) {
+			throw new SystemException("mappingJackson2HttpMessageConverter error", e);
+		}
+	}
+
+	protected void writeXml(Object object, HttpServletResponse response) {
+		try {
+			jaxb2RootElementHttpMessageConverter.write(object, MediaType.TEXT_XML, new ServletServerHttpResponse(
 					response));
 		}
 		catch (IOException e) {
-			throw new SystemException(e, "mappingJackson2HttpMessageConverter error");
-		}
-	}
-
-	protected void writeXml(Object obj, HttpServletResponse response) {
-		try {
-			jaxb2RootElementHttpMessageConverter
-					.write(obj, MediaType.TEXT_XML, new ServletServerHttpResponse(response));
-		}
-		catch (IOException e) {
-			throw new SystemException(e, "jaxb2RootElementHttpMessageConverter error");
+			throw new SystemException("jaxb2RootElementHttpMessageConverter error", e);
 		}
 	}
 }

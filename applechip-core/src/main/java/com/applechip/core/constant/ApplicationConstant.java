@@ -18,4 +18,6 @@ public class ApplicationConstant extends SystemConstant {
 	public static final String APPLICATION_PROPERTIES_PATH = String.format("classpath:properties%s%s", FILE_SEPARATOR,
 			APPLICATION_PROPERTIES);
 
+	public static final String MESSAGE_APPLICATION_RESOURCE = String.format("message.%s", "ApplicationResource");
+
 }

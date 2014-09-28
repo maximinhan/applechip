@@ -45,23 +45,11 @@ configure(rootProject) {
 }
 
 configure(allprojects) { project ->
-	repositories {
-		maven { url "http://nexus.bywook.com/content/groups/public" }
-		mavenCentral()
-	}
-    apply plugin: 'java'
-	apply plugin: 'eclipse'
-	apply plugin: 'propdeps'
-	apply plugin: 'propdeps-eclipse'
-	apply plugin: 'propdeps-maven'
-	apply plugin: 'propdeps-idea'
-    apply plugin: 'idea'
-    
 	//system
 	ext.gradleScriptDir = "${rootProject.projectDir}/gradle"
-    apply from: "${gradleScriptDir}/gradleScript.gradle"
 	ext.javaVersion = "1.7"
     ext.javaEncoding = "UTF-8"
+    ext.buildDir = "build"
     ext.generatedSrcDir = file("${buildDir}/generated/java")
     ext.mainSrcDir = 'src/main'
     ext.testSrcDir = 'src/test'
@@ -103,60 +91,20 @@ configure(allprojects) { project ->
     ext.zipVersion = '1.3.2'
 }
 
-configure(webProjects) {
-    apply plugin: 'war'
-    apply plugin: 'eclipse-wtp'
-    apply from: createVersionTextTask
-    dependencies {
-		provided jdbcDrivers
-		compile project(':applechip-core')
-    	providedCompile("javax.servlet:javax.servlet-api:${javaxServletApiVersion}")
-    	providedCompile("javax.servlet:jstl:${javaxServletJstlVersion}")
-	    provided("org.springframework.security:spring-security-core:${springframeworkSecurityVersion}")
-		provided("org.springframework.data:spring-data-commons:${springframeworkDataVersion}")
-		provided("org.springframework:spring-orm:$springframeworkVersion")
-		provided("org.springframework:spring-tx:$springframeworkVersion")
-		provided("org.springframework:spring-context-support:$springframeworkVersion")
-		provided("org.springframework:spring-context:$springframeworkVersion")
-		provided("org.springframework:spring-expression:$springframeworkVersion")
-		provided("org.hibernate:hibernate-entitymanager:$hibernateVersion")
-		provided("com.fasterxml.jackson.core:jackson-databind:${jacksonVersion}")
-	    provided("com.fasterxml.jackson.core:jackson-annotations:${jacksonVersion}")
-	    provided("com.fasterxml.jackson.core:jackson-core:${jacksonVersion}")
-		provided("org.springframework:spring-webmvc:$springframeworkVersion")
-		provided("org.springframework:spring-web:$springframeworkVersion")
-		provided("org.springframework:spring-beans:$springframeworkVersion")
-		provided("org.springframework:spring-core:$springframeworkVersion")
-		provided("org.springframework:spring-aop:$springframeworkVersion")
-    }
-    configurations.all {
-	    transitive = false
-	}
-    war {
-    /*
-    	manifest = osgiManifest { 
-			instruction 'Private-Package', 'com.applechip' 
-			instruction 'Bundle-Classpath', 'WEB-INF/classes' 
-			instruction 'Import-Package', '''groovy.''' 
-			instruction 'Created-By', 'yyy' 
-			instruction 'Bundle Description', "${project.description}" 
-			vendor = "yyy" 
-			symbolicName = "${project.group}" + "-" + "${project.name}" 
-			version = strippedVersion() 
-			classesDir = new File( "${buildDir}/classes" ) 
-			classpath = configurations.runtime 
-			instruction 'Web-ContextPath', "${name}"
-		}
-		*/
-    	dependsOn createVersionText
-    	from(buildDir) {
-    		include 'version.txt'
-    		into('WEB-INF/classes')
-    	}
-    }
-}
-
 configure(subprojects) { project ->
+	repositories {
+		maven { url "http://nexus.bywook.com/content/groups/public" }
+		mavenCentral()
+	}
+	apply plugin: 'java'
+	apply plugin: 'eclipse'
+	apply plugin: 'propdeps'
+	apply plugin: 'propdeps-eclipse'
+	apply plugin: 'propdeps-maven'
+	apply plugin: 'propdeps-idea'
+    apply plugin: 'idea'
+    apply from: "${gradleScriptDir}/gradleScript.gradle"
+    
     apply from: uploadArchivesTask
     apply from: settingPropertiesTask
     
@@ -214,6 +162,59 @@ configure(subprojects) { project ->
 			}
 		}
 	}
+}
+
+configure(webProjects) {
+    apply plugin: 'war'
+    apply plugin: 'eclipse-wtp'
+    apply from: createVersionTextTask
+    dependencies {
+		provided jdbcDrivers
+		compile project(':applechip-core')
+    	provided("javax.servlet:javax.servlet-api:${javaxServletApiVersion}")
+    	provided("javax.servlet:jstl:${javaxServletJstlVersion}")
+	    provided("org.springframework.security:spring-security-core:${springframeworkSecurityVersion}")
+		provided("org.springframework.data:spring-data-commons:${springframeworkDataVersion}")
+		provided("org.springframework:spring-orm:$springframeworkVersion")
+		provided("org.springframework:spring-tx:$springframeworkVersion")
+		provided("org.springframework:spring-context-support:$springframeworkVersion")
+		provided("org.springframework:spring-context:$springframeworkVersion")
+		provided("org.springframework:spring-expression:$springframeworkVersion")
+		provided("org.hibernate:hibernate-entitymanager:$hibernateVersion")
+		provided("com.fasterxml.jackson.core:jackson-databind:${jacksonVersion}")
+	    provided("com.fasterxml.jackson.core:jackson-annotations:${jacksonVersion}")
+	    provided("com.fasterxml.jackson.core:jackson-core:${jacksonVersion}")
+		provided("org.springframework:spring-webmvc:$springframeworkVersion")
+		provided("org.springframework:spring-web:$springframeworkVersion")
+		provided("org.springframework:spring-beans:$springframeworkVersion")
+		provided("org.springframework:spring-core:$springframeworkVersion")
+		provided("org.springframework:spring-aop:$springframeworkVersion")
+    }
+    configurations.all {
+	    transitive = false
+	}
+    war {
+    /*
+    	manifest = osgiManifest { 
+			instruction 'Private-Package', 'com.applechip' 
+			instruction 'Bundle-Classpath', 'WEB-INF/classes' 
+			instruction 'Import-Package', '''groovy.''' 
+			instruction 'Created-By', 'yyy' 
+			instruction 'Bundle Description', "${project.description}" 
+			vendor = "yyy" 
+			symbolicName = "${project.group}" + "-" + "${project.name}" 
+			version = strippedVersion() 
+			classesDir = new File( "${buildDir}/classes" ) 
+			classpath = configurations.runtime 
+			instruction 'Web-ContextPath', "${name}"
+		}
+		*/
+    	dependsOn createVersionText
+    	from(buildDir) {
+    		include 'version.txt'
+    		into('WEB-INF/classes')
+    	}
+    }
 }
 
 project(":applechip-core") {
