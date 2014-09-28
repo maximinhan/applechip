@@ -14,10 +14,24 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.applechip.core.constant.SystemConstant;
 
+/**
+ * FileUtil
+ * @author https://github.com/maximinhan/applechip
+ */
 public class FileUtil extends FileUtils {
 	private FileUtil() {
 	}
 
+	/**
+	 * <p>
+	 * Use: FileUtil.upload(multipartFile, uploadDir, saveFileName)
+	 * </p>
+	 * 
+	 * @param MultipartFile multipartFile
+	 * @param String uploadDir
+	 * @param String saveFileName
+	 * @return File
+	 */
 	public static File upload(MultipartFile multipartFile, String uploadDir, String saveFileName) {
 		File file = new File(String.format("%s%s%s", uploadDir + File.separator + saveFileName));
 		try {

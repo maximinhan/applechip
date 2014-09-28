@@ -57,6 +57,12 @@ public class ApplicationProperties {
 	@Value("${server.address}")
 	private String serverAddress;
 
+	@Value("${redis.hostName}")
+	private String redisHostName;
+
+	@Value("${redis.port}")
+	private int redisPort;
+
 	public String getStoragePath() {
 		String storagePath = this.storagePath;
 		if (StringUtil.isBlank(storagePath)) {

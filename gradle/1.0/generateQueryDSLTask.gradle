@@ -1,11 +1,6 @@
-dependencies {
-	compile("com.mysema.querydsl:querydsl-jpa:$queryDslVersion")
-	compile("com.mysema.querydsl:querydsl-apt:$queryDslVersion")
-}
-
 task generateQueryDSL(type: JavaCompile, group: 'build', description: 'Generates the QueryDSL query types') {
 	source = mainSrcDir
-	classpath = configurations.compile + configurations.provided
+	classpath = configurations.compile// + configurations.provided
 	options.compilerArgs = [
 		"-proc:only",
 		"-processor", "com.mysema.query.apt.jpa.JPAAnnotationProcessor"

@@ -10,6 +10,8 @@ import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.commons.configuration.reloading.FileChangedReloadingStrategy;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -19,6 +21,7 @@ import com.applechip.core.exception.SystemException;
 import com.applechip.core.properties.ApplicationProperties;
 import com.applechip.core.properties.DatabaseProperties;
 import com.applechip.core.properties.RuntimeProperties;
+import com.applechip.core.service.ApplicationService;
 import com.applechip.core.util.PropertiesLoaderUtil;
 
 @Slf4j
@@ -52,8 +55,7 @@ public class CoreConfig {
 
 	@Bean
 	public RuntimeProperties runtimeProperties() {
-		RuntimeProperties runtimeProperties = new RuntimeProperties(this.propertiesConfiguration());
-		return runtimeProperties;
+		return new RuntimeProperties(this.propertiesConfiguration());
 	}
 
 	private PropertiesConfiguration propertiesConfiguration() {
@@ -63,11 +65,13 @@ public class CoreConfig {
 			propertiesConfiguration.setReloadingStrategy(this.fileChangedReloadingStrategy());
 		}
 		catch (ConfigurationException e) {
-			throw new SystemException(String.format("propertiesConfiguration create fail... message: %s",
+			log.error("propertiesConfiguration create fail... e.getMessage(): {}", e.getMessage());
+			throw new SystemException(String.format("propertiesConfiguration create fail... e.getMessage(): %s",
 					e.getMessage()), e);
 		}
 		catch (IOException e) {
-			throw new SystemException(String.format("propertiesConfiguration create fail... message: %s",
+			log.error("propertiesConfiguration create fail... e.getMessage(): {}", e.getMessage());
+			throw new SystemException(String.format("propertiesConfiguration create fail... e.getMessage(): %s",
 					e.getMessage()), e);
 		}
 		return propertiesConfiguration;
@@ -77,5 +81,17 @@ public class CoreConfig {
 		FileChangedReloadingStrategy fileChangedReloadingStrategy = new FileChangedReloadingStrategy();
 		fileChangedReloadingStrategy.setRefreshDelay(this.applicationProperties().getRefreshDelay());
 		return fileChangedReloadingStrategy;
+	}
+
+	public static void main(String[] args) {
+		ApplicationContext applicationContext = new AnnotationConfigApplicationContext(CoreConfig.class);
+		// applicationContext = new GenericXmlApplicationContext("/META-INF/spring/app-context.xml");
+
+		ApplicationService applicationService = applicationContext.getBean("applicationService",
+				ApplicationService.class);
+		applicationService.getMessage("");
+
+		// First method execution using key='Josh', not cached
+		// System.out.println('message: ' + helloService.getMessage('Josh'));
 	}
 }

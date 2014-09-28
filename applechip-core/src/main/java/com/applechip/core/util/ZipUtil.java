@@ -15,6 +15,7 @@ import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 
 import lombok.extern.slf4j.Slf4j;
+import net.lingala.zip4j.exception.ZipException;
 
 import com.applechip.core.constant.SystemConstant;
 
@@ -104,7 +105,21 @@ public class ZipUtil {
 		finally {
 			IOUtil.closeQuietly(zipFile, inputStream);
 		}
+	}
 
+	public static void unzip(String zip, String directory, String password) {
+		try {
+			net.lingala.zip4j.core.ZipFile zipFile = new net.lingala.zip4j.core.ZipFile(zip);
+			if (zipFile.isEncrypted()) {
+				zipFile.setPassword(password);
+			}
+			zipFile.extractAll(directory);
+		}
+		catch (ZipException e) {
+			log.debug("Failed to unzip the file. (directory: {}, zip: {}) ", directory, zip);
+			throw new RuntimeException(String.format("Failed to unzip the file. (directory: %s, zip: %s) ", directory,
+					zip), e);
+		}
 	}
 
 	private static void copy(File file, OutputStream outputStream) throws IOException {

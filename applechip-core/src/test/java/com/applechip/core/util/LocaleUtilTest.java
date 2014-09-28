@@ -61,38 +61,6 @@ public class LocaleUtilTest {
 		System.out.println(Charsets.UTF_8.toString());
 		System.out.println(Charsets.UTF_8.displayName());
 
-		// UUID uuid = UUID.nameUUIDFromBytes(StringUtil.getBytesUtf8("applechip"));
-		// System.out.println(uuid.toString());
-		// ByteArrayOutputStream ba = new ByteArrayOutputStream(16);
-		// DataOutputStream da = new DataOutputStream(ba);
-		// da.writeLong(uuid.getMostSignificantBits());
-		// da.writeLong(uuid.getLeastSignificantBits());
-		// System.out.println();
-		//
-		// System.out.println(Long.toString(uuid.getMostSignificantBits(), 36));
-		// System.out.println(Long.toString(uuid.getLeastSignificantBits(), 36));
-
-		// char[] l = ByteBuffer.wrap(uuid.toString().getBytes()).asCharBuffer().array();
-		// System.out.println(l.toString());
-		// System.out.println(Character.toString(l, Character.FORMAT));
-		// System.out.println(Long.toString(l, Character.MIN_RADIX));
-		// System.out.println(Long.toString(l, Character.MAX_RADIX));
-		// System.out.println(Long.toString(l, Character.SIZE));
-		// System.out.println(Long.toString(l, Character.MIN_SUPPLEMENTARY_CODE_POINT));
-		// CryptoUtil cryptoUtil = new CryptoUtil();
-		// Byte.SIZE;
-		System.out.println(CryptoUtil.encrypt("password"));
-		System.out.println(CryptoUtil.decrypt("iaLQS4uk5SrS0oV+mm7s/g=="));
-
-		// new CryptoUtil().generateKey(keyString, ivString);
-
-		// System.out.println(Long.toString(l, 16));
-		// 202cb962-ac59-375b-964b-07152d234b70
-		// System.out.println(UUID.randomUUID().getMostSignificantBits());
-		// System.out.println(UUID.randomUUID().toString());
-
-		// User user = null;
-		// System.out.println(StringUtil.defaultString(user.getId()));
 	}
 
 }

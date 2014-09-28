@@ -10,6 +10,8 @@ buildscript {
 	dependencies {
 		classpath("org.gradle.api.plugins:gradle-tomcat-plugin:0.9.8")
 		classpath("org.springframework.build.gradle:propdeps-plugin:0.0.7")
+		classpath("net.sf.proguard:proguard-gradle:4.10")
+		classpath("io.github.divinespear:jpa-schema-gradle-plugin:0.1.10")
 	}
 }
 
@@ -50,7 +52,7 @@ configure(allprojects) { project ->
 	ext.javaVersion = "1.7"
     ext.javaEncoding = "UTF-8"
     ext.buildDir = "build"
-    ext.generatedSrcDir = file("${buildDir}/generated/java")
+    ext.generatedSrcDir = file("${buildDir}/generated-sources/java")
     ext.mainSrcDir = 'src/main'
     ext.testSrcDir = 'src/test'
     
@@ -63,12 +65,14 @@ configure(allprojects) { project ->
     ext.commonsCollectionsVersion = '3.2.1'
     ext.commonsDbcpVersion = '1.4'
     ext.commonsCodecVersion = '1.9'
-    ext.commonsPoolVersion = '1.6'
+    ext.commonsPool1Version = '1.6'
+    ext.commonsPool2Version = '2.2'
     ext.commonsDbcpVersion = '1.4'
     ext.commonsNetVersion = '3.3'
     ext.slf4jVersion = '1.7.7'
     ext.junitVersion = '4.11'
     ext.mockitoVersion = '1.9.5'
+    ext.googleCollectionsVersion = '1.0'
    
     //java
     ext.javaxServletApiVersion = '3.1.0'
@@ -77,12 +81,15 @@ configure(allprojects) { project ->
     
 	//dependencies
 	ext.springframeworkVersion = '4.0.6.RELEASE'
-    ext.springframeworkDataVersion = '1.8.0.RELEASE'
+    ext.springframeworkDataCommonsVersion = '1.8.0.RELEASE'
+    ext.springframeworkDataRedisVersion = '1.4.0.RELEASE'
     ext.springframeworkSecurityVersion = '3.2.5.RELEASE'
     ext.hibernateVersion = '4.3.5.Final'
     ext.hibernateCommonsVersion = '4.0.5.Final'
+    ext.hibernateValidatorVersion = '5.1.2.Final'
     ext.queryDslVersion = '3.4.3'
     ext.aspectjVersion = '1.8.1'
+    ext.redisClientVersion = '2.6.0'
    
     //util
     ext.jacksonVersion = '2.4.1'
@@ -103,6 +110,7 @@ configure(subprojects) { project ->
 	apply plugin: 'propdeps-maven'
 	apply plugin: 'propdeps-idea'
     apply plugin: 'idea'
+    
     apply from: "${gradleScriptDir}/gradleScript.gradle"
     
     apply from: uploadArchivesTask
@@ -114,19 +122,24 @@ configure(subprojects) { project ->
 		provided("commons-io:commons-io:$commonsIoVersion")
 		provided("commons-collections:commons-collections:$commonsCollectionsVersion")
 		provided("commons-codec:commons-codec:$commonsCodecVersion")
-		provided("commons-pool:commons-pool:$commonsPoolVersion")
+		provided("commons-pool:commons-pool:$commonsPool1Version")
+		provided("org.apache.commons:commons-pool2:$commonsPool2Version")
 		provided("commons-net:commons-net:$commonsNetVersion")
 		provided("commons-dbcp:commons-dbcp:$commonsDbcpVersion")
 		provided("net.lingala.zip4j:zip4j:$zipVersion")
 		provided("org.slf4j:jcl-over-slf4j:$slf4jVersion")
 	    provided("org.slf4j:slf4j-api:$slf4jVersion")
 		provided("org.projectlombok:lombok:$lombokVersion")
+		provided("com.google.collections:google-collections:$googleCollectionsVersion")
 		testCompile("org.springframework:spring-test:$springframeworkVersion")
 		testCompile("junit:junit:$junitVersion")
 		testCompile("org.mockito:mockito-all:$mockitoVersion")
 	}
 	
 	[compileJava, compileTestJava]*.options*.encoding = "${javaEncoding}"
+	[compileJava, compileTestJava]*.options*.debug = true
+	[compileJava, compileTestJava]*.options*.compilerArgs = ["-g"]
+	
 	tasks.eclipse.dependsOn processResources
 	[processResources, processTestResources]*.dependsOn settingProperties
 	//sourceCompatibility = 1.8
@@ -145,7 +158,7 @@ configure(subprojects) { project ->
 			resources.srcDirs = [ "${testSrcDir}/resources" ]
 		}
 	}
-	
+
 	eclipse {
 		classpath {
 			downloadSources = true
@@ -170,11 +183,11 @@ configure(webProjects) {
     apply from: createVersionTextTask
     dependencies {
 		provided jdbcDrivers
-		compile project(':applechip-core')
+		//compile project(':applechip-core')
     	provided("javax.servlet:javax.servlet-api:${javaxServletApiVersion}")
     	provided("javax.servlet:jstl:${javaxServletJstlVersion}")
 	    provided("org.springframework.security:spring-security-core:${springframeworkSecurityVersion}")
-		provided("org.springframework.data:spring-data-commons:${springframeworkDataVersion}")
+		provided("org.springframework.data:spring-data-commons:${springframeworkDataCommonsVersion}")
 		provided("org.springframework:spring-orm:$springframeworkVersion")
 		provided("org.springframework:spring-tx:$springframeworkVersion")
 		provided("org.springframework:spring-context-support:$springframeworkVersion")
@@ -190,7 +203,7 @@ configure(webProjects) {
 		provided("org.springframework:spring-core:$springframeworkVersion")
 		provided("org.springframework:spring-aop:$springframeworkVersion")
     }
-    configurations.all {
+	configurations.all {
 	    transitive = false
 	}
     war {
@@ -219,43 +232,64 @@ configure(webProjects) {
 
 project(":applechip-core") {
 	description = "Applechip Core"
+	//apply plugin: 'jpa-schema-generate'
 	apply from: generateSchemaTask
 	apply from: generateQueryDSLTask
-	apply from: generateWsdlTask
+	//apply from: generateWsdlTask
 	dependencies {
-		provided jdbcDrivers
-		provided("org.springframework:spring-orm:$springframeworkVersion")
-		provided("org.springframework:spring-tx:$springframeworkVersion")
-		provided("org.springframework:spring-jdbc:$springframeworkVersion")
-		provided("org.springframework:spring-context-support:$springframeworkVersion")
-		provided("org.springframework:spring-context:$springframeworkVersion")
-		provided("org.springframework:spring-webmvc:$springframeworkVersion")
-		provided("org.springframework:spring-web:$springframeworkVersion")
-		provided("org.springframework:spring-beans:$springframeworkVersion")
-		provided("org.springframework:spring-core:$springframeworkVersion")
-		provided("org.springframework:spring-aop:$springframeworkVersion")
-		provided("org.springframework:spring-expression:$springframeworkVersion")
-		provided("org.springframework.data:spring-data-commons:${springframeworkDataVersion}")
-		provided("org.springframework.security:spring-security-core:$springframeworkSecurityVersion")
-		provided("org.hibernate:hibernate-entitymanager:$hibernateVersion")
-		provided("org.hibernate:hibernate-core:$hibernateVersion")
-		provided("org.hibernate:hibernate-ehcache:$hibernateVersion")
-	    provided("org.hibernate:hibernate-envers:$hibernateVersion")
-		provided("org.hibernate.common:hibernate-commons-annotations:$hibernateCommonsVersion")
-	    provided("com.fasterxml.jackson.core:jackson-databind:${jacksonVersion}")
-	    provided("com.fasterxml.jackson.core:jackson-annotations:${jacksonVersion}")
-	    provided("com.fasterxml.jackson.core:jackson-core:${jacksonVersion}")
-	    provided("com.maxmind.geoip2:geoip2:${geoIpVersion}")
-		provided("edu.uci.ics:crawler4j:${crawlerVersion}")
-		provided("org.aspectj:aspectjweaver:${aspectjVersion}")
-		provided("javax.servlet:javax.servlet-api:${javaxServletApiVersion}")
+		compile jdbcDrivers
+		compile("org.springframework:spring-orm:$springframeworkVersion")
+		compile("org.springframework:spring-tx:$springframeworkVersion")
+		compile("org.springframework:spring-jdbc:$springframeworkVersion")
+		compile("org.springframework:spring-context-support:$springframeworkVersion")
+		compile("org.springframework:spring-context:$springframeworkVersion")
+		compile("org.springframework:spring-webmvc:$springframeworkVersion")
+		compile("org.springframework:spring-web:$springframeworkVersion")
+		compile("org.springframework:spring-beans:$springframeworkVersion")
+		compile("org.springframework:spring-core:$springframeworkVersion")
+		compile("org.springframework:spring-aop:$springframeworkVersion")
+		compile("org.springframework:spring-expression:$springframeworkVersion")
+		compile("org.springframework.data:spring-data-commons:${springframeworkDataCommonsVersion}")
+		compile("org.springframework.security:spring-security-core:$springframeworkSecurityVersion")
+		compile("org.hibernate:hibernate-entitymanager:$hibernateVersion")
+		compile("org.hibernate:hibernate-core:$hibernateVersion")
+		compile("org.hibernate:hibernate-ehcache:$hibernateVersion")
+	    compile("org.hibernate:hibernate-envers:$hibernateVersion")
+	    compile("org.hibernate:hibernate-validator:$hibernateValidatorVersion")
+		compile("org.hibernate.common:hibernate-commons-annotations:$hibernateCommonsVersion")
+	    compile("com.fasterxml.jackson.core:jackson-databind:${jacksonVersion}")
+	    compile("com.fasterxml.jackson.core:jackson-annotations:${jacksonVersion}")
+	    compile("com.fasterxml.jackson.core:jackson-core:${jacksonVersion}")
+	    compile("com.mysema.querydsl:querydsl-jpa:$queryDslVersion")
+		compile("com.mysema.querydsl:querydsl-apt:$queryDslVersion")
+	    compile("com.maxmind.geoip2:geoip2:${geoIpVersion}")
+		compile("edu.uci.ics:crawler4j:${crawlerVersion}")
+		compile("org.aspectj:aspectjweaver:${aspectjVersion}")
+		compile("javax.servlet:javax.servlet-api:${javaxServletApiVersion}")
+		compile("org.springframework.data:spring-data-redis:$springframeworkDataRedisVersion")
+		compile("redis.clients:jedis:$redisClientVersion")
+		compile gradleApi()
 	}
 	compileJava {
 	    dependsOn generateQueryDSL
 	}
-	jar {
+	testClasses {
 		dependsOn generateSchema
 	}
+	/*
+	jar{
+		manifest.from("src/META-INF/MANIFEST.MF")
+	}
+	test{
+		workingDir = new File("${junitWorkingDir}")
+	}
+	generateSchema {
+	    targets {
+	        targetName {
+	        }
+	    }
+	}
+	*/
 }
 
 

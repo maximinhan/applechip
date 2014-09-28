@@ -68,7 +68,7 @@ public class ApplicationServiceImpl implements ApplicationService {
 	}
 
 	@Override
-	// @Cacheable(key = "codeCache", value = { "codeCache" })
+//	 @Cacheable(key = "#codeCategory", value = { "CODE" })
 	public List<CodeValue> getCodes(String codeCategory, Locale locale) {
 		List<Code> codeList = applicationRepository.getCodeList(codeCategory);
 		List<CodeValue> list = new ArrayList<CodeValue>();

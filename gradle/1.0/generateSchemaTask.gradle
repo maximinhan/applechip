@@ -11,31 +11,12 @@ dependencies {
 	provided gradleApi()
 }
 
-task generateSchema(type: GenerateSchemaTask, group: 'build', description: 'Generates the Schema query types', dependsOn: [compileJava, processResources])
+task generateSchema(type: GenerateSchemaTask, group: 'build', description: 'Generates the Schema query types', dependsOn: [processTestResources]){
+	//classesDir = configurations.compile + configurations.provided
+}
 
 class GenerateSchemaTask extends DefaultTask {
-	//@OutputDirectory
-	//def File classesDir
 	def classesDir = project.sourceSets.main.output.classesDir
-    /*
-    		Connection connection = DriverManager.getConnection("");
-		Dialect dialect = new MySQL5InnoDBDialect(); // e.g.: new
-														// MySQL5InnoDBDialect();
-		org.hibernate.cfg.Configuration cfg = new org.hibernate.cfg.Configuration();
-		cfg.addAnnotatedClass(CoreConfig.class); //
-		cfg.buildMappings(); // may be unnecessary
-		DatabaseMetadata metadata = new DatabaseMetadata(connection, dialect,
-				config);
-		List<SchemaUpdateScript> updateScritps = cfg
-				.generateSchemaUpdateScriptList(dialect, metadata);
-		String formatted = null;
-		for (SchemaUpdateScript script : updateScritps) {
-			formatted = FormatStyle.DDL.getFormatter().format(
-					script.getScript());
-			formatted += ";";
-			System.out.println(formatted);
-		}
-    */
 	@TaskAction
 	def generateSchemaTask() {
 		assert classesDir.isDirectory()
@@ -66,15 +47,37 @@ class GenerateSchemaTask extends DefaultTask {
 					println e
 				}
 			}
-			configuration.properties['hibernate.connection.url'] = project.properties['dbUrl']
+			def properties = new Properties()
+			new File(classesDir, "properties/database.properties").withInputStream { 
+				stream -> properties.load(stream) 
+			}
+			configuration.properties = properties
 			configuration.properties['hibernate.connection.username'] = project.properties['dbUsername']
 			configuration.properties['hibernate.connection.password'] = project.properties['dbPassword']
+			/*
 			configuration.properties['hibernate.connection.driver_class'] = project.properties['dbDriverClassName']
+			configuration.properties['hibernate.connection.url'] = project.properties['dbUrl']
 			configuration.properties['hibernate.dialect'] = project.properties['dbHibernateDialect']
 			configuration.properties['hibernate.hbm2ddl.auto'] = project.properties['dbHibernateHbm2ddlAuto']
+			*/
+			//java.sql.Connection connection = java.sql.DriverManager.getConnection(project.properties['dbUrl'], project.properties['dbUsername'], project.properties['dbPassword'])
+			/*
+			Class.forName(project.properties['dbDriverClassName'])
+			java.sql.Connection connection = java.sql.DriverManager.getConnection(project.properties['dbUrl'], properties)
+			org.hibernate.dialect.Dialect dialect = org.hibernate.dialect.Dialect.getDialect(properties)
+			org.hibernate.tool.hbm2ddl.DatabaseMetadata databaseMetadata = new org.hibernate.tool.hbm2ddl.DatabaseMetadata(connection, dialect, configuration)
+			
+			def schemaUpdateScriptList = configuration.generateSchemaUpdateScriptList(dialect, metadata);
+			schemaUpdateScriptList.each { schemaUpdateScript -> 
+				def formatted = org.hibernate.engine.jdbc.internal.FormatStyle.DDL.getFormatter().format(schemaUpdateScript.getScript())
+				formatted += ";"
+				println formatted
+			}
+			*/
 			org.hibernate.tool.hbm2ddl.SchemaExport schemaExport = new org.hibernate.tool.hbm2ddl.SchemaExport(configuration)
 			schemaExport.delimiter = ';'
 		    schemaExport.format = true
+		    schemaExport.outputFile = new File(classesDir, "schema.sql").absolutePath
 			schemaExport.execute true, true, false, false
 		} finally {
 			Thread.currentThread().setContextClassLoader(classLoader)

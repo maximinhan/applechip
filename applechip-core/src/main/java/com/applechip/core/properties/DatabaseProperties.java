@@ -13,8 +13,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.dbcp.BasicDataSourceFactory;
 
 import com.applechip.core.entity.User;
-import com.applechip.core.util.CryptoUtil;
 import com.applechip.core.util.FieldUtil;
+import com.applechip.core.util.SecurityUtil;
 
 @Getter
 @Slf4j
@@ -76,7 +76,7 @@ public class DatabaseProperties {
 		for (String string : DATA_SOURCE_PROPERTIES_SET) {
 			if (properties.containsKey(string)) {
 				String value = properties.getProperty(string);
-				result.put(string, CryptoUtil.forceDecrypt(value));
+				result.put(string, SecurityUtil.forceDecrypt(value));
 				log.info("setDataSourceProperties put finish... key: {}, value: {}", string, value);
 			}
 		}
@@ -88,7 +88,7 @@ public class DatabaseProperties {
 		for (String string : HIBERNATE_PROPERTIES_SET) {
 			if (properties.containsKey(string)) {
 				String value = properties.getProperty(string);
-				result.put(string, CryptoUtil.forceDecrypt(value));
+				result.put(string, SecurityUtil.forceDecrypt(value));
 				log.info("setHibernateProperties put finish... key: {}, value: {}", string, value);
 			}
 		}

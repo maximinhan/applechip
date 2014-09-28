@@ -3,24 +3,33 @@ package com.applechip.core.configurer;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.xml.transform.Source;
+
 import org.apache.commons.pool.impl.GenericKeyedObjectPool;
+import org.hibernate.validator.HibernateValidator;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.AbstractApplicationContext;
+import org.springframework.context.support.MessageSourceAccessor;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
-import org.springframework.http.MediaType;
+import org.springframework.http.converter.ByteArrayHttpMessageConverter;
 import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.http.converter.ResourceHttpMessageConverter;
 import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.http.converter.xml.Jaxb2RootElementHttpMessageConverter;
+import org.springframework.http.converter.xml.SourceHttpMessageConverter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
+import org.springframework.web.bind.support.ConfigurableWebBindingInitializer;
 import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.i18n.SessionLocaleResolver;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter;
 
 import com.applechip.core.constant.ApplicationConstant;
+import com.applechip.core.constant.SystemConstant;
 import com.applechip.core.socket.CustomBaseKeyedPoolableObjectFactory;
 import com.applechip.core.socket.CustomSocketClient;
 import com.applechip.core.socket.SocketClientUtil;
@@ -30,9 +39,8 @@ public class CustomConfigurer {
 
 	@Bean
 	public SocketClientUtil socketClientUtil() {
-		SocketClientUtil bean = new SocketClientUtil(new GenericKeyedObjectPool<String, CustomSocketClient>(
+		return new SocketClientUtil(new GenericKeyedObjectPool<String, CustomSocketClient>(
 				new CustomBaseKeyedPoolableObjectFactory()));
-		return bean;
 	}
 
 	@Bean
@@ -40,19 +48,14 @@ public class CustomConfigurer {
 		RequestMappingHandlerAdapter bean = new RequestMappingHandlerAdapter();
 		List<HttpMessageConverter<?>> list = new ArrayList<HttpMessageConverter<?>>();
 		list.add(this.mappingJackson2HttpMessageConverter());
-		list.add(this.stringHttpMessageConverter());
 		list.add(this.jaxb2RootElementHttpMessageConverter());
+		list.add(this.byteArrayHttpMessageConverter());
+		list.add(this.resourceHttpMessageConverter());
+		list.add(this.sourceHttpMessageConverter());
+		list.add(this.stringHttpMessageConverter());
+		// list.add(new RssChannelHttpMessageConverter());
+		// list.add(new AtomFeedHttpMessageConverter());
 		bean.setMessageConverters(list);
-		return bean;
-	}
-
-	@Bean
-	public MappingJackson2HttpMessageConverter mappingJackson2HttpMessageConverter() {
-		MappingJackson2HttpMessageConverter bean = new MappingJackson2HttpMessageConverter();
-		// bean.
-		List<MediaType> list = new ArrayList<MediaType>();
-		list.add(MediaType.APPLICATION_JSON);
-		bean.setSupportedMediaTypes(list);
 		return bean;
 	}
 
@@ -64,21 +67,33 @@ public class CustomConfigurer {
 	}
 
 	@Bean
+	public MappingJackson2HttpMessageConverter mappingJackson2HttpMessageConverter() {
+		return new MappingJackson2HttpMessageConverter();
+	}
+
+	@Bean
 	public Jaxb2RootElementHttpMessageConverter jaxb2RootElementHttpMessageConverter() {
-		Jaxb2RootElementHttpMessageConverter bean = new Jaxb2RootElementHttpMessageConverter();
-		List<MediaType> list = new ArrayList<MediaType>();
-		list.add(MediaType.APPLICATION_XML);
-		bean.setSupportedMediaTypes(list);
-		return bean;
+		return new Jaxb2RootElementHttpMessageConverter();
+	}
+
+	@Bean
+	public ByteArrayHttpMessageConverter byteArrayHttpMessageConverter() {
+		return new ByteArrayHttpMessageConverter();
+	}
+
+	@Bean
+	public ResourceHttpMessageConverter resourceHttpMessageConverter() {
+		return new ResourceHttpMessageConverter();
+	}
+
+	@Bean
+	public <T extends Source> SourceHttpMessageConverter<T> sourceHttpMessageConverter() {
+		return new SourceHttpMessageConverter<T>();
 	}
 
 	@Bean
 	public StringHttpMessageConverter stringHttpMessageConverter() {
-		StringHttpMessageConverter bean = new StringHttpMessageConverter();
-		List<MediaType> list = new ArrayList<MediaType>();
-		list.add(MediaType.TEXT_PLAIN);
-		bean.setSupportedMediaTypes(list);
-		return bean;
+		return new StringHttpMessageConverter(SystemConstant.CHARSET);
 	}
 
 	@Bean(name = AbstractApplicationContext.MESSAGE_SOURCE_BEAN_NAME)
@@ -92,6 +107,11 @@ public class CustomConfigurer {
 	}
 
 	@Bean
+	public MessageSourceAccessor messageSourceAccessor() {
+		return new MessageSourceAccessor(this.messageSource());
+	}
+
+	@Bean
 	public LocaleResolver localeResolver() {
 		return new SessionLocaleResolver();
 	}
@@ -99,6 +119,22 @@ public class CustomConfigurer {
 	@Bean
 	public BCryptPasswordEncoder passwordEncoder() {
 		return new BCryptPasswordEncoder();
+	}
+
+	@Bean
+	public ConfigurableWebBindingInitializer configurableWebBindingInitializer() {
+		ConfigurableWebBindingInitializer bean = new ConfigurableWebBindingInitializer();
+		// bean.setConversionService();
+		// <property name="converters">
+		// <list>
+		// <bean class="org.anyframe.sample.moviefinder.StringToFilmRatingConverter" />
+		// <bean class="org.anyframe.sample.moviefinder.FilmRatingToStringConverter" />
+		// </list>
+		// </property>
+		LocalValidatorFactoryBean localValidatorFactoryBean = new LocalValidatorFactoryBean();
+		localValidatorFactoryBean.setProviderClass(HibernateValidator.class);
+		bean.setValidator(localValidatorFactoryBean);
+		return bean;
 	}
 
 	/*

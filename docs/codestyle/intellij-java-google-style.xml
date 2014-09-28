@@ -1,5 +1,5 @@
-<!-- http://code.google.com/p/google-styleguide/source/browse/trunk/intellij-java-google-style.xml -->
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- http://code.google.com/p/google-styleguide/source/browse/trunk/intellij-java-google-style.xml -->
 <code_scheme name="GoogleStyle">
   <option name="JAVA_INDENT_OPTIONS">
     <value>

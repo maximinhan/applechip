@@ -8,7 +8,6 @@ import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatche
 
 import com.applechip.api.ApiConfig;
 import com.applechip.configurer.ApiWebMvcConfigurer;
-import com.applechip.core.CoreConfig;
 
 @Order(1)
 public class ApiDispatcherServletInitializer extends AbstractAnnotationConfigDispatcherServletInitializer {
@@ -22,7 +21,7 @@ public class ApiDispatcherServletInitializer extends AbstractAnnotationConfigDis
 
 	@Override
 	protected Class<?>[] getRootConfigClasses() {
-		return new Class[] { CoreConfig.class, ApiConfig.class };
+		return new Class[] { ApiConfig.class };
 		// return new Class[] { ApiConfig.class };
 	}
 

@@ -1,3 +1,56 @@
+/*
+code cover...
+	/*
+	apply plugin: 'pmd'
+	apply plugin: 'findbugs'
+	apply plugin: 'checkstyle'
+	apply plugin: 'jacoco'
+	*/
+	checkstyle {
+		configFile = new File(rootDir, "config/checkstyle.xml")
+		ignoreFailures = true
+		sourceSets = [sourceSets.main]
+	}
+	findbugs {
+		ignoreFailures = true
+		sourceSets = [sourceSets.main]
+	}
+	pmd {
+		ruleSetFiles = files("$rootDir/config/pmd.xml")
+		ignoreFailures = true
+		sourceSets = [sourceSets.main]
+	}
+	jacoco {
+		toolVersion = "0.6.4.201312101107"
+		reportsDir = file("$buildDir/customJacocoReportDir")
+	}
+	test {
+		jacoco {
+			enabled = true
+			append = false
+			destinationFile = file("$buildDir/jacoco/jacocoTest.exec")
+			classDumpFile = file("$buildDir/jacoco/classpathdumps")
+		}
+	}
+	jacocoTestReport {
+		group = "Reporting"
+		description = "Generate Jacoco coverage reports after running tests."
+		reports {
+			xml{
+				enabled true
+				destination "${buildDir}/reports/jacoco/jacoco.xml"
+			}
+			csv.enabled false
+			html{
+			enabled true
+			destination "${buildDir}/jacocoHtml"
+			}
+		}
+		additionalSourceDirs = files(sourceSets.main.allJava.srcDirs)
+	}
+*/
+
+
 /**
 ext {
     lombokVersion = '1.12.4'}
@@ -33,6 +86,19 @@ javadoc {
     source = fileTree(dir: delombok.srcDelomboked, includes: ['**/*.java', '**/*.html'])
     options.encoding = 'utf-8'}
 }
+
+
+
+task javadoc(type: Javadoc) {
+    source subprojects.collect {project ->
+        project.sourceSets.main.allJava
+    }
+    destinationDir = new File(buildDir, 'javadoc')
+    // Might need a classpath
+    classpath = files(subprojects.collect {project ->
+        project.sourceSets.main.compileClasspath})
+    }}
+
 **/
 
 
