@@ -2,15 +2,16 @@ package com.applechip.core.socket;
 
 import lombok.extern.slf4j.Slf4j;
 
-import org.apache.commons.pool.BaseKeyedPoolableObjectFactory;
+import org.apache.commons.pool2.BaseKeyedPooledObjectFactory;
+import org.apache.commons.pool2.PooledObject;
+import org.apache.commons.pool2.impl.DefaultPooledObject;
 
 import com.applechip.core.util.StringUtil;
 
 @Slf4j
-public class CustomBaseKeyedPoolableObjectFactory extends BaseKeyedPoolableObjectFactory<String, CustomSocketClient> {
-
+public class CustomBaseKeyedPoolableObjectFactory extends BaseKeyedPooledObjectFactory<String, CustomSocketClient> {
 	@Override
-	public CustomSocketClient makeObject(String key) throws Exception {
+	public CustomSocketClient create(String key) throws Exception {
 		log.trace("makeObject... {}", key);
 		CustomSocketClient customSocketClient = new CustomSocketClient();
 		connect(key, customSocketClient);
@@ -18,35 +19,40 @@ public class CustomBaseKeyedPoolableObjectFactory extends BaseKeyedPoolableObjec
 	}
 
 	@Override
-	public void destroyObject(String key, CustomSocketClient customSocketClient) throws Exception {
-		log.trace("destroyObject... {}", key);
-		if (customSocketClient.isConnected()) {
-			customSocketClient.disconnect();
+	public PooledObject<CustomSocketClient> wrap(CustomSocketClient value) {
+		return new DefaultPooledObject<CustomSocketClient>(value);
+	}
+
+	@Override
+	public void passivateObject(String key, PooledObject<CustomSocketClient> value) throws Exception {
+		log.trace("passivateObject... {}", key);
+		if (value.getObject().isConnected()) {
+			log.trace("disconnect... {}", key);
+			value.getObject().disconnect();
 		}
 	}
 
 	@Override
-	public boolean validateObject(String key, CustomSocketClient customSocketClient) {
-		boolean validate = customSocketClient.isAvailable();
+	public boolean validateObject(String key, PooledObject<CustomSocketClient> value) {
+		boolean validate = value.getObject().isAvailable();
 		log.trace("validateObject... {}, {}", key, validate);
 		return validate;
 	}
 
 	@Override
-	public void activateObject(String key, CustomSocketClient customSocketClient) throws Exception {
-		log.trace("activateObject... {}", key);
-		if (!customSocketClient.isConnected()) {
-			log.trace("reconnect... {}", key);
-			connect(key, customSocketClient);
+	public void destroyObject(String key, PooledObject<CustomSocketClient> value) throws Exception {
+		log.trace("destroyObject... {}", key);
+		if (value.getObject().isConnected()) {
+			value.getObject().disconnect();
 		}
 	}
 
 	@Override
-	public void passivateObject(String key, CustomSocketClient customSocketClient) throws Exception {
-		log.trace("passivateObject... {}", key);
-		if (customSocketClient.isConnected()) {
-			log.trace("disconnect... {}", key);
-			customSocketClient.disconnect();
+	public void activateObject(String key, PooledObject<CustomSocketClient> value) throws Exception {
+		log.trace("activateObject... {}", key);
+		if (!value.getObject().isConnected()) {
+			log.trace("reconnect... {}", key);
+			connect(key, value.getObject());
 		}
 	}
 

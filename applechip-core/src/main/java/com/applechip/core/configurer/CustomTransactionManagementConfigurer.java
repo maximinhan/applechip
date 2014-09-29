@@ -95,7 +95,10 @@ public class CustomTransactionManagementConfigurer implements TransactionManagem
 	@Bean
 	public EntityManagerFactory entityManagerFactory() {
 		LocalContainerEntityManagerFactoryBean localContainerEntityManagerFactoryBean = new LocalContainerEntityManagerFactoryBean();
-		localContainerEntityManagerFactoryBean.setJpaVendorAdapter(CustomHibernateJpaVendorAdapter.getInstance());
+		CustomHibernateJpaVendorAdapter customHibernateJpaVendorAdapter = CustomHibernateJpaVendorAdapter.getInstance();
+		customHibernateJpaVendorAdapter.setGenerateDdl(Boolean.TRUE);
+		customHibernateJpaVendorAdapter.setShowSql(Boolean.TRUE);
+		localContainerEntityManagerFactoryBean.setJpaVendorAdapter(customHibernateJpaVendorAdapter);
 		localContainerEntityManagerFactoryBean.setDataSource(this.dataSource());
 		localContainerEntityManagerFactoryBean.setJpaProperties(databaseProperties.getHibernateProperties());
 		localContainerEntityManagerFactoryBean.setPersistenceUnitName(ApplicationConstant.PERSISTENCE_UNIT_NAME);

@@ -2,7 +2,7 @@ package com.applechip.core.socket;
 
 import lombok.extern.slf4j.Slf4j;
 
-import org.apache.commons.pool.impl.GenericKeyedObjectPool;
+import org.apache.commons.pool2.impl.GenericKeyedObjectPool;
 
 import com.applechip.core.entity.Server;
 import com.applechip.core.util.StringUtil;

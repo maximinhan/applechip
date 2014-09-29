@@ -8,7 +8,9 @@ import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatche
 import com.applechip.web.configurer.WebWebMvcConfigurer;
 
 public class WebDispatcherServletInitializer extends AbstractAnnotationConfigDispatcherServletInitializer {
-
+//	<listener>
+//    <listener-class>org.h2.server.web.DbStarter</listener-class>
+//</listener>
 	@Override
 	protected Class<?>[] getRootConfigClasses() {
 		// return new Class[] { CoreConfig.class, WebConfig.class };

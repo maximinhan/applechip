@@ -3,7 +3,9 @@ def Map<String, String> hibernateHbm2ddlAutoMap = [
 	MARIA: "update",
 	MYSQL_REPLICATION: "update",
 	ORACLE: "update",
-	SQLSERVER: "update"
+	SQLSERVER: "update",
+	HSQL: "update",
+	H2: "update"
 ]
 def Map<String, String> hibernateDialectMap = [
 	MYSQL: "org.hibernate.dialect.MySQL5InnoDBDialect",
@@ -29,7 +31,8 @@ def Map<String, String> validationQueryMap = [
 	MYSQL_REPLICATION: "/* ping */ SELECT 1",
 	ORACLE: "SELECT 1 FROM DUAL",
 	SQLSERVER: "SELECT 1",
-	MARIA: "SELECT 1",
+	HSQL: "SELECT 1",
+	H2: "SELECT 1"
 ]
 def Map<String, String> dbunitDataTypeFactoryNameMap = [
 	MYSQL: "org.dbunit.ext.mysql.MySqlDataTypeFactory",
@@ -57,14 +60,14 @@ task settingProperties(type: JavaCompile, group: 'build', description: 'Generate
 	[processResources, processTestResources]*.filter(org.apache.tools.ant.filters.ReplaceTokens,
 		tokens: [
 			'dbType': project.properties['dbType'],
+			'dbVersion': project.properties['dbVersion'],
 			'dbUrl': project.properties['dbUrl'],
 			'dbUsername': project.properties['dbUsername'],
 			'dbPassword': project.properties['dbPassword'],
 			'dbDriverClassName': project.properties['dbDriverClassName'],
 			'dbValidationQuery': project.properties['dbValidationQuery'],
 			'dbHibernateDialect': project.properties['dbHibernateDialect'],
-			'dbHibernateHbm2ddlAuto': project.properties['dbHibernateHbm2ddlAuto'],
-			'dbVersion': project.properties['dbVersion']
+			'dbHibernateHbm2ddlAuto': project.properties['dbHibernateHbm2ddlAuto']
 		]
 	)
 }

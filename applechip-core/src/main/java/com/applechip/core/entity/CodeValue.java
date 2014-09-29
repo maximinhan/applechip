@@ -34,6 +34,6 @@ public class CodeValue extends AbstractObject implements Comparable<CodeValue> {
 	private String value;
 
 	public int compareTo(CodeValue codeValue) {
-		return this.getCode().compareTo(codeValue.getCode());
+		return this.code.compareTo(codeValue.getCode());
 	}
 }

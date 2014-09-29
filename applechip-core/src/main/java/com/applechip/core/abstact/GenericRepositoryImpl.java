@@ -1,6 +1,7 @@
 package com.applechip.core.abstact;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -14,13 +15,13 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
-import org.apache.commons.collections.IteratorUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
 import com.applechip.core.constant.ApplicationConstant;
+import com.applechip.core.util.IteratorUtil;
 
 //@RepositoryDefinition(domainClass = Employee.class, idClass = Long.class)
 public class GenericRepositoryImpl<T extends GenericEntity<PK>, PK extends Serializable> implements
@@ -39,7 +40,7 @@ public class GenericRepositoryImpl<T extends GenericEntity<PK>, PK extends Seria
 	public Iterable<T> findAll(Sort sort) {
 		CriteriaQuery<T> criteriaQuery = this.getCriteriaBuilder().createQuery(this.clazz);
 		criteriaQuery.select(criteriaQuery.from(this.clazz));
-		criteriaQuery.orderBy(IteratorUtils.toList(sort.iterator()));// Lists.newArrayList(sort.iterator());
+		criteriaQuery.orderBy(IteratorUtil.toList(sort.iterator()));// IteratorUtil.newArrayList(sort.iterator());
 		return this.entityManager.createQuery(criteriaQuery).getResultList();
 	}
 
@@ -54,7 +55,7 @@ public class GenericRepositoryImpl<T extends GenericEntity<PK>, PK extends Seria
 	public Page<T> findAll(Pageable pageable) {
 		CriteriaQuery<T> criteriaQuery = this.getCriteriaBuilder().createQuery(this.clazz);
 		criteriaQuery.select(criteriaQuery.from(this.clazz));
-		criteriaQuery.orderBy(IteratorUtils.toList(pageable.getSort().iterator()));
+		criteriaQuery.orderBy(IteratorUtil.toList(pageable.getSort().iterator()));
 		TypedQuery<T> typedQuery = this.entityManager.createQuery(criteriaQuery);
 		typedQuery.setFirstResult(pageable.getOffset());
 		typedQuery.setMaxResults((pageable.getOffset() * pageable.getPageNumber()) + pageable.getPageSize());
@@ -73,7 +74,7 @@ public class GenericRepositoryImpl<T extends GenericEntity<PK>, PK extends Seria
 		for (S entity : entities) {
 			collection.add(this.save(entity));
 		}
-		return collection;// new ArrayList<S>(collection)
+		return new ArrayList<S>(collection);
 	}
 
 	@Override
@@ -109,7 +110,6 @@ public class GenericRepositoryImpl<T extends GenericEntity<PK>, PK extends Seria
 		criteriaQuery.select(criteriaBuilder.count(criteriaQuery.from(this.clazz)));
 		try {
 			return this.entityManager.createQuery(criteriaQuery).getSingleResult();
-			// return ((Long) this.entityManager.createQuery(criteriaQuery).getSingleResult());
 		}
 		catch (NoResultException e) {
 			return 0;

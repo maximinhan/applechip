@@ -57,11 +57,20 @@ public class ApplicationProperties {
 	@Value("${server.address}")
 	private String serverAddress;
 
-	@Value("${redis.hostName}")
-	private String redisHostName;
+	@Value("${redis.host}")
+	private String redisHost;
 
 	@Value("${redis.port}")
 	private int redisPort;
+
+	@Value("${redis.timeout}")
+	private int redisTimeout;
+
+	@Value("${redis.database}")
+	private int redisDatabase;
+
+	@Value("${redis.usePool}")
+	private boolean redisUsePool;
 
 	public String getStoragePath() {
 		String storagePath = this.storagePath;

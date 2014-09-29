@@ -8,6 +8,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -24,7 +25,6 @@ import com.applechip.core.constant.ColumnSizeConstant;
 
 @Getter
 @Setter
-@SuppressWarnings(value = { "PMD.UnusedPrivateField", "PMD.SingularField" })
 @EqualsAndHashCode(callSuper = false, of = { "id" })
 @ToString(exclude = { "user", "optionCode" })
 @NoArgsConstructor
@@ -35,7 +35,7 @@ public class UserPreferOption extends GenericUpdatedBy<UserPreferOption.Id> {
 	private static final long serialVersionUID = -6006862108744697176L;
 
 	@EmbeddedId
-	private Id id = new Id();
+	private Id id;
 
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "user_id", nullable = false, updatable = false, insertable = false)
@@ -50,20 +50,16 @@ public class UserPreferOption extends GenericUpdatedBy<UserPreferOption.Id> {
 	@Column(name = "option_value", length = ColumnSizeConstant.OPTION_VALUE)
 	private String optionValue;
 
-	public UserPreferOption(User user, Integer optionCodeId, String optionValue) {
+	public UserPreferOption(User user, OptionCode optionCode, String optionValue) {
 		this.user = user;
-		this.id = new Id(user.getId(), optionCodeId);
-		this.optionValue = optionValue;
-	}
-
-	public UserPreferOption(String userId, Integer optionCodeId, String optionValue) {
-		this.id.userId = userId;
-		this.id.optionCodeId = optionCodeId;
+		this.optionCode = optionCode;
+		this.id = new Id(user.getId(), optionCode.getId());
 		this.optionValue = optionValue;
 	}
 
 	@EqualsAndHashCode(callSuper = false, of = { "userId", "optionCodeId" })
 	@NoArgsConstructor
+	@AllArgsConstructor
 	@Embeddable
 	@Data
 	public static class Id extends AbstractObject {
@@ -75,11 +71,6 @@ public class UserPreferOption extends GenericUpdatedBy<UserPreferOption.Id> {
 
 		@Column(name = "option_code_id")
 		private Integer optionCodeId;
-
-		public Id(String groupId, Integer optionCodeId) {
-			this.userId = groupId;
-			this.optionCodeId = optionCodeId;
-		}
 
 	}
 }

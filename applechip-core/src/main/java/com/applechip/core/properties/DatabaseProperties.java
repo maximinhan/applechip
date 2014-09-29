@@ -4,29 +4,29 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
 
 import lombok.Getter;
-import lombok.extern.slf4j.Slf4j;
 
 import org.apache.commons.dbcp.BasicDataSourceFactory;
 
+import com.applechip.core.constant.SystemConstant;
 import com.applechip.core.entity.User;
 import com.applechip.core.util.FieldUtil;
 import com.applechip.core.util.SecurityUtil;
 
 @Getter
-@Slf4j
 public class DatabaseProperties {
-	public static Set<String> DATA_SOURCE_PROPERTIES_SET = Collections.unmodifiableSet(new HashSet<String>() {
+	private static Set<String> DATA_SOURCE_PROPERTIES_SET = Collections.unmodifiableSet(new HashSet<String>() {
 		private static final long serialVersionUID = 7526702150204237983L;
 		{
 			addAll(FieldUtil.readFieldList(BasicDataSourceFactory.class, String.class));
 		}
 	});
 
-	public static Set<String> HIBERNATE_PROPERTIES_SET = Collections.unmodifiableSet(new HashSet<String>() {
+	private static Set<String> HIBERNATE_PROPERTIES_SET = Collections.unmodifiableSet(new HashSet<String>() {
 		private static final long serialVersionUID = 533898394580130849L;
 		{
 			addAll(FieldUtil.readFieldList(org.hibernate.cfg.AvailableSettings.class, String.class));
@@ -77,7 +77,6 @@ public class DatabaseProperties {
 			if (properties.containsKey(string)) {
 				String value = properties.getProperty(string);
 				result.put(string, SecurityUtil.forceDecrypt(value));
-				log.info("setDataSourceProperties put finish... key: {}, value: {}", string, value);
 			}
 		}
 		this.dataSourceProperties = result;
@@ -89,9 +88,30 @@ public class DatabaseProperties {
 			if (properties.containsKey(string)) {
 				String value = properties.getProperty(string);
 				result.put(string, SecurityUtil.forceDecrypt(value));
-				log.info("setHibernateProperties put finish... key: {}, value: {}", string, value);
 			}
 		}
 		this.hibernateProperties = result;
+	}
+
+	public String hibernateProperties() {
+		StringBuilder stringBuilder = new StringBuilder();
+		for (Entry<Object, Object> entry : this.hibernateProperties.entrySet()) {
+			stringBuilder.append(entry.getKey());
+			stringBuilder.append('=');
+			stringBuilder.append(entry.getValue());
+			stringBuilder.append(SystemConstant.LINE_SEPARATOR);
+		}
+		return stringBuilder.toString();
+	}
+
+	public String dataSourceProperties() {
+		StringBuilder stringBuilder = new StringBuilder();
+		for (Entry<Object, Object> entry : this.dataSourceProperties.entrySet()) {
+			stringBuilder.append(entry.getKey());
+			stringBuilder.append('=');
+			stringBuilder.append(entry.getValue());
+			stringBuilder.append(SystemConstant.LINE_SEPARATOR);
+		}
+		return stringBuilder.toString();
 	}
 }

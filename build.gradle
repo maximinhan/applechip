@@ -65,14 +65,13 @@ configure(allprojects) { project ->
     ext.commonsCollectionsVersion = '3.2.1'
     ext.commonsDbcpVersion = '1.4'
     ext.commonsCodecVersion = '1.9'
-    ext.commonsPool1Version = '1.6'
     ext.commonsPool2Version = '2.2'
     ext.commonsDbcpVersion = '1.4'
     ext.commonsNetVersion = '3.3'
     ext.slf4jVersion = '1.7.7'
     ext.junitVersion = '4.11'
     ext.mockitoVersion = '1.9.5'
-    ext.googleCollectionsVersion = '1.0'
+    //ext.googleCollectionsVersion = '1.0'
    
     //java
     ext.javaxServletApiVersion = '3.1.0'
@@ -80,7 +79,7 @@ configure(allprojects) { project ->
     ext.javaxWsVersion = '1.1.1'
     
 	//dependencies
-	ext.springframeworkVersion = '4.0.6.RELEASE'
+	ext.springframeworkVersion = '4.0.7.RELEASE'
     ext.springframeworkDataCommonsVersion = '1.8.0.RELEASE'
     ext.springframeworkDataRedisVersion = '1.4.0.RELEASE'
     ext.springframeworkSecurityVersion = '3.2.5.RELEASE'
@@ -122,7 +121,6 @@ configure(subprojects) { project ->
 		provided("commons-io:commons-io:$commonsIoVersion")
 		provided("commons-collections:commons-collections:$commonsCollectionsVersion")
 		provided("commons-codec:commons-codec:$commonsCodecVersion")
-		provided("commons-pool:commons-pool:$commonsPool1Version")
 		provided("org.apache.commons:commons-pool2:$commonsPool2Version")
 		provided("commons-net:commons-net:$commonsNetVersion")
 		provided("commons-dbcp:commons-dbcp:$commonsDbcpVersion")
@@ -130,15 +128,15 @@ configure(subprojects) { project ->
 		provided("org.slf4j:jcl-over-slf4j:$slf4jVersion")
 	    provided("org.slf4j:slf4j-api:$slf4jVersion")
 		provided("org.projectlombok:lombok:$lombokVersion")
-		provided("com.google.collections:google-collections:$googleCollectionsVersion")
+		//provided("com.google.collections:google-collections:$googleCollectionsVersion")
 		testCompile("org.springframework:spring-test:$springframeworkVersion")
 		testCompile("junit:junit:$junitVersion")
 		testCompile("org.mockito:mockito-all:$mockitoVersion")
 	}
 	
 	[compileJava, compileTestJava]*.options*.encoding = "${javaEncoding}"
-	[compileJava, compileTestJava]*.options*.debug = true
-	[compileJava, compileTestJava]*.options*.compilerArgs = ["-g"]
+	//[compileJava, compileTestJava]*.options*.debug = true
+	//[compileJava, compileTestJava]*.options*.compilerArgs = ["-g"]
 	
 	tasks.eclipse.dependsOn processResources
 	[processResources, processTestResources]*.dependsOn settingProperties
@@ -158,6 +156,17 @@ configure(subprojects) { project ->
 			resources.srcDirs = [ "${testSrcDir}/resources" ]
 		}
 	}
+	/*
+	configurations {
+	    compile {
+	        description = 'compile classpath'
+	        transitive = true
+	    }
+	    runtime {
+	        extendsFrom compile
+	    }
+	}
+	*/
 
 	eclipse {
 		classpath {
@@ -183,7 +192,8 @@ configure(webProjects) {
     apply from: createVersionTextTask
     dependencies {
 		provided jdbcDrivers
-		//compile project(':applechip-core')
+		//compile(project(':applechip-core'))
+		//{ transitive = false }
     	provided("javax.servlet:javax.servlet-api:${javaxServletApiVersion}")
     	provided("javax.servlet:jstl:${javaxServletJstlVersion}")
 	    provided("org.springframework.security:spring-security-core:${springframeworkSecurityVersion}")
@@ -237,45 +247,74 @@ project(":applechip-core") {
 	apply from: generateQueryDSLTask
 	//apply from: generateWsdlTask
 	dependencies {
-		compile jdbcDrivers
-		compile("org.springframework:spring-orm:$springframeworkVersion")
-		compile("org.springframework:spring-tx:$springframeworkVersion")
-		compile("org.springframework:spring-jdbc:$springframeworkVersion")
-		compile("org.springframework:spring-context-support:$springframeworkVersion")
-		compile("org.springframework:spring-context:$springframeworkVersion")
-		compile("org.springframework:spring-webmvc:$springframeworkVersion")
-		compile("org.springframework:spring-web:$springframeworkVersion")
-		compile("org.springframework:spring-beans:$springframeworkVersion")
-		compile("org.springframework:spring-core:$springframeworkVersion")
-		compile("org.springframework:spring-aop:$springframeworkVersion")
-		compile("org.springframework:spring-expression:$springframeworkVersion")
-		compile("org.springframework.data:spring-data-commons:${springframeworkDataCommonsVersion}")
-		compile("org.springframework.security:spring-security-core:$springframeworkSecurityVersion")
-		compile("org.hibernate:hibernate-entitymanager:$hibernateVersion")
-		compile("org.hibernate:hibernate-core:$hibernateVersion")
-		compile("org.hibernate:hibernate-ehcache:$hibernateVersion")
-	    compile("org.hibernate:hibernate-envers:$hibernateVersion")
-	    compile("org.hibernate:hibernate-validator:$hibernateValidatorVersion")
-		compile("org.hibernate.common:hibernate-commons-annotations:$hibernateCommonsVersion")
-	    compile("com.fasterxml.jackson.core:jackson-databind:${jacksonVersion}")
-	    compile("com.fasterxml.jackson.core:jackson-annotations:${jacksonVersion}")
-	    compile("com.fasterxml.jackson.core:jackson-core:${jacksonVersion}")
-	    compile("com.mysema.querydsl:querydsl-jpa:$queryDslVersion")
-		compile("com.mysema.querydsl:querydsl-apt:$queryDslVersion")
-	    compile("com.maxmind.geoip2:geoip2:${geoIpVersion}")
-		compile("edu.uci.ics:crawler4j:${crawlerVersion}")
-		compile("org.aspectj:aspectjweaver:${aspectjVersion}")
-		compile("javax.servlet:javax.servlet-api:${javaxServletApiVersion}")
-		compile("org.springframework.data:spring-data-redis:$springframeworkDataRedisVersion")
-		compile("redis.clients:jedis:$redisClientVersion")
-		compile gradleApi()
+		provided jdbcDrivers
+		provided("org.springframework.data:spring-data-commons:${springframeworkDataCommonsVersion}") { exclude group: 'org.springframework' }
+		provided("org.springframework.security:spring-security-core:$springframeworkSecurityVersion") { exclude group: 'org.springframework' }
+		provided("org.springframework.data:spring-data-redis:$springframeworkDataRedisVersion") { exclude group: 'org.springframework' }
+		provided("org.springframework:spring-aop:$springframeworkVersion") //{ transitive = false }
+		provided("org.springframework:spring-orm:$springframeworkVersion") { transitive = false }
+		provided("org.springframework:spring-tx:$springframeworkVersion")
+		//{ transitive = false }
+		provided("org.springframework:spring-jdbc:$springframeworkVersion")
+		{ transitive = false }
+		provided("org.springframework:spring-context-support:$springframeworkVersion") { transitive = false }
+		provided("org.springframework:spring-context:$springframeworkVersion")
+		{ transitive = false }
+		provided("org.springframework:spring-webmvc:$springframeworkVersion")
+		{ transitive = false }
+		provided("org.springframework:spring-web:$springframeworkVersion")
+		{ transitive = false }
+		//provided("org.springframework:spring-beans:$springframeworkVersion")
+		//{ transitive = false }
+		provided("org.springframework:spring-core:$springframeworkVersion")
+		{ transitive = false }
+		provided("org.springframework:spring-expression:$springframeworkVersion")
+		{ transitive = false }
+		//{ transitive = false }
+		provided("org.hibernate:hibernate-entitymanager:$hibernateVersion") //{ transitive = false }
+		provided("org.hibernate:hibernate-ehcache:$hibernateVersion")//{ transitive = false }
+	    provided("org.hibernate:hibernate-envers:$hibernateVersion")
+	    { transitive = false }
+	    provided("org.hibernate:hibernate-validator:$hibernateValidatorVersion")//{ transitive = false }
+		//provided("org.hibernate.common:hibernate-commons-annotations:$hibernateCommonsVersion")
+		//{ transitive = false }
+	    provided("com.fasterxml.jackson.core:jackson-databind:${jacksonVersion}")
+	    { transitive = false }
+	    provided("com.fasterxml.jackson.core:jackson-annotations:${jacksonVersion}")
+	    { transitive = false }
+	    provided("com.fasterxml.jackson.core:jackson-core:${jacksonVersion}") { transitive = false }
+	    provided("com.mysema.querydsl:querydsl-jpa:$queryDslVersion") //{ transitive = false }
+		provided("com.mysema.querydsl:querydsl-apt:$queryDslVersion") //{ transitive = false }
+	    provided("com.maxmind.geoip2:geoip2:${geoIpVersion}")
+	    { transitive = false }
+		provided("edu.uci.ics:crawler4j:${crawlerVersion}")
+		{ transitive = false }
+		provided("org.aspectj:aspectjweaver:${aspectjVersion}")
+		{ transitive = false }
+		provided("javax.servlet:javax.servlet-api:${javaxServletApiVersion}")
+		{ transitive = false }
+		provided("redis.clients:jedis:$redisClientVersion")
+		{ transitive = false }
 	}
-	compileJava {
-	    dependsOn generateQueryDSL
-	}
+	
+	compileJava { dependsOn generateQueryDSL }
 	testClasses {
 		dependsOn generateSchema
 	}
+	/*
+	configurations {
+    compile {
+        description = 'compile classpath'
+        transitive = true
+    }
+    runtime {
+        extendsFrom compile
+    }
+}
+configurations.compile {
+    description = 'compile classpath'
+}
+	*/
 	/*
 	jar{
 		manifest.from("src/META-INF/MANIFEST.MF")
@@ -302,3 +341,16 @@ project(":applechip-plugin") {
 	}
 	configurations.archives.artifacts.clear()
 }
+
+/* module check */
+/*
+	configurations.all {
+	  resolutionStrategy {
+	    failOnVersionConflict()
+	    forcedModules = ['com.google.guava:guava:11.0.2', 'commons-logging:commons-logging:1.1.1', 'org.slf4j:slf4j-api:1.7.7']
+	    force 'asm:asm-all:3.3.1', 'commons-io:commons-io:1.4'
+	    cacheDynamicVersionsFor 10, 'minutes'
+	    cacheChangingModulesFor 0, 'seconds'
+	  }
+	}
+*/

@@ -19,22 +19,21 @@ import com.applechip.core.properties.ApplicationProperties;
 @Configuration
 @EnableCaching(proxyTargetClass = true, mode = AdviceMode.PROXY, order = Ordered.LOWEST_PRECEDENCE)
 public class CustomCachingConfigurer implements CachingConfigurer {
-	
-//	// inject the actual template
-//    @Autowired
-//    private RedisTemplate<String, String> template;
-//
-//    // inject the template as ListOperations
-//    // can also inject as Value, Set, ZSet, and HashOperations
-//    @Resource(name="redisTemplate")
-//    private ListOperations<String, String> listOps;
-//
-//    public void addLink(String userId, URL url) {
-//        listOps.leftPush(userId, url.toExternalForm());
-//        // or use template directly
-//        redisTemplate.boundListOps(userId).leftPush(url.toExternalForm());
-//    }
 
+	// // inject the actual template
+	// @Autowired
+	// private RedisTemplate<String, String> template;
+	//
+	// // inject the template as ListOperations
+	// // can also inject as Value, Set, ZSet, and HashOperations
+	// @Resource(name="redisTemplate")
+	// private ListOperations<String, String> listOps;
+	//
+	// public void addLink(String userId, URL url) {
+	// listOps.leftPush(userId, url.toExternalForm());
+	// // or use template directly
+	// redisTemplate.boundListOps(userId).leftPush(url.toExternalForm());
+	// }
 
 	@Autowired
 	private ApplicationProperties applicationProperties;
@@ -42,9 +41,11 @@ public class CustomCachingConfigurer implements CachingConfigurer {
 	@Bean
 	public JedisConnectionFactory jedisConnectionFactory() {
 		JedisConnectionFactory factory = new JedisConnectionFactory();
-		factory.setHostName(applicationProperties.getRedisHostName());
+		factory.setHostName(applicationProperties.getRedisHost());
 		factory.setPort(applicationProperties.getRedisPort());
-		factory.setUsePool(true);
+		factory.setTimeout(applicationProperties.getRedisTimeout());
+		factory.setDatabase(applicationProperties.getRedisDatabase());
+		factory.setUsePool(applicationProperties.isRedisUsePool());
 		// new JedisSentinelConnection(applicationProperties.getRedisHostName(), applicationProperties.getRedisPort());
 		return factory;
 	}
