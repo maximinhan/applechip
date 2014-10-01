@@ -21,7 +21,7 @@ public class ApplicationRepositoryImpl implements ApplicationRepository {
 	private EntityManager entityManager;
 
 	@Override
-	public List<Code> getCodeList(String codeCategoryId) {
+	public List<Code> getCodes(String codeCategoryId) {
 		JPAQuery query = new JPAQuery(entityManager);
 		QCode code = QCode.code;
 		query.from(code).where(code.id.codeCategoryId.eq(codeCategoryId).and(code.enabled.eq(true)))

@@ -13,6 +13,9 @@ import org.springframework.core.Ordered;
 import org.springframework.data.redis.cache.RedisCacheManager;
 import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.StringRedisTemplate;
+
+import redis.clients.jedis.JedisPoolConfig;
 
 import com.applechip.core.properties.ApplicationProperties;
 
@@ -20,34 +23,28 @@ import com.applechip.core.properties.ApplicationProperties;
 @EnableCaching(proxyTargetClass = true, mode = AdviceMode.PROXY, order = Ordered.LOWEST_PRECEDENCE)
 public class CustomCachingConfigurer implements CachingConfigurer {
 
-	// // inject the actual template
-	// @Autowired
-	// private RedisTemplate<String, String> template;
-	//
-	// // inject the template as ListOperations
-	// // can also inject as Value, Set, ZSet, and HashOperations
-	// @Resource(name="redisTemplate")
-	// private ListOperations<String, String> listOps;
-	//
-	// public void addLink(String userId, URL url) {
-	// listOps.leftPush(userId, url.toExternalForm());
-	// // or use template directly
-	// redisTemplate.boundListOps(userId).leftPush(url.toExternalForm());
-	// }
-
 	@Autowired
 	private ApplicationProperties applicationProperties;
 
 	@Bean
 	public JedisConnectionFactory jedisConnectionFactory() {
-		JedisConnectionFactory factory = new JedisConnectionFactory();
+		JedisConnectionFactory factory = new JedisConnectionFactory(this.jedisPoolConfig());
 		factory.setHostName(applicationProperties.getRedisHost());
 		factory.setPort(applicationProperties.getRedisPort());
 		factory.setTimeout(applicationProperties.getRedisTimeout());
 		factory.setDatabase(applicationProperties.getRedisDatabase());
 		factory.setUsePool(applicationProperties.isRedisUsePool());
-		// new JedisSentinelConnection(applicationProperties.getRedisHostName(), applicationProperties.getRedisPort());
 		return factory;
+	}
+
+	private JedisPoolConfig jedisPoolConfig() {
+		JedisPoolConfig jedisPoolConfig = new JedisPoolConfig();
+		jedisPoolConfig.setTestWhileIdle(applicationProperties.isRedisPoolTestWhileIdle());
+		jedisPoolConfig.setMinEvictableIdleTimeMillis(applicationProperties.getRedisPoolMinEvictableIdleTimeMillis());
+		jedisPoolConfig.setTimeBetweenEvictionRunsMillis(applicationProperties
+				.getRedisPoolTimeBetweenEvictionRunsMillis());
+		jedisPoolConfig.setNumTestsPerEvictionRun(applicationProperties.getRedisPoolNumTestsPerEvictionRun());
+		return jedisPoolConfig;
 	}
 
 	@Bean
@@ -67,22 +64,21 @@ public class CustomCachingConfigurer implements CachingConfigurer {
 		return new SimpleKeyGenerator();
 	}
 
+	//	@Override
+	//	@Bean
+	//	public CacheManager cacheManager() {
+	//		return new EhCacheCacheManager(ehCacheManagerFactoryBean().getObject());
+	//	}
 	//
-	// @Override
-	// @Bean
-	// public CacheManager cacheManager() {
-	// return new EhCacheCacheManager(ehCacheManagerFactoryBean().getObject());
-	// }
-	//
-	// @Bean
-	// public EhCacheManagerFactoryBean ehCacheManagerFactoryBean() {
-	// EhCacheManagerFactoryBean bean = new EhCacheManagerFactoryBean();
-	// bean.setShared(coreProperties.isCacheShared());
-	// String configLocation = coreProperties.getCacheConfigLocation();
-	// if (StringUtil.isNotBlank(configLocation)) {
-	// bean.setConfigLocation(new PathMatchingResourcePatternResolver().getResource(configLocation));
-	// }
-	// return bean;
-	// }
+	//	@Bean
+	//	public EhCacheManagerFactoryBean ehCacheManagerFactoryBean() {
+	//		EhCacheManagerFactoryBean bean = new EhCacheManagerFactoryBean();
+	//		bean.setShared(coreProperties.isCacheShared());
+	//		String configLocation = coreProperties.getCacheConfigLocation();
+	//		if (StringUtil.isNotBlank(configLocation)) {
+	//			bean.setConfigLocation(new PathMatchingResourcePatternResolver().getResource(configLocation));
+	//		}
+	//		return bean;
+	//	}
 
 }

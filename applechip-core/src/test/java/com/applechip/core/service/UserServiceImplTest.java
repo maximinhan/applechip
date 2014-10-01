@@ -1,9 +1,11 @@
 package com.applechip.core.service;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import lombok.extern.slf4j.Slf4j;
 
 import org.apache.commons.dbcp.BasicDataSource;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -21,7 +23,7 @@ public class UserServiceImplTest extends AbstractTest {
 	private BasicDataSource dataSource;
 
 	@Test(expected = UsernameNotFoundException.class)
-//	@Ignore
+	//	@Ignore
 	public void testLoadUserByUsername() throws Exception {
 		log.debug("{}", userService.loadUserByUsername("usernameZx"));
 	}
@@ -60,10 +62,24 @@ public class UserServiceImplTest extends AbstractTest {
 		log.debug("{}", userService.findAll());
 	}
 
+	@Test
+	public void testFindAll() {
+		log.debug("{}", userService.findAll(getList()));
+	}
+
 	private User getUser() {
 		User user = new User();
 		user.setUsername("username");
 		user.setPassword("password");
 		return user;
+	}
+
+	private List<String> getList() {
+		List<String> list = new ArrayList<String>();
+		list.add("123");
+		list.add("1234");
+		list.add("12345");
+		list.add("12346");
+		return list;
 	}
 }

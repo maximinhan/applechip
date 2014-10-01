@@ -69,6 +69,10 @@ public class CodeDetail extends GenericUpdatedBy<CodeDetail.Id> {
 		@Column(name = "code_detail_id", length = ColumnSizeConstant.CODE)
 		private String codeDetailId;
 
+		public String getId() {
+			return String.format("%s.%s.%s", codeCategoryId, codeId, codeDetailId);
+		}
+
 	}
 
 }

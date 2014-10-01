@@ -10,13 +10,14 @@ import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.commons.configuration.reloading.FileChangedReloadingStrategy;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.Resource;
+import org.springframework.core.io.support.ResourcePropertySource;
 
+import com.applechip.core.constant.ApplicationConstant;
 import com.applechip.core.exception.SystemException;
 import com.applechip.core.properties.ApplicationProperties;
 import com.applechip.core.properties.DatabaseProperties;
@@ -30,9 +31,10 @@ import com.applechip.core.util.PropertiesLoaderUtil;
 public class CoreConfig {
 
 	/*
-	 * use.. <util:map id="loginCheckErrorCodes" key-type="java.lang.Integer" value-type="java.lang.String"
-	 * map-class="java.util.HashMap"> <entry key="3102" value="NET_ERR_SESSION_NOT_FOUND" /> <entry key="3100"
-	 * value="NET_ERR_SESSION_TIME_OUT" /> </util:map>
+	 * <util:map id="test" key-type="java.lang.Integer" value-type="java.lang.String" map-class="java.util.HashMap">
+	 *   <entry key="1" value="VALUE1" />
+	 *   <entry key="2" value="VALUE2" />
+	 * </util:map>
 	 */
 
 	@Value("${runtimeProperties}")
@@ -83,15 +85,15 @@ public class CoreConfig {
 		return fileChangedReloadingStrategy;
 	}
 
-	public static void main(String[] args) {
-		ApplicationContext applicationContext = new AnnotationConfigApplicationContext(CoreConfig.class);
-		// applicationContext = new GenericXmlApplicationContext("/META-INF/spring/app-context.xml");
+	public static void main(String[] args) throws IOException {
+		AnnotationConfigApplicationContext annotationConfigApplicationContext = new AnnotationConfigApplicationContext(
+				CoreConfig.class);
+		for (Resource resource : PropertiesLoaderUtil.getResources(ApplicationConstant.CONFIG_PROPERTIES_PATH,
+				ApplicationConstant.APPLICATION_PROPERTIES_PATH)) {
+			annotationConfigApplicationContext.getEnvironment().getPropertySources()
+					.addFirst(new ResourcePropertySource(resource));
+		}
 
-		ApplicationService applicationService = applicationContext.getBean("applicationService",
-				ApplicationService.class);
-		applicationService.getMessage("");
-
-		// First method execution using key='Josh', not cached
-		// System.out.println('message: ' + helloService.getMessage('Josh'));
+		ApplicationService applicationService = annotationConfigApplicationContext.getBean(ApplicationService.class);
 	}
 }

@@ -10,7 +10,6 @@ import javax.persistence.Table;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 import org.hibernate.annotations.Cache;
@@ -64,6 +63,8 @@ public class Code extends GenericUpdatedBy<Code.Id> {
 		@Column(name = "code_id", length = ColumnSizeConstant.CODE)
 		private String codeId;
 
+		public String getId() {
+			return String.format("%s.%s", codeCategoryId, codeId);
+		}
 	}
-
 }

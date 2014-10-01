@@ -62,11 +62,12 @@ public class DatabaseProperties {
 
 	private void setTransactionProperties() {
 		Properties properties = new Properties();
-		properties.setProperty("exists*", "PROPAGATION_REQUIRED,readOnly");// ISOLATION_READ_UNCOMMITTED,timeout_30,-Exception
-		properties.setProperty("count*", "PROPAGATION_REQUIRED,readOnly");
-		properties.setProperty("find*", "PROPAGATION_REQUIRED,readOnly");
-		properties.setProperty("get*", "PROPAGATION_REQUIRED,readOnly");
-		properties.setProperty("*", "PROPAGATION_REQUIRED");
+		properties.setProperty("exists*", "PROPAGATION_REQUIRED,ISOLATION_READ_COMMITTED,readOnly");// ISOLATION_READ_UNCOMMITTED,timeout_30,-Exception
+		properties.setProperty("count*", "PROPAGATION_REQUIRED,ISOLATION_READ_COMMITTED,readOnly");
+		properties.setProperty("find*", "PROPAGATION_REQUIRED,ISOLATION_READ_COMMITTED,readOnly");
+		properties.setProperty("load*", "PROPAGATION_REQUIRED,ISOLATION_READ_COMMITTED,readOnly");
+		properties.setProperty("get*", "PROPAGATION_REQUIRED,ISOLATION_READ_COMMITTED,readOnly");
+		properties.setProperty("*", "PROPAGATION_REQUIRED,ISOLATION_READ_COMMITTED");
 		this.transactionProperties = properties;
 	}
 

@@ -56,18 +56,23 @@ public class CustomHibernateJpaVendorAdapter extends HibernateJpaVendorAdapter {
 		@Override
 		public Object beginTransaction(EntityManager entityManager, final TransactionDefinition transactionDefinition) {
 			Session session = super.getSession(entityManager);
-			if (TransactionDefinition.TIMEOUT_DEFAULT != transactionDefinition.getTimeout()) {
+			if (transactionDefinition.getTimeout() != TransactionDefinition.TIMEOUT_DEFAULT) {
 				session.getTransaction().setTimeout(transactionDefinition.getTimeout());
 			}
 			final Data data = new Data();
 			session.doWork(new Work() {
 				@Override
 				public void execute(Connection connection) throws SQLException {
-					Integer isolationLevel = DataSourceUtils.prepareConnectionForTransaction(connection,
-							transactionDefinition);
-					log.debug("old: {}, new: {}", isolationLevel, transactionDefinition.getIsolationLevel());
-					data.setIsolationLevel(isolationLevel);
-					data.setConnection(connection);
+					Integer acceptIsolationLevel = transactionDefinition.getIsolationLevel();
+					Integer connectionIsolationLevel = connection.getTransactionIsolation();
+					//					Integer isolationLevel = DataSourceUtils.prepareConnectionForTransaction(connection, transactionDefinition);
+					if (acceptIsolationLevel != connectionIsolationLevel) {
+						//						acceptIsolationLevel != TransactionDefinition.ISOLATION_DEFAULT
+						log.debug("session execute acceptIsolationLevel: {}, connectionIsolationLevel {} ",
+								acceptIsolationLevel, connectionIsolationLevel);
+						data.setConnection(connection);
+						connection.setTransactionIsolation(acceptIsolationLevel);
+					}
 				}
 			});
 			entityManager.getTransaction().begin();
@@ -83,20 +88,24 @@ public class CustomHibernateJpaVendorAdapter extends HibernateJpaVendorAdapter {
 			data.reset();
 		}
 
-		@Getter
-		@Setter
-		@SuppressWarnings(value = { "PMD.UnusedPrivateField", "PMD.SingularField" })
 		private static class Data {
 
+			@Getter
+			@Setter
 			private Object object;
-
-			private Integer isolationLevel;
 
 			private Connection connection;
 
+			private Integer connectionIsolationLevel;
+
+			public void setConnection(Connection connection) throws SQLException {
+				this.connection = connection;
+				this.connectionIsolationLevel = connection.getTransactionIsolation();
+			}
+
 			public void reset() {
-				if (this.connection != null && this.isolationLevel != null) {
-					DataSourceUtils.resetConnectionAfterTransaction(connection, isolationLevel);
+				if (this.connectionIsolationLevel != null && this.connection != null) {
+					DataSourceUtils.resetConnectionAfterTransaction(connection, connectionIsolationLevel);
 				}
 			}
 		}

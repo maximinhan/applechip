@@ -4,6 +4,7 @@ import java.security.Guard;
 import java.util.Collection;
 
 import org.springframework.cache.Cache;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.transaction.AbstractTransactionSupportingCacheManager;
 import org.springframework.data.redis.core.RedisTemplate;
 
@@ -14,6 +15,7 @@ public class CustomRedisCacheManager extends AbstractTransactionSupportingCacheM
 	@Override
 	protected Collection<? extends Cache> loadCaches() {
 		// TODO Auto-generated method stub
+//		@Cacheable
 		return null;
 	}
 

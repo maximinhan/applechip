@@ -7,7 +7,7 @@ import com.applechip.core.entity.CodeDetail;
 
 public interface ApplicationRepository {
 
-	List<Code> getCodeList(String codeCategory);
+	List<Code> getCodes(String codeCategory);
 
 	List<CodeDetail> getCodeDetails(String codeCategory, String code);
 

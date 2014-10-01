@@ -72,6 +72,18 @@ public class ApplicationProperties {
 	@Value("${redis.usePool}")
 	private boolean redisUsePool;
 
+	@Value("${redis.pool.testWhileIdle}")
+	private boolean redisPoolTestWhileIdle;
+
+	@Value("${redis.pool.minEvictableIdleTimeMillis}")
+	private int redisPoolMinEvictableIdleTimeMillis;
+
+	@Value("${redis.pool.timeBetweenEvictionRunsMillis}")
+	private int redisPoolTimeBetweenEvictionRunsMillis;
+
+	@Value("${redis.pool.numTestsPerEvictionRun}")
+	private int redisPoolNumTestsPerEvictionRun;
+
 	public String getStoragePath() {
 		String storagePath = this.storagePath;
 		if (StringUtil.isBlank(storagePath)) {

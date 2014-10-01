@@ -6,8 +6,6 @@ import java.util.List;
 import javax.xml.transform.Source;
 
 import org.apache.commons.pool2.impl.GenericKeyedObjectPool;
-import org.hibernate.cache.CacheException;
-import org.hibernate.cfg.Environment;
 import org.hibernate.validator.HibernateValidator;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;

@@ -1,37 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
-
-	<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
-		<encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
-			<Pattern>%d{yyyy-MM-dd_HH:mm:ss.SSS} %-5level %logger{36} - %msg%n
-			</Pattern>
-		</encoder>
-	</appender>
-
-	<appender name="FILE"
-		class="ch.qos.logback.core.rolling.RollingFileAppender">
-		<file>${user.home}/.applechip/applechip_logback.log</file>
-		<encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
-			<Pattern>%d{yyyy-MM-dd_HH:mm:ss.SSS} [%thread] %-5level %logger{36} -
-				%msg%n
-			</Pattern>
-		</encoder>
-
-		<rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
-			<FileNamePattern>${user.home}/.applechip/applechip.%i.log.zip
-			</FileNamePattern>
-			<MinIndex>1</MinIndex>
-			<MaxIndex>10</MaxIndex>
-		</rollingPolicy>
-
-		<triggeringPolicy
-			class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
-			<MaxFileSize>2MB</MaxFileSize>
-		</triggeringPolicy>
-
-	</appender>
-	<root level="TRACE">
-		<appender-ref ref="FILE" />
-		<appender-ref ref="STDOUT" />
-	</root>
+	<include resource="logging/base.xml" />
+	<logger name="org.springframework" level="WARN" />
+	<logger name="com.applechip" level="DEBUG" />
 </configuration>
