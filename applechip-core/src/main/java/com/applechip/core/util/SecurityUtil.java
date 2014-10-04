@@ -17,7 +17,7 @@ import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import com.applechip.core.entity.User;
+import com.applechip.core.entity.member.User;
 import com.applechip.core.exception.SystemException;
 
 public class SecurityUtil {

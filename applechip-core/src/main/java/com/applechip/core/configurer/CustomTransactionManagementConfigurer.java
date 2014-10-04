@@ -10,37 +10,25 @@ import org.hibernate.event.service.spi.EventListenerRegistry;
 import org.hibernate.event.spi.EventType;
 import org.hibernate.internal.SessionFactoryImpl;
 import org.hibernate.jpa.HibernateEntityManagerFactory;
-import org.springframework.aop.Advisor;
-import org.springframework.aop.aspectj.AspectJExpressionPointcut;
-import org.springframework.aop.aspectj.AspectJExpressionPointcutAdvisor;
-import org.springframework.aop.support.DefaultPointcutAdvisor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.AdviceMode;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.core.Ordered;
 import org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.annotation.AnnotationTransactionAttributeSource;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.annotation.TransactionManagementConfigurer;
-import org.springframework.transaction.interceptor.CompositeTransactionAttributeSource;
-import org.springframework.transaction.interceptor.NameMatchTransactionAttributeSource;
-import org.springframework.transaction.interceptor.TransactionAttributeSource;
-import org.springframework.transaction.interceptor.TransactionInterceptor;
 
 import com.applechip.core.configurer.support.CustomEventListener;
 import com.applechip.core.configurer.support.CustomHibernateJpaVendorAdapter;
 import com.applechip.core.constant.ApplicationConstant;
 import com.applechip.core.exception.SystemException;
 import com.applechip.core.properties.DatabaseProperties;
-import com.applechip.core.util.MonitoringInterceptor;
 
 @Configuration
-@EnableAspectJAutoProxy(proxyTargetClass = true)
 @EnableTransactionManagement(proxyTargetClass = true, mode = AdviceMode.PROXY, order = Ordered.HIGHEST_PRECEDENCE)
 public class CustomTransactionManagementConfigurer implements TransactionManagementConfigurer {
 
@@ -50,35 +38,10 @@ public class CustomTransactionManagementConfigurer implements TransactionManagem
 	@Autowired
 	private CustomEventListener entityListener;
 
-	@Bean
-	public Advisor advisor() {
-		AspectJExpressionPointcut aspectJExpressionPointcut = new AspectJExpressionPointcut();
-		aspectJExpressionPointcut
-				.setExpression(CustomAspectJConfigurer.class.getCanonicalName() + ".servicePointcut()");
-		return new DefaultPointcutAdvisor(aspectJExpressionPointcut, this.monitoringInterceptor());
-	}
-
-	@Bean
-	public MonitoringInterceptor monitoringInterceptor() {
-		MonitoringInterceptor bean = new MonitoringInterceptor();
-		bean.setEnabled(Boolean.TRUE);
-		bean.setFrequency(3);
-		bean.setThreshold(100);
-		return bean;
-	}
-
 	@Override
 	@Bean
 	public PlatformTransactionManager annotationDrivenTransactionManager() {
-		PlatformTransactionManager bean = null;
-		try {
-			bean = new JpaTransactionManager(this.entityManagerFactory());
-		}
-		catch (Exception e) {
-			throw new SystemException(String.format("annotationDrivenTransactionManager create fail.. %s",
-					e.getMessage()), e);
-		}
-		return bean;
+		return new JpaTransactionManager(this.entityManagerFactory());
 	}
 
 	@PostConstruct
@@ -121,34 +84,14 @@ public class CustomTransactionManagementConfigurer implements TransactionManagem
 
 	@Bean(destroyMethod = "close")
 	public DataSource dataSource() {
-		DataSource bean = null;
+		DataSource dataSource = null;
 		try {
-			bean = BasicDataSourceFactory.createDataSource(databaseProperties.getDataSourceProperties());
+			dataSource = BasicDataSourceFactory.createDataSource(databaseProperties.getDataSourceProperties());
 		}
 		catch (Exception e) {
 			throw new SystemException(String.format("dataSource create fail.. %s", e.getMessage()), e);
 		}
-		return bean;
-	}
-
-	@Bean
-	public AspectJExpressionPointcutAdvisor aspectJExpressionPointcutAdvisor() {
-		AspectJExpressionPointcutAdvisor bean = new AspectJExpressionPointcutAdvisor();
-		// bean.setExpression("execution(* *..service.*Manager.*(..))");
-		bean.setExpression(CustomAspectJConfigurer.class.getCanonicalName() + ".servicePointcut()");
-		// bean.setExpression("execution(* com..*.*Service.*(..))");
-		bean.setAdvice(new TransactionInterceptor(this.annotationDrivenTransactionManager(), this
-				.transactionAttributeSource()));
-		bean.setOrder(Ordered.HIGHEST_PRECEDENCE);
-		return bean;
-	}
-
-	private TransactionAttributeSource transactionAttributeSource() {
-		NameMatchTransactionAttributeSource nameMatchTransactionAttributeSource = new NameMatchTransactionAttributeSource();
-		nameMatchTransactionAttributeSource.setProperties(databaseProperties.getTransactionProperties());
-		AnnotationTransactionAttributeSource annotationTransactionAttributeSource = new AnnotationTransactionAttributeSource();
-		return new CompositeTransactionAttributeSource(new TransactionAttributeSource[] {
-				annotationTransactionAttributeSource, nameMatchTransactionAttributeSource });
+		return dataSource;
 	}
 
 	@Bean

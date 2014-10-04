@@ -17,18 +17,18 @@ import com.applechip.core.util.PropertiesLoaderUtil;
 @Import(CoreConfig.class)
 public class ApplicationContextTest {
 
-	@Bean
-	public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
-		PropertySourcesPlaceholderConfigurer bean = new PropertySourcesPlaceholderConfigurer();
-		Resource[] resources = PropertiesLoaderUtil.getResources(ApplicationConstant.CONFIG_PROPERTIES_PATH,
-				ApplicationConstant.APPLICATION_PROPERTIES_PATH);
-		for (Resource resource : resources) {
-			log.debug("target resource... path: {}", resource);
-		}
-		bean.setLocations(resources);
-		bean.setIgnoreResourceNotFound(Boolean.TRUE);
-		bean.setIgnoreUnresolvablePlaceholders(Boolean.TRUE);
-		bean.setFileEncoding(SystemConstant.CHARSET.toString());
-		return bean;
-	}
+  @Bean
+  public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
+    PropertySourcesPlaceholderConfigurer bean = new PropertySourcesPlaceholderConfigurer();
+    String[] strings = new String[] {ApplicationConstant.PropertiesPath.CONFIG_PROPERTIES, ApplicationConstant.PropertiesPath.APPLICATION_PROPERTIES};
+    Resource[] resources = PropertiesLoaderUtil.getResources(strings);
+    for (Resource resource : resources) {
+      log.debug("target resource... path: {}", resource);
+    }
+    bean.setLocations(resources);
+    bean.setIgnoreResourceNotFound(Boolean.TRUE);
+    bean.setIgnoreUnresolvablePlaceholders(Boolean.TRUE);
+    bean.setFileEncoding(SystemConstant.CHARSET.toString());
+    return bean;
+  }
 }

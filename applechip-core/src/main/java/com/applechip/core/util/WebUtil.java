@@ -1,7 +1,10 @@
 package com.applechip.core.util;
 
 import java.io.StringWriter;
+import java.text.DecimalFormat;
 import java.util.Locale;
+import java.util.Properties;
+import java.util.Random;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.bind.JAXBContext;
@@ -14,55 +17,66 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.util.WebUtils;
 
+import com.applechip.core.constant.ApplicationConstant;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class WebUtil extends WebUtils {
-	public static String toJsonString(Object object) {
-		ObjectMapper mapper = new ObjectMapper();
-		String jsonString = "{}";
-		try {
-			jsonString = mapper.writeValueAsString(object);
-		} catch (Exception ex) {
-			throw new RuntimeException(ex);
-		}
-		return jsonString;
-	}
+  public static String toJsonString(Object object) {
+    ObjectMapper objectMapper = new ObjectMapper();
+    String jsonString = "{}";
+    try {
+      jsonString = objectMapper.writeValueAsString(object);
+    } catch (Exception ex) {
+      throw new RuntimeException(ex);
+    }
+    return jsonString;
+  }
 
-	public static String toXmlString(Object object) {
-		StringWriter writer = new StringWriter();
-		try {
-			JAXBContext context = JAXBContext.newInstance(object.getClass());
-			Marshaller m = context.createMarshaller();
-			m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.FALSE);
-			m.marshal(object, writer);
-		} catch (Exception ex) {
-			throw new RuntimeException(ex);
-		}
-		return writer.toString();
-	}
+  public static String toXmlString(Object object) {
+    StringWriter stringWriter = new StringWriter();
+    try {
+      JAXBContext jaxbContext = JAXBContext.newInstance(object.getClass());
+      Marshaller marshaller = jaxbContext.createMarshaller();
+      marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.FALSE);
+      marshaller.marshal(object, stringWriter);
+    } catch (Exception e) {
+      throw new RuntimeException(e);
+    }
+    return stringWriter.toString();
+  }
 
-	public static RequestAttributes currentRequestAttributes() {
-		return RequestContextHolder.currentRequestAttributes();
-	}
+  public static RequestAttributes currentRequestAttributes() {
+    return RequestContextHolder.currentRequestAttributes();
+  }
 
-	public static HttpServletRequest getCurrentRequest() {
-		RequestAttributes requestAttributes = RequestContextHolder
-				.getRequestAttributes();
-		Assert.state(requestAttributes != null,
-				"Could not find current request via RequestContextHolder");
-		Assert.isInstanceOf(ServletRequestAttributes.class, requestAttributes);
-		HttpServletRequest httpServletRequest = ((ServletRequestAttributes) requestAttributes)
-				.getRequest();
-		Assert.state(httpServletRequest != null,
-				"Could not find current HttpServletRequest");
-		return httpServletRequest;
-	}
+  public static HttpServletRequest getCurrentRequest() {
+    RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
+    Assert.state(requestAttributes != null, "Could not find current request via RequestContextHolder");
+    Assert.isInstanceOf(ServletRequestAttributes.class, requestAttributes);
+    HttpServletRequest httpServletRequest = ((ServletRequestAttributes) requestAttributes).getRequest();
+    Assert.state(httpServletRequest != null, "Could not find current HttpServletRequest");
+    return httpServletRequest;
+  }
 
-	public static String getLanguage() {
-		return getLocale().getLanguage();
-	}
+  public static String getLanguage() {
+    return getLocale().getLanguage();
+  }
 
-	public static Locale getLocale() {
-		return LocaleContextHolder.getLocale();
-	}
+  public static Locale getLocale() {
+    return LocaleContextHolder.getLocale();
+  }
+
+  public static String getRandomNumberString(int size) {
+    String format = "";
+    for (int i = 0; i < size; i++) {
+      format = format.concat("0");
+    }
+    DecimalFormat df = new DecimalFormat(format);
+    Random generator = new Random();
+    return df.format(generator.nextDouble() * Math.pow(10, size));
+  }
+
+  public static Properties getVersionProperties() {
+    return PropertiesLoaderUtil.getProperties(ApplicationConstant.ServerInfo.VERSION_TXT);
+  }
 }

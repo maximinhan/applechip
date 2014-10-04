@@ -17,4 +17,8 @@ public class StringUtil extends StringUtils {
 		return Hex.encodeHexString(bytes);
 	}
 
+	public static String removeTag(String string) {
+		return string.replaceAll("<(/)?([a-zA-Z]*)(\\s[a-zA-Z]*=[^>]*)?(\\s)*(/)?>", "").replaceAll("\r|\n| ", "");
+	}
+
 }

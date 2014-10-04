@@ -4,7 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import org.apache.commons.pool2.impl.GenericKeyedObjectPool;
 
-import com.applechip.core.entity.Server;
+import com.applechip.core.entity.network.Server;
 import com.applechip.core.util.StringUtil;
 
 @Slf4j

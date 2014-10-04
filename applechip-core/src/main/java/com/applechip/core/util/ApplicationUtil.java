@@ -1,5 +1,7 @@
 package com.applechip.core.util;
 
+import java.util.Locale;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.support.MessageSourceAccessor;
 import org.springframework.stereotype.Component;
@@ -10,34 +12,26 @@ public class ApplicationUtil {
 	@Autowired
 	private MessageSourceAccessor messageSourceAccessor;
 
-	public String getMessage(String codeCategory) {
-		return this.getMessage(codeCategory, null);
+	public String getMessage(String code) {
+		return this.getMessage(code, WebUtil.getLocale());
 	}
 
-	public String getMessage(String codeCategory, String code) {
-		return this.getMessage(codeCategory, code, null);
+	public String getMessage(String code, Locale locale) {
+		return this.getMessage(code, null, locale);
 	}
 
-	public String getMessage(String codeCategory, String code, String codeDetail) {
-		return this.getMessage(codeCategory, code, codeDetail, null);
+	public String getMessage(String code, Object[] objects) {
+		return this.getMessage(code, objects, WebUtil.getLocale());
 	}
 
-	public String getMessage(String codeCategory, String code, String codeDetail, Object[] objects) {
-		StringBuilder sb = new StringBuilder(codeCategory);
-		if (StringUtil.isNotBlank(code)) {
-			sb.append(String.format(".%s", code));
-			if (StringUtil.isNotBlank(codeDetail)) {
-				sb.append(String.format(".%s", codeDetail));
-			}
-		}
-		String result = codeCategory;
+	public String getMessage(String code, Object[] objects, Locale locale) {
+		String result = code;
 		if (ArrayUtil.isEmpty(objects)) {
-			result = messageSourceAccessor.getMessage(sb.toString(), sb.toString());
+			result = messageSourceAccessor.getMessage(code, code, locale);
 		}
 		else {
-			result = messageSourceAccessor.getMessage(sb.toString(), objects, sb.toString());
+			result = messageSourceAccessor.getMessage(code, objects, code, locale);
 		}
 		return result;
 	}
-
 }

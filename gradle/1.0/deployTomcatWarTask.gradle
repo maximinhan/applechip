@@ -49,3 +49,83 @@ dependencies { classpath 'org.gradle.api.plugins:gradle-tomcat-plugin:1.0' class
     password = 'qwer12#$' 
     } 
     }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    apply plugin: 'war'
+
+configurations { jetty9 }
+
+dependencies.jetty9 'org.eclipse.jetty:jetty-ant:9.0.2.v20130417'
+
+ant {
+	taskdef(name: 'jettyRun', classname: 'org.eclipse.jetty.ant.JettyRunTask', classpath: configurations.jetty9.asPath)
+	taskdef(name: 'jettyStop', classname: 'org.eclipse.jetty.ant.JettyStopTask', classpath: configurations.jetty9.asPath)
+}
+
+def config = [
+	contextPath : '/',
+	port : 8080,
+	stopPort : 9999,
+	stopKey : 9999
+]
+
+[
+	task(jettyRun) << {
+		ant.jettyRun(jettyPort: config.port, scanIntervalSeconds: 3) {
+			webApp(war: webAppDir, contextPath: config.contextPath, extraClasspath: configurations.compile.asPath)
+		}
+	},
+	task(jettyRunWar(dependsOn: war)) << {
+		ant.jettyRun(jettyPort: config.port) {
+			webApp(war: war.archivePath, contextPath: config.contextPath)
+		}
+	},
+	task (jettyStart(dependsOn: war)) << {
+		ant.jettyRun(daemon: true, jettyPort: config.port, stopPort: config.stopPort, stopKey: config.stopKey) {
+			webApp(war: war.archivePath, contextPath: config.contextPath)
+		}
+	},
+	task(jettyStop) << {
+		ant.jettyStop(stopWait: 1, stopPort: config.stopPort, stopKey: config.stopKey)
+	}
+].each { it.group = 'jetty9' }
+
+
+stopPort = 9123
+stopKey = "jjj" //whatever you prefere
+//Stops the jetty Instace when restarting (instance has to be stopped manually otherwise, with jettyStop)
+jettyRun, jettyRunWar]*.daemon = true
+[jettyRun, jettyRunWar].each { jetty ->
+    jetty.dependsOn jettyStop
+}
+
+jettyRunWar.stopPort = 8090
+jettyRunWar.stopKey = 'stopKey'
+jettyStop.stopPort = 8090
+jettyStop.stopKey = 'stopKey'
+
+
+
+GRADLE_OPTS='-XX:MaxPermSize=256M -Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=4001'
+gradle jettyRun
+org.gradle.jvmargs=-Xdebug -Xrunjdwp:transport=dt_socket,server=y,address=5005,suspend=y
+GRADLE_OPTS="-Xdebug -Xrunjdwp:transport=dt_socket,address=9999,suspend=y,server=y"
+gradle jettyRun
+GRADLE_OPTS='-Xdebug -Xrunjdwp:transport=dt_socket,address=9999,server=y,suspend=n'
+gradle jettyRun
+GRADLE_OPTS="-Xdebug -Xrunjdwp:transport=dt_socket,address=9999,server=y,suspend=n"
+gradle jettyRun

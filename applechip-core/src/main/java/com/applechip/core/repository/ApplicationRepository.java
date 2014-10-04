@@ -1,14 +1,17 @@
 package com.applechip.core.repository;
 
 import java.util.List;
+import java.util.Map;
 
-import com.applechip.core.entity.Code;
-import com.applechip.core.entity.CodeDetail;
+import com.applechip.core.entity.code.Category;
+import com.applechip.core.entity.code.Detail;
 
 public interface ApplicationRepository {
 
-	List<Code> getCodes(String codeCategory);
+  List<Category> getCategories();
 
-	List<CodeDetail> getCodeDetails(String codeCategory, String code);
+  List<Detail> getDetails(String codeCategory);
+
+  Map<String, String> getGeoipGroupMap();
 
 }

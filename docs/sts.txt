@@ -40,6 +40,7 @@ Preferences > XML > XML Files > Editor > Line width - 200
 Preferences > XML > XML Files > Editor > Indentation using spaces
 Preferences > XML > XML Files > Editor > Indentation size - 2
 Preferences > Java > Code Style > Formatter > "codestyle\eclipse-java-google-style.xml"
+Preferences > Java > Code Style > Formatter > Edit... > Off/On Tags > Enable Off/On tags
 Preferences > Gradle > Gradle Distrubution > Folder "Gradle"
 Preferences > Gradle > Gradle User Home > Directory "dev\.gradle"
 Preferences > General > Editors > File Associations > File types(*.class) > Associated editors(JadClipse)

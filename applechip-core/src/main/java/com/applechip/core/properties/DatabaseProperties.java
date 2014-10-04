@@ -1,24 +1,23 @@
 package com.applechip.core.properties;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.List;
-import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
 
 import lombok.Getter;
 
 import org.apache.commons.dbcp.BasicDataSourceFactory;
+import org.springframework.beans.factory.annotation.Value;
 
-import com.applechip.core.constant.SystemConstant;
-import com.applechip.core.entity.User;
+import com.applechip.core.AbstractObject;
 import com.applechip.core.util.FieldUtil;
 import com.applechip.core.util.SecurityUtil;
 
 @Getter
-public class DatabaseProperties {
+public class DatabaseProperties extends AbstractObject {
+	private static final long serialVersionUID = -7775672004964113819L;
+
 	private static Set<String> DATA_SOURCE_PROPERTIES_SET = Collections.unmodifiableSet(new HashSet<String>() {
 		private static final long serialVersionUID = 7526702150204237983L;
 		{
@@ -39,41 +38,23 @@ public class DatabaseProperties {
 
 	private Properties dataSourceProperties;
 
-	private Properties transactionProperties;
-
+	@Value("${database.packagesToScan}")
 	private String[] packagesToScan;
+
+	@Value("${database.type}")
+	private String type;
 
 	public static DatabaseProperties getInstance(Properties properties) {
 		return new DatabaseProperties(properties);
 	}
 
 	private DatabaseProperties(Properties properties) {
-		this.setPackagesToScan();
-		this.setTransactionProperties();
 		this.setDataSourceProperties(properties);
 		this.setHibernateProperties(properties);
 	}
 
-	private void setPackagesToScan() {
-		List<String> list = new ArrayList<String>();
-		list.add(User.class.getPackage().getName());
-		this.packagesToScan = list.toArray(new String[list.size()]);
-	}
-
-	private void setTransactionProperties() {
-		Properties properties = new Properties();
-		properties.setProperty("exists*", "PROPAGATION_REQUIRED,ISOLATION_READ_COMMITTED,readOnly");// ISOLATION_READ_UNCOMMITTED,timeout_30,-Exception
-		properties.setProperty("count*", "PROPAGATION_REQUIRED,ISOLATION_READ_COMMITTED,readOnly");
-		properties.setProperty("find*", "PROPAGATION_REQUIRED,ISOLATION_READ_COMMITTED,readOnly");
-		properties.setProperty("load*", "PROPAGATION_REQUIRED,ISOLATION_READ_COMMITTED,readOnly");
-		properties.setProperty("get*", "PROPAGATION_REQUIRED,ISOLATION_READ_COMMITTED,readOnly");
-		properties.setProperty("*", "PROPAGATION_REQUIRED,ISOLATION_READ_COMMITTED");
-		this.transactionProperties = properties;
-	}
-
 	private void setDataSourceProperties(Properties properties) {
 		Properties result = new Properties();
-		// this.jdbcType = properties.getProperty("type");
 		for (String string : DATA_SOURCE_PROPERTIES_SET) {
 			if (properties.containsKey(string)) {
 				String value = properties.getProperty(string);
@@ -92,27 +73,5 @@ public class DatabaseProperties {
 			}
 		}
 		this.hibernateProperties = result;
-	}
-
-	public String hibernateProperties() {
-		StringBuilder stringBuilder = new StringBuilder();
-		for (Entry<Object, Object> entry : this.hibernateProperties.entrySet()) {
-			stringBuilder.append(entry.getKey());
-			stringBuilder.append('=');
-			stringBuilder.append(entry.getValue());
-			stringBuilder.append(SystemConstant.LINE_SEPARATOR);
-		}
-		return stringBuilder.toString();
-	}
-
-	public String dataSourceProperties() {
-		StringBuilder stringBuilder = new StringBuilder();
-		for (Entry<Object, Object> entry : this.dataSourceProperties.entrySet()) {
-			stringBuilder.append(entry.getKey());
-			stringBuilder.append('=');
-			stringBuilder.append(entry.getValue());
-			stringBuilder.append(SystemConstant.LINE_SEPARATOR);
-		}
-		return stringBuilder.toString();
 	}
 }

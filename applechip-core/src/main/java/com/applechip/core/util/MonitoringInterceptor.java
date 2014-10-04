@@ -23,6 +23,13 @@ public class MonitoringInterceptor implements MethodInterceptor {
 
 	private long threshold = 1000;
 
+	public MonitoringInterceptor(boolean enabled, long frequency, long threshold) {
+		super();
+		this.enabled = enabled;
+		this.frequency = frequency;
+		this.threshold = threshold;
+	}
+
 	public Object invoke(MethodInvocation methodInvocation) throws Throwable {
 		if (this.enabled) {
 			return methodInvocationTrace(methodInvocation);
@@ -51,15 +58,13 @@ public class MonitoringInterceptor implements MethodInterceptor {
 		if (elapsedTime > methodState.getMaxTime()) {
 			methodState.setMaxTime(elapsedTime);
 		}
-
-		if (elapsedTime > threshold) {
+		if (elapsedTime > this.threshold) {
 			log.warn("method warning:{}, count={}, lastTime={}, maxTime={}", method, methodState.getCount(),
 					elapsedTime, methodState.getMaxTime());
 		}
-
-		if (methodState.getCount() % frequency == 0) {
+		if (methodState.getCount() % this.frequency == 0) {
 			long avgTime = methodState.getTotalTime() / methodState.getCount();
-			long runningAvg = (methodState.getTotalTime() - methodState.getLastTotalTime()) / frequency;
+			long runningAvg = (methodState.getTotalTime() - methodState.getLastTotalTime()) / this.frequency;
 			log.info("method:{}, count={}, lastTime={}, avgTime={}, runningAvg={}, maxTime={}", method,
 					methodState.getCount(), elapsedTime, avgTime, runningAvg, methodState.getMaxTime());
 			methodState.setLastTotalTime(methodState.getTotalTime());
@@ -78,7 +83,6 @@ public class MonitoringInterceptor implements MethodInterceptor {
 	@Getter
 	@Setter
 	private static class MethodState {
-
 		private long count;
 
 		private long totalTime;
@@ -86,6 +90,5 @@ public class MonitoringInterceptor implements MethodInterceptor {
 		private long lastTotalTime;
 
 		private long maxTime;
-
 	}
 }

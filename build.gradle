@@ -42,7 +42,8 @@ configure(rootProject) {
 		logging.addStandardErrorListener(new StandardOutputListener(){ void onOutput(CharSequence output){ warnLogFile << output }})
 	}
 	task wrapper(type: Wrapper) {
-	  gradleVersion = "2.0"
+		description = 'Generates gradlew[.bat] scripts'
+		gradleVersion = "2.0"
 	}
 }
 
@@ -173,7 +174,10 @@ configure(subprojects) { project ->
 	}
 	*/
 
-	eclipse {
+	eclipse {/*
+		project {
+			natures += 'org.springframework.ide.eclipse.core.springnature'
+		}*/
 		classpath {
 			downloadSources = true
 			defaultOutputDir = file("${buildDir}/classes")
@@ -222,6 +226,11 @@ configure(webProjects) {
 	    transitive = false
 	}
     war {
+    	manifest.attributes["Created-By"] = "${System.getProperty("java.version")} (${System.getProperty("java.specification.vendor")})"
+		manifest.attributes["Implementation-Title"] = project.name
+		manifest.attributes["Implementation-Version"] = project.version
+		manifest.attributes["Web-ContextPath"] = name
+		//manifest.attributes["Bundle Description"] = project.description
     /*
     	manifest = osgiManifest { 
 			instruction 'Private-Package', 'com.applechip' 
@@ -243,6 +252,21 @@ configure(webProjects) {
     		into('WEB-INF/classes')
     	}
     }
+}
+
+configure(moduleProjects) {
+	jar{
+		manifest.attributes["Created-By"] = "${System.getProperty("java.version")} (${System.getProperty("java.specification.vendor")})"
+		manifest.attributes["Implementation-Title"] = project.name
+		manifest.attributes["Implementation-Version"] = project.version
+
+		from("${rootProject.projectDir}/docs/dist") {
+			include "license.txt"
+			include "notice.txt"
+			into "META-INF"
+			expand(copyright: new Date().format("yyyy"), version: project.version)
+		}
+	}
 }
 
 project(":applechip-core") {
@@ -290,8 +314,7 @@ project(":applechip-core") {
 	    provided("com.fasterxml.jackson.core:jackson-core:${jacksonVersion}") { transitive = false }
 	    provided("com.mysema.querydsl:querydsl-jpa:$queryDslVersion") //{ transitive = false }
 		provided("com.mysema.querydsl:querydsl-apt:$queryDslVersion") //{ transitive = false }
-	    provided("com.maxmind.geoip2:geoip2:${geoIpVersion}")
-	    { transitive = false }
+	    provided("com.maxmind.geoip2:geoip2:${geoIpVersion}") //{ transitive = false }
 		provided("edu.uci.ics:crawler4j:${crawlerVersion}")
 		{ transitive = false }
 		provided("org.aspectj:aspectjweaver:${aspectjVersion}")
@@ -321,9 +344,6 @@ configurations.compile {
 }
 	*/
 	/*
-	jar{
-		manifest.from("src/META-INF/MANIFEST.MF")
-	}
 	test{
 		workingDir = new File("${junitWorkingDir}")
 	}

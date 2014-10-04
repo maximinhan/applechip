@@ -10,8 +10,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import com.applechip.core.abstact.AbstractObject;
-import com.applechip.core.constant.ReturnCodeConstant;
+import com.applechip.core.AbstractObject;
+import com.applechip.core.constant.ReturnConstant;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -64,7 +64,7 @@ public class ResponseVO extends AbstractObject {
 	}
 
 	public static ResponseVO getResponseVO() {
-		return new ResponseVO(ReturnCodeConstant.OK);
+		return new ResponseVO(ReturnConstant.OK);
 	}
 
 	public static ResponseVO getResponseVO(String code) {

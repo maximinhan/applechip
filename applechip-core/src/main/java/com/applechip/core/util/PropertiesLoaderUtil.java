@@ -12,6 +12,11 @@ import org.springframework.core.io.support.PropertiesLoaderUtils;
 import com.applechip.core.exception.SystemException;
 
 public class PropertiesLoaderUtil extends PropertiesLoaderUtils {
+
+	public static Properties getProperties(String location) {
+		return loadProperty(getResource(location));
+	}
+
 	public static Properties loadProperty(Resource resource) {
 		Properties properties = null;
 		try {
@@ -24,13 +29,25 @@ public class PropertiesLoaderUtil extends PropertiesLoaderUtils {
 		return properties;
 	}
 
-	public static Resource[] getResources(String... resources) {
-		PathMatchingResourcePatternResolver pathMatchingResourcePatternResolver = new PathMatchingResourcePatternResolver();
+	public static Resource getResource(String location) {
+		return new PathMatchingResourcePatternResolver().getResource(location);
+	}
+
+	public static Resource[] getResources(String... locations) {
 		List<Resource> list = new ArrayList<Resource>();
-		for (String resource : resources) {
-			list.add(pathMatchingResourcePatternResolver.getResource(resource));
+		for (String location : locations) {
+			list.add(getResource(location));
 		}
 		return list.toArray(new Resource[list.size()]);
+	}
+
+	public static Properties stringToProperties(String string, char arrayPattern, char valuePattern) {
+		Properties properties = new Properties();
+		for (String s : StringUtil.split(string, arrayPattern)) {
+			String[] values = StringUtil.split(s, valuePattern);
+			properties.put(values[0], values[1]);
+		}
+		return properties;
 	}
 
 }

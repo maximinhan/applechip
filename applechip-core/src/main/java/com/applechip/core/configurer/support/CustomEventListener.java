@@ -12,8 +12,8 @@ import org.hibernate.event.spi.PostUpdateEventListener;
 import org.hibernate.persister.entity.EntityPersister;
 import org.springframework.stereotype.Component;
 
-import com.applechip.core.abstact.GenericEntity;
-import com.applechip.core.entity.User;
+import com.applechip.core.entity.GenericEntity;
+import com.applechip.core.entity.member.User;
 
 @Component
 @Slf4j

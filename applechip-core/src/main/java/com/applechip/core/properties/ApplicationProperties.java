@@ -1,107 +1,142 @@
 package com.applechip.core.properties;
 
+import java.util.List;
+import java.util.Properties;
+
 import lombok.Getter;
-import lombok.ToString;
 
 import org.springframework.beans.factory.annotation.Value;
 
+import com.applechip.core.AbstractObject;
 import com.applechip.core.constant.ApplicationConstant;
 import com.applechip.core.constant.SystemConstant;
 import com.applechip.core.util.StringUtil;
 
 @Getter
-@ToString
-public class ApplicationProperties {
-	@Value("${storage.path}")
-	private String storagePath;
+public class ApplicationProperties extends AbstractObject {
+  private static final long serialVersionUID = 6739078137459063185L;
 
-	@Value("${download.name}")
-	private String downloadName;
+  @Value("${server.id}")
+  private String serverId;
 
-	@Value("${resource.name}")
-	private String resourceName;
+  @Value("${storage.path}")
+  private String storagePath;
 
-	@Value("${properties.refresh.delay}")
-	private long refreshDelay;
+  @Value("${download.name}")
+  private String downloadName;
 
-	@Value("${executor.corePoolSize}")
-	private int executorCorePoolSize;
+  @Value("${resource.name}")
+  private String resourceName;
 
-	@Value("${executor.maxPoolSize}")
-	private int executorMaxPoolSize;
+  @Value("${upload.name}")
+  private String uploadName;
 
-	@Value("${executor.queueCapacity}")
-	private int executorQueueCapacity;
+  @Value("${properties.refresh.delay}")
+  private long refreshDelay;
 
-	@Value("${executor.keepAliveSeconds}")
-	private int executorKeepAliveSeconds;
+  @Value("${executor.corePoolSize}")
+  private int executorCorePoolSize;
 
-	@Value("${executor.threadNamePrefix}")
-	private String executorThreadNamePrefix;
+  @Value("${executor.maxPoolSize}")
+  private int executorMaxPoolSize;
 
-	@Value("${schedule.cronExpression}")
-	private String scheduleCronExpression;
+  @Value("${executor.queueCapacity}")
+  private int executorQueueCapacity;
 
-	@Value("${schedule.timeZoneId}")
-	private String scheduleTimeZoneId;
+  @Value("${executor.keepAliveSeconds}")
+  private int executorKeepAliveSeconds;
 
-	@Value("${schedule.threadPool}")
-	private String scheduleThreadPool;
+  @Value("${executor.threadNamePrefix}")
+  private String executorThreadNamePrefix;
 
-	@Value("${push.mdm.key}")
-	private String pushMdmKey;
+  @Value("${schedule.cronExpression}")
+  private String scheduleCronExpression;
 
-	@Value("${push.wp.param}")
-	private String pushWpParam;
+  @Value("${schedule.timeZoneId}")
+  private String scheduleTimeZoneId;
 
-	@Value("${server.address}")
-	private String serverAddress;
+  @Value("${schedule.threadPool}")
+  private String scheduleThreadPool;
 
-	@Value("${redis.host}")
-	private String redisHost;
+  @Value("${monitoring.enabled}")
+  private boolean monitoringEnabled;
 
-	@Value("${redis.port}")
-	private int redisPort;
+  @Value("${monitoring.frequency}")
+  private int monitoringFrequency;
 
-	@Value("${redis.timeout}")
-	private int redisTimeout;
+  @Value("${monitoring.threshold}")
+  private int monitoringThreshold;
 
-	@Value("${redis.database}")
-	private int redisDatabase;
+  @Value("${push.mdm.key}")
+  private String pushMdmKey;
 
-	@Value("${redis.usePool}")
-	private boolean redisUsePool;
+  @Value("${push.wp.param}")
+  private String pushWpParam;
 
-	@Value("${redis.pool.testWhileIdle}")
-	private boolean redisPoolTestWhileIdle;
+  @Value("${server.address}")
+  private String serverAddress;
 
-	@Value("${redis.pool.minEvictableIdleTimeMillis}")
-	private int redisPoolMinEvictableIdleTimeMillis;
+  @Value("${redis.host}")
+  private String redisHost;
 
-	@Value("${redis.pool.timeBetweenEvictionRunsMillis}")
-	private int redisPoolTimeBetweenEvictionRunsMillis;
+  @Value("${redis.port}")
+  private int redisPort;
 
-	@Value("${redis.pool.numTestsPerEvictionRun}")
-	private int redisPoolNumTestsPerEvictionRun;
+  @Value("${redis.timeout}")
+  private int redisTimeout;
 
-	public String getStoragePath() {
-		String storagePath = this.storagePath;
-		if (StringUtil.isBlank(storagePath)) {
-			storagePath = ApplicationConstant.APPLECHIP_HOME;
-		}
-		return storagePath;
-	}
+  @Value("${redis.database}")
+  private int redisDatabase;
 
-	public String getDownloadPath() {
-		return this.getStoragePath() + SystemConstant.FILE_SEPARATOR + this.downloadName;
-	}
+  @Value("${redis.usePool}")
+  private boolean redisUsePool;
 
-	public String getResourcePath() {
-		return this.getStoragePath() + SystemConstant.FILE_SEPARATOR + this.resourceName;
-	}
+  @Value("${redis.pool.testWhileIdle}")
+  private boolean redisPoolTestWhileIdle;
 
-	public String getGeoipFilePath() {
-		return this.getResourcePath() + SystemConstant.FILE_SEPARATOR + "GeoIP2-City.mmdb";
-	}
+  @Value("${redis.pool.minEvictableIdleTimeMillis}")
+  private int redisPoolMinEvictableIdleTimeMillis;
+
+  @Value("${redis.pool.timeBetweenEvictionRunsMillis}")
+  private int redisPoolTimeBetweenEvictionRunsMillis;
+
+  @Value("${redis.pool.numTestsPerEvictionRun}")
+  private int redisPoolNumTestsPerEvictionRun;
+
+  @Value("${ehcache.shared}")
+  private boolean ehcacheShared;
+
+  @Value("${ehcache.configLocation}")
+  private String ehcacheConfigLocation;
+
+  @Value("#{T(java.util.Arrays).asList('${ehcache.cacheNames}')}")
+  private List<String> ehcacheCacheNames;
+
+  @Value("#{T(com.applechip.core.util.PropertiesLoaderUtil).stringToProperties('${database.transactionProperties}', '|', '=')}")
+  private Properties databaseTransactionProperties;
+
+  public String getStoragePath() {
+    String storagePath = this.storagePath;
+    if (StringUtil.isBlank(storagePath)) {
+      storagePath = ApplicationConstant.APPLECHIP_HOME;
+    }
+    return storagePath;
+  }
+
+  public String getDownloadPath() {
+    return this.getStoragePath() + SystemConstant.FILE_SEPARATOR + this.downloadName;
+  }
+
+  public String getResourcePath() {
+    return this.getStoragePath() + SystemConstant.FILE_SEPARATOR + this.resourceName;
+  }
+
+  public String getUploadPath() {
+    return this.getStoragePath() + SystemConstant.FILE_SEPARATOR + this.uploadName;
+  }
+
+  public String getGeoipFilePath() {
+    return this.getResourcePath() + SystemConstant.FILE_SEPARATOR + "GeoLite2-City.mmdb";
+  }
 
 }

@@ -1,0 +1,2 @@
+Applechip ${version}
+Copyright (c) 2014-${copyright} Applechip, Inc.

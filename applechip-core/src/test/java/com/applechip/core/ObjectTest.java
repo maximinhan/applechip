@@ -2,8 +2,8 @@ package com.applechip.core;
 
 import org.junit.Test;
 
-import com.applechip.core.entity.Role;
-import com.applechip.core.entity.User;
+import com.applechip.core.entity.member.Role;
+import com.applechip.core.entity.member.User;
 import com.applechip.core.vo.ResponseVO;
 
 public class ObjectTest {

@@ -56,6 +56,8 @@ task settingProperties(type: JavaCompile, group: 'build', description: 'Generate
 	project.ext.dbValidationQuery = validationQueryMap.get(project.properties['dbType'])
 	project.ext.dbHibernateDialect = hibernateDialectMap.get(project.properties['dbType'])
 	project.ext.dbHibernateHbm2ddlAuto = hibernateHbm2ddlAutoMap.get(project.properties['dbType'])
+	def configStoragePath = project.properties['configStoragePath']
+	project.ext.configStoragePath = (configStoragePath == null || configStoragePath.trim().isEmpty()) ? new File("${rootProject.projectDir}/storage").getPath().replaceAll("\\\\", "\\\\\\\\") : configStoragePath
 	
 	[processResources, processTestResources]*.filter(org.apache.tools.ant.filters.ReplaceTokens,
 		tokens: [
@@ -67,7 +69,8 @@ task settingProperties(type: JavaCompile, group: 'build', description: 'Generate
 			'dbDriverClassName': project.properties['dbDriverClassName'],
 			'dbValidationQuery': project.properties['dbValidationQuery'],
 			'dbHibernateDialect': project.properties['dbHibernateDialect'],
-			'dbHibernateHbm2ddlAuto': project.properties['dbHibernateHbm2ddlAuto']
+			'dbHibernateHbm2ddlAuto': project.properties['dbHibernateHbm2ddlAuto'],
+			'configStoragePath': project.properties['configStoragePath']
 		]
 	)
 }

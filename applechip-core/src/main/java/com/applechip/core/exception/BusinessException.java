@@ -1,6 +1,5 @@
 package com.applechip.core.exception;
 
-import com.applechip.core.abstact.AbstractRuntimeException;
 
 public class BusinessException extends AbstractRuntimeException {
 	private static final long serialVersionUID = 6953304855598597942L;

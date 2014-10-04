@@ -3,8 +3,9 @@ package com.applechip.core.properties;
 import org.apache.commons.configuration.PropertiesConfiguration;
 
 public class RuntimeProperties extends ApplicationProperties {
+	private static final long serialVersionUID = 8269657777859176740L;
 
-	private PropertiesConfiguration propertiesConfiguration;
+	private transient PropertiesConfiguration propertiesConfiguration;
 
 	public RuntimeProperties(PropertiesConfiguration propertiesConfiguration) {
 		super();
@@ -29,9 +30,15 @@ public class RuntimeProperties extends ApplicationProperties {
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
-		builder.append("RuntimeProperties [getServerAddress()=").append(getServerAddress())
-				.append(", getPushMdmKey()=").append(getPushMdmKey()).append(", getPushWpParam()=")
-				.append(getPushWpParam()).append(", toString()=").append(super.toString()).append("]");
+		builder.append("RuntimeProperties [getServerAddress()=");
+		builder.append(getServerAddress());
+		builder.append(", getPushMdmKey()=");
+		builder.append(getPushMdmKey());
+		builder.append(", getPushWpParam()=");
+		builder.append(getPushWpParam());
+		builder.append(", toString()=");
+		builder.append(super.toString());
+		builder.append("]");
 		return builder.toString();
 	}
 }

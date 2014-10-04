@@ -27,12 +27,12 @@ class GenerateSchemaTask extends DefaultTask {
 		URLClassLoader urlClassLoader = new URLClassLoader(urlList as URL[], getClass().getClassLoader())
 		def entityList = []
 		classesDir.eachFileRecurse { file ->
-			if (file.name.endsWith('.class') && file.parentFile.name.equals('entity')) {
+			//if (file.name.endsWith('.class') && file.name.startsWith('com.applechip.core.entity')) {
+			if (file.name.endsWith('.class') && file.parentFile.parentFile.name.equals('entity')) {
 				def classPath = file.absolutePath - classesDir.absolutePath
 				entityList << classPath[1..-7].replace(System.properties['file.separator'], '.')
 			}
 		}
-
 		ClassLoader classLoader = Thread.currentThread().getContextClassLoader()
 		try {
 			Thread.currentThread().setContextClassLoader(urlClassLoader)
@@ -79,6 +79,8 @@ class GenerateSchemaTask extends DefaultTask {
 		    schemaExport.format = true
 		    schemaExport.outputFile = new File(classesDir, "schema.sql").absolutePath
 			schemaExport.execute true, true, false, false
+		} catch (Exception e) {
+			println e.message()
 		} finally {
 			Thread.currentThread().setContextClassLoader(classLoader)
 		}

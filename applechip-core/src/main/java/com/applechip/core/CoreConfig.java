@@ -18,6 +18,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.ResourcePropertySource;
 
 import com.applechip.core.constant.ApplicationConstant;
+import com.applechip.core.entity.CodeValue;
 import com.applechip.core.exception.SystemException;
 import com.applechip.core.properties.ApplicationProperties;
 import com.applechip.core.properties.DatabaseProperties;
@@ -27,15 +28,16 @@ import com.applechip.core.util.PropertiesLoaderUtil;
 
 @Slf4j
 @Configuration
-@ComponentScan(basePackageClasses = { CoreConfig.class })
+@ComponentScan(basePackageClasses = {CoreConfig.class})
 public class CoreConfig {
 
-	/*
-	 * <util:map id="test" key-type="java.lang.Integer" value-type="java.lang.String" map-class="java.util.HashMap">
-	 *   <entry key="1" value="VALUE1" />
-	 *   <entry key="2" value="VALUE2" />
-	 * </util:map>
-	 */
+  // @formatter:on
+  // <util:map id="test" key-type="java.lang.Integer" value-type="java.lang.String"
+  // map-class="java.util.HashMap">
+  // <entry key="1" value="VALUE1" />
+  // <entry key="2" value="VALUE2" />
+  // </util:map>
+  //@formatter:off
 
 	@Value("${runtimeProperties}")
 	private Resource runtimeProperties;
@@ -88,12 +90,16 @@ public class CoreConfig {
 	public static void main(String[] args) throws IOException {
 		AnnotationConfigApplicationContext annotationConfigApplicationContext = new AnnotationConfigApplicationContext(
 				CoreConfig.class);
-		for (Resource resource : PropertiesLoaderUtil.getResources(ApplicationConstant.CONFIG_PROPERTIES_PATH,
-				ApplicationConstant.APPLICATION_PROPERTIES_PATH)) {
+		for (Resource resource : PropertiesLoaderUtil.getResources(ApplicationConstant.PropertiesPath.CONFIG_PROPERTIES,
+				ApplicationConstant.PropertiesPath.APPLICATION_PROPERTIES)) {
 			annotationConfigApplicationContext.getEnvironment().getPropertySources()
 					.addFirst(new ResourcePropertySource(resource));
 		}
+//		annotationConfigApplicationContext.refresh();
 
 		ApplicationService applicationService = annotationConfigApplicationContext.getBean(ApplicationService.class);
+		for (CodeValue codeValue : applicationService.getDetails("")) {
+			System.out.println(codeValue);
+		}
 	}
 }

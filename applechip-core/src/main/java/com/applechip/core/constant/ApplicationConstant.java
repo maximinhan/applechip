@@ -1,23 +1,26 @@
 package com.applechip.core.constant;
 
 public class ApplicationConstant extends SystemConstant {
+  private ApplicationConstant() {}
 
-	public static final String PERSISTENCE_UNIT_NAME = "PERSISTENCE_UNIT";
+  public static final String APPLECHIP_HOME = String.format("%s%s.applechip", USER_HOME, FILE_SEPARATOR);
+  public static final String PERSISTENCE_UNIT_NAME = "PERSISTENCE_UNIT";
 
-	public static final String APPLECHIP_HOME = String.format("%s%s.applechip", USER_HOME, FILE_SEPARATOR);
+  public static final class PropertiesPath {
+    public static final String CONFIG_PROPERTIES = "classpath:config.properties";
+    public static final String CONFIG_PROPERTIES_PRODUCTION = String.format("file:%s%sconfig.properties", APPLECHIP_HOME, FILE_SEPARATOR);
+    public static final String APPLICATION_PROPERTIES = String.format("classpath:properties%sapplication.properties", FILE_SEPARATOR);
+  }
 
-	private static final String CONFIG_PROPERTIES = "config.properties";
+  public static final class MessageResource {
+    public static final String APPLICATION = String.format("message.%s", "ApplicationResource");
+  }
 
-	private static final String APPLICATION_PROPERTIES = "application.properties";
-
-	public static final String CONFIG_PROPERTIES_PATH = String.format("classpath:%s", CONFIG_PROPERTIES);
-
-	public static final String CONFIG_PROPERTIES_PRODUCTION = String.format("file:%s%s%s", APPLECHIP_HOME,
-			FILE_SEPARATOR, CONFIG_PROPERTIES);
-
-	public static final String APPLICATION_PROPERTIES_PATH = String.format("classpath:properties%s%s", FILE_SEPARATOR,
-			APPLICATION_PROPERTIES);
-
-	public static final String MESSAGE_APPLICATION_RESOURCE = String.format("message.%s", "ApplicationResource");
-
+  public static final class ServerInfo {
+    public static final String VERSION_TXT = "classpath:version.txt";
+    public static final String SERVER_ID = "serverId";
+    public static final String GEOIP_ID = "geoipId";
+    public static final String GEOIP_LOCATION = "geoipLocation";
+    public static final String GEOIP_GROUP_MAP = "geoipGroupMap";
+  }
 }

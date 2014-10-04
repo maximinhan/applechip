@@ -4,7 +4,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
-import com.applechip.core.abstact.AbstractObject;
+import com.applechip.core.AbstractObject;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.mysema.query.annotations.QueryProjection;
 
