@@ -37,10 +37,6 @@ ext {
 gradle.taskGraph.afterTask {Task task, TaskState state -> if (state.failure) { println "excuting $task Failure" } else { println "excuting $task Done" }}
 
 configure(rootProject) {
-	tasks.withType(JavaCompile){
-		def warnLogFile = file("${buildDir}/${name}Warnings.log")
-		logging.addStandardErrorListener(new StandardOutputListener(){ void onOutput(CharSequence output){ warnLogFile << output }})
-	}
 	task wrapper(type: Wrapper) {
 		description = 'Generates gradlew[.bat] scripts'
 		gradleVersion = "2.0"
@@ -73,7 +69,6 @@ configure(allprojects) { project ->
     ext.slf4jVersion = '1.7.7'
     ext.junitVersion = '4.11'
     ext.mockitoVersion = '1.9.5'
-    //ext.googleCollectionsVersion = '1.0'
    
     //java
     ext.javaxServletApiVersion = '3.1.0'
@@ -84,11 +79,9 @@ configure(allprojects) { project ->
 	//dependencies
 	ext.springframeworkVersion = '4.0.7.RELEASE'
     ext.springframeworkDataJpaVersion = '1.7.0.RELEASE'
-    ext.springframeworkDataCommonsVersion = '1.8.0.RELEASE'
     ext.springframeworkDataRedisVersion = '1.4.0.RELEASE'
     ext.springframeworkSecurityVersion = '3.2.5.RELEASE'
     ext.hibernateVersion = '4.3.5.Final'
-    ext.hibernateCommonsVersion = '4.0.5.Final'
     ext.hibernateValidatorVersion = '5.1.2.Final'
     ext.queryDslVersion = '3.4.3'
     ext.aspectjVersion = '1.8.1'
@@ -116,7 +109,6 @@ configure(subprojects) { project ->
     apply plugin: 'idea'
     
     apply from: "${gradleScriptDir}/gradleScript.gradle"
-    
     apply from: uploadArchivesTask
     apply from: settingPropertiesTask
     
@@ -135,7 +127,6 @@ configure(subprojects) { project ->
 		provided("org.projectlombok:lombok:$lombokVersion")
 		provided("org.apache.httpcomponents:httpclient:$commonsHttpVersion")
 		provided("com.rometools:rome-fetcher:$romeVersion")
-		//provided("com.google.collections:google-collections:$googleCollectionsVersion")
 		testCompile("org.springframework:spring-test:$springframeworkVersion")
 		testCompile("junit:junit:$junitVersion")
 		testCompile("org.mockito:mockito-all:$mockitoVersion")
@@ -154,9 +145,7 @@ configure(subprojects) { project ->
 		main {
 			output.classesDir = output.resourcesDir = "${buildDir}/classes"
 			java.srcDirs = [ "${mainSrcDir}/java", "${mainSrcDir}/webapp",  generatedSrcDir ]
-			//java.srcDir = "${mainSrcDir}/java"
 			resources.srcDirs = [ "${mainSrcDir}/resources" ]
-			//compileClasspath = file("${buildDir}/classes") runtimeClasspath = output + compileClasspath
 		}
 		test {
 			output.classesDir = output.resourcesDir = "${buildDir}/test-classes"
@@ -164,17 +153,6 @@ configure(subprojects) { project ->
 			resources.srcDirs = [ "${testSrcDir}/resources" ]
 		}
 	}
-	/*
-	configurations {
-	    compile {
-	        description = 'compile classpath'
-	        transitive = true
-	    }
-	    runtime {
-	        extendsFrom compile
-	    }
-	}
-	*/
 
 	eclipse {/*
 		project {
@@ -201,7 +179,6 @@ configure(subprojects) { project ->
 configure(webProjects) {
     apply plugin: 'war'
     apply plugin: 'eclipse-wtp'
-    apply from: createVersionTextTask
     dependencies {
 		provided jdbcDrivers
 		//compile(project(':applechip-core'))
@@ -210,7 +187,7 @@ configure(webProjects) {
     	provided("javax.servlet:jstl:${javaxServletJstlVersion}")
     	provided("javax.websocket:javax.websocket-api:${javaxWebsocketVersion}")
 	    provided("org.springframework.security:spring-security-core:${springframeworkSecurityVersion}")
-		provided("org.springframework.data:spring-data-commons:${springframeworkDataCommonsVersion}")
+		provided("org.springframework.data:spring-data-jpa:${springframeworkDataJpaVersion}")
 		provided("org.springframework:spring-orm:$springframeworkVersion")
 		provided("org.springframework:spring-tx:$springframeworkVersion")
 		provided("org.springframework:spring-context-support:$springframeworkVersion")
@@ -227,62 +204,37 @@ configure(webProjects) {
 		provided("org.springframework:spring-aop:$springframeworkVersion")
 		provided("org.springframework:spring-websocket:$springframeworkVersion")
     }
-	configurations.all {
-	    transitive = false
-	}
-    war {
+	war {
     	manifest.attributes["Created-By"] = "${System.getProperty("java.version")} (${System.getProperty("java.specification.vendor")})"
 		manifest.attributes["Implementation-Title"] = project.name
 		manifest.attributes["Implementation-Version"] = project.version
-		manifest.attributes["Web-ContextPath"] = name
-		//manifest.attributes["Bundle Description"] = project.description
-    /*
-    	manifest = osgiManifest { 
-			instruction 'Private-Package', 'com.applechip' 
-			instruction 'Bundle-Classpath', 'WEB-INF/classes' 
-			instruction 'Import-Package', '''groovy.''' 
-			instruction 'Created-By', 'yyy' 
-			instruction 'Bundle Description', "${project.description}" 
-			vendor = "yyy" 
-			symbolicName = "${project.group}" + "-" + "${project.name}" 
-			version = strippedVersion() 
-			classesDir = new File( "${buildDir}/classes" ) 
-			classpath = configurations.runtime 
-			instruction 'Web-ContextPath', "${name}"
+		from("${gradleScriptDir}") {
+			include 'version.txt'
+			into "META-INF"
+			expand(projectDate: new Date().format("yyyy-MM-dd' 'HH:mm:ss' 'S"), projectVersion: project.version, projectName: project.name, projectBuild: System.env.SOURCE_BUILD_NUMBER)
 		}
-		*/
-    	dependsOn createVersionText
-    	from(buildDir) {
-    		include 'version.txt'
-    		into('META-INF/resources')
-    	}
     }
 }
 
 configure(moduleProjects) {
-	jar{
+	jar {
 		manifest.attributes["Created-By"] = "${System.getProperty("java.version")} (${System.getProperty("java.specification.vendor")})"
 		manifest.attributes["Implementation-Title"] = project.name
 		manifest.attributes["Implementation-Version"] = project.version
-
-		from("${rootProject.projectDir}/docs/dist") {
-			include "license.txt"
-			include "notice.txt"
+		from("${gradleScriptDir}") {
+			include 'version.txt'
 			into "META-INF"
-			expand(copyright: new Date().format("yyyy"), version: project.version)
+			expand(projectDate: new Date().format("yyyy-MM-dd' 'HH:mm:ss' 'S"), projectVersion: project.version, projectName: project.name, projectBuild: System.env.SOURCE_BUILD_NUMBER)
 		}
 	}
 }
 
 project(":applechip-core") {
 	description = "Applechip Core"
-	//apply plugin: 'jpa-schema-generate'
 	apply from: generateSchemaTask
 	apply from: generateQueryDSLTask
-	//apply from: generateWsdlTask
 	dependencies {
 		provided jdbcDrivers
-		provided("org.springframework.data:spring-data-commons:${springframeworkDataCommonsVersion}") { exclude group: 'org.springframework' }
 		provided("org.springframework.data:spring-data-jpa:$springframeworkDataJpaVersion") { exclude group: 'org.springframework' }
 		provided("org.springframework.data:spring-data-redis:$springframeworkDataRedisVersion") { exclude group: 'org.springframework' }
 		provided("org.springframework.security:spring-security-core:$springframeworkSecurityVersion") { exclude group: 'org.springframework' }
@@ -299,20 +251,15 @@ project(":applechip-core") {
 		{ transitive = false }
 		provided("org.springframework:spring-web:$springframeworkVersion")
 		{ transitive = false }
-		//provided("org.springframework:spring-beans:$springframeworkVersion")
-		//{ transitive = false }
 		provided("org.springframework:spring-core:$springframeworkVersion")
 		{ transitive = false }
 		provided("org.springframework:spring-expression:$springframeworkVersion")
 		{ transitive = false }
-		//{ transitive = false }
 		provided("org.hibernate:hibernate-entitymanager:$hibernateVersion") //{ transitive = false }
 		provided("org.hibernate:hibernate-ehcache:$hibernateVersion")//{ transitive = false }
 	    provided("org.hibernate:hibernate-envers:$hibernateVersion")
 	    { transitive = false }
 	    provided("org.hibernate:hibernate-validator:$hibernateValidatorVersion")//{ transitive = false }
-		//provided("org.hibernate.common:hibernate-commons-annotations:$hibernateCommonsVersion")
-		//{ transitive = false }
 	    provided("com.fasterxml.jackson.core:jackson-databind:${jacksonVersion}")
 	    { transitive = false }
 	    provided("com.fasterxml.jackson.core:jackson-annotations:${jacksonVersion}")
@@ -335,31 +282,6 @@ project(":applechip-core") {
 	testClasses {
 		dependsOn generateSchema
 	}
-	/*
-	configurations {
-    compile {
-        description = 'compile classpath'
-        transitive = true
-    }
-    runtime {
-        extendsFrom compile
-    }
-}
-configurations.compile {
-    description = 'compile classpath'
-}
-	*/
-	/*
-	test{
-		workingDir = new File("${junitWorkingDir}")
-	}
-	generateSchema {
-	    targets {
-	        targetName {
-	        }
-	    }
-	}
-	*/
 }
 
 

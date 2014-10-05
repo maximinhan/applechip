@@ -1,0 +1,4 @@
+project-name=${projectName}
+project-version=${projectVersion}
+project-date=${projectDate}
+project-build=${projectBuild}
