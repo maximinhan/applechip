@@ -79,9 +79,11 @@ configure(allprojects) { project ->
     ext.javaxServletApiVersion = '3.1.0'
     ext.javaxServletJstlVersion = '1.2'
     ext.javaxWsVersion = '1.1.1'
+    ext.javaxWebsocketVersion = '1.0'
     
 	//dependencies
 	ext.springframeworkVersion = '4.0.7.RELEASE'
+    ext.springframeworkDataJpaVersion = '1.7.0.RELEASE'
     ext.springframeworkDataCommonsVersion = '1.8.0.RELEASE'
     ext.springframeworkDataRedisVersion = '1.4.0.RELEASE'
     ext.springframeworkSecurityVersion = '3.2.5.RELEASE'
@@ -193,6 +195,7 @@ configure(subprojects) { project ->
 			}
 		}
 	}
+	test { testLogging.showStandardStreams = true }
 }
 
 configure(webProjects) {
@@ -205,6 +208,7 @@ configure(webProjects) {
 		//{ transitive = false }
     	provided("javax.servlet:javax.servlet-api:${javaxServletApiVersion}")
     	provided("javax.servlet:jstl:${javaxServletJstlVersion}")
+    	provided("javax.websocket:javax.websocket-api:${javaxWebsocketVersion}")
 	    provided("org.springframework.security:spring-security-core:${springframeworkSecurityVersion}")
 		provided("org.springframework.data:spring-data-commons:${springframeworkDataCommonsVersion}")
 		provided("org.springframework:spring-orm:$springframeworkVersion")
@@ -221,6 +225,7 @@ configure(webProjects) {
 		provided("org.springframework:spring-beans:$springframeworkVersion")
 		provided("org.springframework:spring-core:$springframeworkVersion")
 		provided("org.springframework:spring-aop:$springframeworkVersion")
+		provided("org.springframework:spring-websocket:$springframeworkVersion")
     }
 	configurations.all {
 	    transitive = false
@@ -249,7 +254,7 @@ configure(webProjects) {
     	dependsOn createVersionText
     	from(buildDir) {
     		include 'version.txt'
-    		into('WEB-INF/classes')
+    		into('META-INF/resources')
     	}
     }
 }
@@ -278,8 +283,9 @@ project(":applechip-core") {
 	dependencies {
 		provided jdbcDrivers
 		provided("org.springframework.data:spring-data-commons:${springframeworkDataCommonsVersion}") { exclude group: 'org.springframework' }
-		provided("org.springframework.security:spring-security-core:$springframeworkSecurityVersion") { exclude group: 'org.springframework' }
+		provided("org.springframework.data:spring-data-jpa:$springframeworkDataJpaVersion") { exclude group: 'org.springframework' }
 		provided("org.springframework.data:spring-data-redis:$springframeworkDataRedisVersion") { exclude group: 'org.springframework' }
+		provided("org.springframework.security:spring-security-core:$springframeworkSecurityVersion") { exclude group: 'org.springframework' }
 		provided("org.springframework:spring-aop:$springframeworkVersion") //{ transitive = false }
 		provided("org.springframework:spring-orm:$springframeworkVersion") { transitive = false }
 		provided("org.springframework:spring-tx:$springframeworkVersion")

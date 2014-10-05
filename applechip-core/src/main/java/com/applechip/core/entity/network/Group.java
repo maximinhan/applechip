@@ -1,6 +1,8 @@
 package com.applechip.core.entity.network;
 
-import java.util.Set;
+import java.io.Serializable;
+import java.util.Comparator;
+import java.util.SortedSet;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -18,6 +20,7 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.SortComparator;
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.NotAudited;
 
@@ -45,6 +48,32 @@ public class Group extends GenericUpdatedBy<String> {
   @OneToMany(targetEntity = GroupServer.class, cascade = CascadeType.ALL, mappedBy = "group", orphanRemoval = true)
   @OrderBy("priority")
   @NotAudited
-  private Set<GroupServer> groupServers;
+  @SortComparator(value = GroupServerComparator.class)
+  private SortedSet<GroupServer> groupServers;
 
+  private static class GroupServerComparator implements Comparator<GroupServer>, Serializable {
+    private static final long serialVersionUID = 5548763152116249874L;
+
+    @Override
+    public int compare(GroupServer groupServer1, GroupServer groupServer2) {
+      if (groupServer1.getServer() == null && groupServer2.getServer() == null) {
+        return 0;
+      } else if (groupServer1.getServer() == null) {
+        return -1;
+      } else if (groupServer2.getServer() == null) {
+        return 1;
+      }
+      if (groupServer1.getServer().getType().compareTo(groupServer2.getServer().getType()) == 0) {
+        if (groupServer1.getPriority() == groupServer2.getPriority()) {
+          return 0;
+        } else if (groupServer1.getPriority() > groupServer2.getPriority()) {
+          return 1;
+        } else {
+          return -1;
+        }
+      } else {
+        return groupServer1.getServer().getType().compareTo(groupServer2.getServer().getType());
+      }
+    }
+  }
 }

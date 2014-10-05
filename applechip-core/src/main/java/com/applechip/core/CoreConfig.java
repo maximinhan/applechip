@@ -18,7 +18,6 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.ResourcePropertySource;
 
 import com.applechip.core.constant.ApplicationConstant;
-import com.applechip.core.entity.CodeValue;
 import com.applechip.core.exception.SystemException;
 import com.applechip.core.properties.ApplicationProperties;
 import com.applechip.core.properties.DatabaseProperties;
@@ -31,75 +30,55 @@ import com.applechip.core.util.PropertiesLoaderUtil;
 @ComponentScan(basePackageClasses = {CoreConfig.class})
 public class CoreConfig {
 
-  // @formatter:on
-  // <util:map id="test" key-type="java.lang.Integer" value-type="java.lang.String"
-  // map-class="java.util.HashMap">
-  // <entry key="1" value="VALUE1" />
-  // <entry key="2" value="VALUE2" />
-  // </util:map>
-  //@formatter:off
+  @Value("${runtimeProperties}")
+  private Resource runtimeProperties;
 
-	@Value("${runtimeProperties}")
-	private Resource runtimeProperties;
+  @Value("${databaseProperties}")
+  private Resource databaseProperties;
 
-	@Value("${databaseProperties}")
-	private Resource databaseProperties;
+  @PostConstruct
+  @Bean
+  public ApplicationProperties applicationProperties() {
+    return new ApplicationProperties();
+  }
 
-	@PostConstruct
-	@Bean
-	public ApplicationProperties applicationProperties() {
-		return new ApplicationProperties();
-	}
+  @PostConstruct
+  @Bean
+  public DatabaseProperties databaseProperties() {
+    return new DatabaseProperties(PropertiesLoaderUtil.loadProperty(databaseProperties));
+  }
 
-	@PostConstruct
-	@Bean
-	public DatabaseProperties databaseProperties() {
-		return DatabaseProperties.getInstance(PropertiesLoaderUtil.loadProperty(databaseProperties));
-	}
+  @Bean
+  public RuntimeProperties runtimeProperties() {
+    return new RuntimeProperties(this.propertiesConfiguration());
+  }
 
-	@Bean
-	public RuntimeProperties runtimeProperties() {
-		return new RuntimeProperties(this.propertiesConfiguration());
-	}
+  private PropertiesConfiguration propertiesConfiguration() {
+    PropertiesConfiguration propertiesConfiguration = null;
+    try {
+      propertiesConfiguration = new PropertiesConfiguration(runtimeProperties.getFile());
+      propertiesConfiguration.setReloadingStrategy(this.fileChangedReloadingStrategy());
+    } catch (ConfigurationException e) {
+      log.error("propertiesConfiguration create fail... e.getMessage(): {}", e.getMessage());
+      throw new SystemException(String.format("propertiesConfiguration create fail... e.getMessage(): %s", e.getMessage()), e);
+    } catch (IOException e) {
+      log.error("propertiesConfiguration create fail... e.getMessage(): {}", e.getMessage());
+      throw new SystemException(String.format("propertiesConfiguration create fail... e.getMessage(): %s", e.getMessage()), e);
+    }
+    return propertiesConfiguration;
+  }
 
-	private PropertiesConfiguration propertiesConfiguration() {
-		PropertiesConfiguration propertiesConfiguration = null;
-		try {
-			propertiesConfiguration = new PropertiesConfiguration(runtimeProperties.getFile());
-			propertiesConfiguration.setReloadingStrategy(this.fileChangedReloadingStrategy());
-		}
-		catch (ConfigurationException e) {
-			log.error("propertiesConfiguration create fail... e.getMessage(): {}", e.getMessage());
-			throw new SystemException(String.format("propertiesConfiguration create fail... e.getMessage(): %s",
-					e.getMessage()), e);
-		}
-		catch (IOException e) {
-			log.error("propertiesConfiguration create fail... e.getMessage(): {}", e.getMessage());
-			throw new SystemException(String.format("propertiesConfiguration create fail... e.getMessage(): %s",
-					e.getMessage()), e);
-		}
-		return propertiesConfiguration;
-	}
+  private FileChangedReloadingStrategy fileChangedReloadingStrategy() {
+    FileChangedReloadingStrategy fileChangedReloadingStrategy = new FileChangedReloadingStrategy();
+    fileChangedReloadingStrategy.setRefreshDelay(this.applicationProperties().getRefreshDelay());
+    return fileChangedReloadingStrategy;
+  }
 
-	private FileChangedReloadingStrategy fileChangedReloadingStrategy() {
-		FileChangedReloadingStrategy fileChangedReloadingStrategy = new FileChangedReloadingStrategy();
-		fileChangedReloadingStrategy.setRefreshDelay(this.applicationProperties().getRefreshDelay());
-		return fileChangedReloadingStrategy;
-	}
-
-	public static void main(String[] args) throws IOException {
-		AnnotationConfigApplicationContext annotationConfigApplicationContext = new AnnotationConfigApplicationContext(
-				CoreConfig.class);
-		for (Resource resource : PropertiesLoaderUtil.getResources(ApplicationConstant.PropertiesPath.CONFIG_PROPERTIES,
-				ApplicationConstant.PropertiesPath.APPLICATION_PROPERTIES)) {
-			annotationConfigApplicationContext.getEnvironment().getPropertySources()
-					.addFirst(new ResourcePropertySource(resource));
-		}
-//		annotationConfigApplicationContext.refresh();
-
-		ApplicationService applicationService = annotationConfigApplicationContext.getBean(ApplicationService.class);
-		for (CodeValue codeValue : applicationService.getDetails("")) {
-			System.out.println(codeValue);
-		}
-	}
+  public static void main(String[] args) throws IOException {
+    AnnotationConfigApplicationContext annotationConfigApplicationContext = new AnnotationConfigApplicationContext(CoreConfig.class);
+    for (Resource resource : PropertiesLoaderUtil.getResources(ApplicationConstant.PropertiesPath.CONFIG_PROPERTIES, ApplicationConstant.PropertiesPath.APPLICATION_PROPERTIES)) {
+      annotationConfigApplicationContext.getEnvironment().getPropertySources().addFirst(new ResourcePropertySource(resource));
+    }
+    annotationConfigApplicationContext.getBean(ApplicationService.class).getCategories();
+  }
 }

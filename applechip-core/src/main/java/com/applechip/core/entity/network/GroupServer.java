@@ -58,40 +58,6 @@ public class GroupServer extends GenericUpdatedBy<GroupServer.Id> {
     this.priority = priority;
   }
 
-  // public static class NetworkGroupServerComparator implements Comparator<NtGroupServer> {
-  //
-  // @Override
-  // public int compare(NtGroupServer networkGroupServer1, NtGroupServer networkGroupServer2) {
-  // if (networkGroupServer1.getServer() == null && networkGroupServer2.getServer() == null) {
-  // return 0;
-  // }
-  // else if (networkGroupServer1.getServer() == null) {
-  // return -1;
-  // }
-  // else if (networkGroupServer2.getServer() == null) {
-  // return 1;
-  // }
-  //
-  // if
-  // (networkGroupServer1.getServer().getType().compareTo(networkGroupServer2.getServer().getType())
-  // == 0) {
-  // if (networkGroupServer1.getPriority() == networkGroupServer2.getPriority()) {
-  // return 0;
-  // }
-  // else if (networkGroupServer1.getPriority() > networkGroupServer2.getPriority()) {
-  // return 1;
-  // }
-  // else {
-  // return -1;
-  // }
-  // }
-  // else {
-  // return
-  // networkGroupServer1.getServer().getType().compareTo(networkGroupServer2.getServer().getType());
-  // }
-  // }
-  // }
-
   @NoArgsConstructor
   @AllArgsConstructor
   @Embeddable

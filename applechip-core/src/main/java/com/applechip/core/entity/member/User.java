@@ -36,7 +36,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import com.applechip.core.constant.ColumnLengthConstant;
 import com.applechip.core.entity.GenericUpdatedBy;
 import com.applechip.core.util.BitwisePermissions;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name = "mt_user")
@@ -44,6 +43,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 @ToString(exclude = {"roles"})
 @NoArgsConstructor
 @Data
+// @FieldMatch.List({@FieldMatch(first = "password", second = "repeatedPassword")})
 public class User extends GenericUpdatedBy<String> implements UserDetails {
 
   private static final long serialVersionUID = 1920694340054206260L;
@@ -75,9 +75,16 @@ public class User extends GenericUpdatedBy<String> implements UserDetails {
   @MapKey(name = "id.optionId")
   private Map<String, UserPreferOption> userPreferOption;
 
+  // @NotBlank(message = "Pole Email jest wymagane")
+  // @Email(message = "Podany email jest nieprawidłowy")
+  // @Pattern(regexp = ".+@.+\\..+")
+  // @Size(max = 100)
   @Column(name = "username", length = ColumnLengthConstant.NAME, nullable = false, unique = true)
   private String username;
 
+  // @Basic
+  // @NotBlank
+  // @Size(min = 6, max = 20, message = "Password should have at least 6 and at most 20 letters")
   @Column(name = "password", length = ColumnLengthConstant.PASSWORD, nullable = false)
   private String password;
 
@@ -102,7 +109,7 @@ public class User extends GenericUpdatedBy<String> implements UserDetails {
   private int loginFailcount;
 
   @Transient
-  private String confirmPassword;
+  private String repeatedPassword;
 
   @Override
   public Collection<GrantedAuthority> getAuthorities() {

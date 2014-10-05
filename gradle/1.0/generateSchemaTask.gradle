@@ -48,7 +48,7 @@ class GenerateSchemaTask extends DefaultTask {
 				}
 			}
 			def properties = new Properties()
-			new File(classesDir, "properties/database.properties").withInputStream { 
+			new File(classesDir, "META-INF/properties/database.properties").withInputStream { 
 				stream -> properties.load(stream) 
 			}
 			configuration.properties = properties
@@ -80,7 +80,7 @@ class GenerateSchemaTask extends DefaultTask {
 		    schemaExport.outputFile = new File(classesDir, "schema.sql").absolutePath
 			schemaExport.execute true, true, false, false
 		} catch (Exception e) {
-			println e.message()
+			println e.getMessage()
 		} finally {
 			Thread.currentThread().setContextClassLoader(classLoader)
 		}

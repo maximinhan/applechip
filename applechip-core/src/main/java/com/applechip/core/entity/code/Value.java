@@ -1,4 +1,4 @@
-package com.applechip.core.entity;
+package com.applechip.core.entity.code;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -11,18 +11,18 @@ import com.mysema.query.annotations.QueryProjection;
 @Data
 @EqualsAndHashCode(callSuper = false, of = { "code", "value" })
 @NoArgsConstructor
-public class CodeValue extends AbstractObject implements Comparable<CodeValue> {
+public class Value extends AbstractObject implements Comparable<Value> {
 
 	private static final long serialVersionUID = -7016161450074984593L;
 
 	@QueryProjection
-	public CodeValue(final String code, final String value) {
+	public Value(final String code, final String value) {
 		this.code = code;
 		this.value = value;
 	}
 
 	@QueryProjection
-	public CodeValue(final String code, final Integer value) {
+	public Value(final String code, final Integer value) {
 		this.code = code;
 		this.value = value.toString();
 	}
@@ -33,7 +33,7 @@ public class CodeValue extends AbstractObject implements Comparable<CodeValue> {
 	@JsonProperty("value")
 	private String value;
 
-	public int compareTo(CodeValue codeValue) {
+	public int compareTo(Value codeValue) {
 		return this.code.compareTo(codeValue.getCode());
 	}
 }

@@ -8,8 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
-import com.applechip.core.entity.CodeValue;
 import com.applechip.core.entity.code.Category;
+import com.applechip.core.entity.code.Value;
 import com.applechip.core.entity.code.Detail;
 import com.applechip.core.repository.ApplicationRepository;
 import com.applechip.core.util.ApplicationUtil;
@@ -25,22 +25,22 @@ public class ApplicationServiceImpl implements ApplicationService {
 
   @Override
   @Cacheable(value = "getCategories")
-  public List<CodeValue> getCategories() {
+  public List<Value> getCategories() {
     List<Category> codeCategories = applicationRepository.getCategories();
-    List<CodeValue> list = new ArrayList<CodeValue>();
+    List<Value> list = new ArrayList<Value>();
     for (Category codeCategory : codeCategories) {
-      list.add(new CodeValue(codeCategory.getId(), applicationUtil.getMessage(codeCategory.getId())));
+      list.add(new Value(codeCategory.getId(), applicationUtil.getMessage(codeCategory.getId())));
     }
     return list;
   }
 
   @Override
   @Cacheable(value = "getDetails", key = "#category")
-  public List<CodeValue> getDetails(String category) {
+  public List<Value> getDetails(String category) {
     List<Detail> codes = applicationRepository.getDetails(category);
-    List<CodeValue> list = new ArrayList<CodeValue>();
+    List<Value> list = new ArrayList<Value>();
     for (Detail code : codes) {
-      list.add(new CodeValue(code.getId().getId(), applicationUtil.getMessage(code.getId().getId())));
+      list.add(new Value(code.getId().getId(), applicationUtil.getMessage(code.getId().getId())));
     }
     return list;
   }

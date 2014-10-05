@@ -3,13 +3,13 @@ package com.applechip.core.service;
 import java.util.List;
 import java.util.Map;
 
-import com.applechip.core.entity.CodeValue;
+import com.applechip.core.entity.code.Value;
 
 public interface ApplicationService {
 
-  List<CodeValue> getCategories();
+  List<Value> getCategories();
 
-  List<CodeValue> getDetails(String codeCategory);
+  List<Value> getDetails(String codeCategory);
 
   Map<String, String> getGeoipGroupMap();
 }

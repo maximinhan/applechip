@@ -18,11 +18,11 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.util.WebUtils;
 
 import com.applechip.core.constant.ApplicationConstant;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.applechip.core.web.util.CustomObjectMapper;
 
 public class WebUtil extends WebUtils {
   public static String toJsonString(Object object) {
-    ObjectMapper objectMapper = new ObjectMapper();
+    CustomObjectMapper objectMapper = new CustomObjectMapper();
     String jsonString = "{}";
     try {
       jsonString = objectMapper.writeValueAsString(object);
@@ -30,6 +30,17 @@ public class WebUtil extends WebUtils {
       throw new RuntimeException(ex);
     }
     return jsonString;
+  }
+
+  public static <T> T toJsonObject(String body, Class<T> object) {
+    CustomObjectMapper objectMapper = new CustomObjectMapper();
+    T t = null;
+    try {
+      t = objectMapper.readValue(body, object);
+    } catch (Exception ex) {
+      throw new RuntimeException(ex);
+    }
+    return t;
   }
 
   public static String toXmlString(Object object) {

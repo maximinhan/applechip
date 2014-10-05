@@ -100,7 +100,7 @@ public class ApplicationConfigurer {
     ReloadableResourceBundleMessageSource bean = new ReloadableResourceBundleMessageSource();
     bean.setBasenames(ApplicationConstant.MessageResource.APPLICATION);
     bean.setUseCodeAsDefaultMessage(true);
-    bean.setDefaultEncoding("UTF-8");
+    bean.setDefaultEncoding(ApplicationConstant.CHARSET.toString());
     bean.setCacheSeconds(0);
     return bean;
   }
