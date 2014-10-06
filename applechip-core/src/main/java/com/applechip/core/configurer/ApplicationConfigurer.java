@@ -98,7 +98,7 @@ public class ApplicationConfigurer {
   @Bean(name = AbstractApplicationContext.MESSAGE_SOURCE_BEAN_NAME)
   public MessageSource messageSource() {
     ReloadableResourceBundleMessageSource bean = new ReloadableResourceBundleMessageSource();
-    bean.setBasenames(ApplicationConstant.MessageResource.APPLICATION);
+    bean.setBasenames(ApplicationConstant.MessageResource.APPLICATION);//i18n
     bean.setUseCodeAsDefaultMessage(true);
     bean.setDefaultEncoding(ApplicationConstant.CHARSET.toString());
     bean.setCacheSeconds(0);

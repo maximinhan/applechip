@@ -6,8 +6,12 @@ task generateQueryDSL(type: JavaCompile, group: 'build', description: 'Generates
 	classpath = configurations.compile + configurations.provided
 	options.compilerArgs = [
 		"-proc:only",
-		"-processor", "com.mysema.query.apt.jpa.JPAAnnotationProcessor"
+		"-processor",
+		"com.mysema.query.apt.jpa.JPAAnnotationProcessor",
+		"-s",
+		generatedSrcDir
 	]
 	options.warnings = false
 	destinationDir = generatedSrcDir
+	dependencyCacheDir = compileJava.dependencyCacheDir
 }

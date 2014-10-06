@@ -9,7 +9,7 @@ import com.applechip.core.entity.member.User;
 import com.applechip.core.repository.UserRepository;
 
 @Service
-public class UserServiceImpl extends GenericServiceImpl<User, String> implements UserService {
+public class UserServiceImpl extends GenericServiceImpl<User, String> implements UserService { // implements SocialUserDetailsService {
 
 	private UserRepository userRepository;
 
@@ -26,6 +26,8 @@ public class UserServiceImpl extends GenericServiceImpl<User, String> implements
 		if (user == null) {
 			throw new UsernameNotFoundException(username);
 		}
+//		UserDetails userDetails = userDetailsService.loadUserByUsername(userId);
+//        return (SocialUserDetails) userDetails;
 		return user;
 	}
 }

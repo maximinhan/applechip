@@ -8,10 +8,10 @@ buildscript {
         maven { url "http://repo.springsource.org/plugins-release" }
 	}
 	dependencies {
-		classpath("org.gradle.api.plugins:gradle-tomcat-plugin:0.9.8")
+		//classpath("org.gradle.api.plugins:gradle-tomcat-plugin:0.9.8")
 		classpath("org.springframework.build.gradle:propdeps-plugin:0.0.7")
-		classpath("net.sf.proguard:proguard-gradle:4.10")
-		classpath("io.github.divinespear:jpa-schema-gradle-plugin:0.1.10")
+		//classpath("net.sf.proguard:proguard-gradle:4.10")
+		//classpath("io.github.divinespear:jpa-schema-gradle-plugin:0.1.10")
 	}
 }
 
@@ -42,7 +42,15 @@ configure(rootProject) {
 		gradleVersion = "2.0"
 	}
 }
-
+/*
+ext {
+versions = [
+modelmapper: '0.6.3',
+tomcat: '7.0.50'
+    ]
+    compile 'org.springframework:spring-core:'+ versions.spring_core, 
+		    'org.springframework:spring-context:'+ versions.spring_core,
+*/
 configure(allprojects) { project ->
 	//system
 	ext.gradleScriptDir = "${rootProject.projectDir}/gradle"
@@ -100,13 +108,13 @@ configure(subprojects) { project ->
 		maven { url "http://nexus.bywook.com/content/groups/public" }
 		mavenCentral()
 	}
-	apply plugin: 'java'
-	apply plugin: 'eclipse'
+	//apply plugin: 'java'
+	//apply plugin: 'eclipse'
 	apply plugin: 'propdeps'
 	apply plugin: 'propdeps-eclipse'
-	apply plugin: 'propdeps-maven'
+	//apply plugin: 'propdeps-maven'
 	apply plugin: 'propdeps-idea'
-    apply plugin: 'idea'
+    //apply plugin: 'idea'
     
     apply from: "${gradleScriptDir}/gradleScript.gradle"
     apply from: uploadArchivesTask
@@ -134,6 +142,7 @@ configure(subprojects) { project ->
 	}
 	
 	[compileJava, compileTestJava]*.options*.encoding = "${javaEncoding}"
+	//[configurations.runtime, configurations.default]*.exclude(module: 'commons-logging')
 	//[compileJava, compileTestJava]*.options*.debug = true
 	//[compileJava, compileTestJava]*.options*.compilerArgs = ["-g"]
 	
@@ -144,7 +153,7 @@ configure(subprojects) { project ->
     sourceSets {
 		main {
 			output.classesDir = output.resourcesDir = "${buildDir}/classes"
-			java.srcDirs = [ "${mainSrcDir}/java", "${mainSrcDir}/webapp",  generatedSrcDir ]
+			java.srcDirs = [ generatedSrcDir, "${mainSrcDir}/java", "${mainSrcDir}/webapp" ]
 			resources.srcDirs = [ "${mainSrcDir}/resources" ]
 		}
 		test {
@@ -153,11 +162,12 @@ configure(subprojects) { project ->
 			resources.srcDirs = [ "${testSrcDir}/resources" ]
 		}
 	}
-
-	eclipse {/*
+	eclipse {
+/*
 		project {
 			natures += 'org.springframework.ide.eclipse.core.springnature'
-		}*/
+		}
+		*/
 		classpath {
 			downloadSources = true
 			defaultOutputDir = file("${buildDir}/classes")
@@ -234,54 +244,67 @@ project(":applechip-core") {
 	apply from: generateSchemaTask
 	apply from: generateQueryDSLTask
 	dependencies {
-		provided jdbcDrivers
-		provided("org.springframework.data:spring-data-jpa:$springframeworkDataJpaVersion") { exclude group: 'org.springframework' }
-		provided("org.springframework.data:spring-data-redis:$springframeworkDataRedisVersion") { exclude group: 'org.springframework' }
-		provided("org.springframework.security:spring-security-core:$springframeworkSecurityVersion") { exclude group: 'org.springframework' }
-		provided("org.springframework:spring-aop:$springframeworkVersion") //{ transitive = false }
-		provided("org.springframework:spring-orm:$springframeworkVersion") { transitive = false }
-		provided("org.springframework:spring-tx:$springframeworkVersion")
-		//{ transitive = false }
-		provided("org.springframework:spring-jdbc:$springframeworkVersion")
-		{ transitive = false }
-		provided("org.springframework:spring-context-support:$springframeworkVersion") { transitive = false }
-		provided("org.springframework:spring-context:$springframeworkVersion")
-		{ transitive = false }
-		provided("org.springframework:spring-webmvc:$springframeworkVersion")
-		{ transitive = false }
-		provided("org.springframework:spring-web:$springframeworkVersion")
-		{ transitive = false }
-		provided("org.springframework:spring-core:$springframeworkVersion")
-		{ transitive = false }
-		provided("org.springframework:spring-expression:$springframeworkVersion")
-		{ transitive = false }
-		provided("org.hibernate:hibernate-entitymanager:$hibernateVersion") //{ transitive = false }
-		provided("org.hibernate:hibernate-ehcache:$hibernateVersion")//{ transitive = false }
-	    provided("org.hibernate:hibernate-envers:$hibernateVersion")
-	    { transitive = false }
-	    provided("org.hibernate:hibernate-validator:$hibernateValidatorVersion")//{ transitive = false }
-	    provided("com.fasterxml.jackson.core:jackson-databind:${jacksonVersion}")
-	    { transitive = false }
-	    provided("com.fasterxml.jackson.core:jackson-annotations:${jacksonVersion}")
-	    { transitive = false }
-	    provided("com.fasterxml.jackson.core:jackson-core:${jacksonVersion}") { transitive = false }
-	    provided("com.mysema.querydsl:querydsl-jpa:$queryDslVersion") //{ transitive = false }
-		provided("com.mysema.querydsl:querydsl-apt:$queryDslVersion") //{ transitive = false }
-	    provided("com.maxmind.geoip2:geoip2:${geoIpVersion}") //{ transitive = false }
-		provided("edu.uci.ics:crawler4j:${crawlerVersion}")
-		{ transitive = false }
-		provided("org.aspectj:aspectjweaver:${aspectjVersion}")
-		{ transitive = false }
-		provided("javax.servlet:javax.servlet-api:${javaxServletApiVersion}")
-		{ transitive = false }
-		provided("redis.clients:jedis:$redisClientVersion")
-		{ transitive = false }
+		compile jdbcDrivers
+		compile("org.springframework.data:spring-data-jpa:$springframeworkDataJpaVersion") { exclude group: 'org.springframework' }
+		compile("org.springframework.data:spring-data-redis:$springframeworkDataRedisVersion") { exclude group: 'org.springframework' }
+		compile("org.springframework.security:spring-security-core:$springframeworkSecurityVersion") { exclude group: 'org.springframework' }
+		compile("org.springframework:spring-aop:$springframeworkVersion") //{ transitive = false }
+		compile("org.springframework:spring-orm:$springframeworkVersion") { transitive = false }
+		compile("org.springframework:spring-tx:$springframeworkVersion")//{ transitive = false }
+		compile("org.springframework:spring-jdbc:$springframeworkVersion"){ transitive = false }
+		compile("org.springframework:spring-context-support:$springframeworkVersion") { transitive = false }
+		compile("org.springframework:spring-context:$springframeworkVersion")		{ transitive = false }
+		compile("org.springframework:spring-webmvc:$springframeworkVersion")		{ transitive = false }
+		compile("org.springframework:spring-web:$springframeworkVersion")		{ transitive = false }
+		compile("org.springframework:spring-core:$springframeworkVersion")		{ transitive = false }
+		compile("org.springframework:spring-expression:$springframeworkVersion")		{ transitive = false }
+		compile("org.hibernate:hibernate-entitymanager:$hibernateVersion") //{ transitive = false }
+		compile("org.hibernate:hibernate-ehcache:$hibernateVersion")//{ transitive = false }
+	    compile("org.hibernate:hibernate-envers:$hibernateVersion")	    { transitive = false }
+	    compile("org.hibernate:hibernate-validator:$hibernateValidatorVersion")//{ transitive = false }
+	    compile("com.fasterxml.jackson.core:jackson-databind:${jacksonVersion}")	    { transitive = false }
+	    compile("com.fasterxml.jackson.core:jackson-annotations:${jacksonVersion}")	    { transitive = false }
+	    compile("com.fasterxml.jackson.core:jackson-core:${jacksonVersion}") { transitive = false }
+	    compile("com.mysema.querydsl:querydsl-jpa:$queryDslVersion") //{ transitive = false }
+		compile("com.mysema.querydsl:querydsl-apt:$queryDslVersion") //{ transitive = false }
+	    compile("com.maxmind.geoip2:geoip2:${geoIpVersion}") //{ transitive = false }
+		compile("edu.uci.ics:crawler4j:${crawlerVersion}")		{ transitive = false }
+		compile("org.aspectj:aspectjweaver:${aspectjVersion}")		{ transitive = false }
+		compile("javax.servlet:javax.servlet-api:${javaxServletApiVersion}")		{ transitive = false }
+		compile("redis.clients:jedis:$redisClientVersion")		{ transitive = false }
+	}/*
+	task generateQueryDSL(type: JavaCompile, group: 'build', description: 'Generates the QueryDSL query types') {
+	source = sourceSets.main.java
+	classpath = configurations.compile + configurations.provided
+	options.compilerArgs = [
+		"-proc:only",
+		"-processor",
+		"com.mysema.query.apt.jpa.JPAAnnotationProcessor",
+		"-s",
+		sourceSets.main.java.srcDirs.iterator().next()
+	]
+	options.warnings = false
+	destinationDir = sourceSets.main.java.srcDirs.iterator().next()
+	dependencyCacheDir = compileJava.dependencyCacheDir
+}
+*/
+	compileJava { 
+	dependsOn generateQueryDSL
+	//source generateQueryDSL.destinationDir 
 	}
-	
-	compileJava { dependsOn generateQueryDSL }
 	testClasses {
 		dependsOn generateSchema
 	}
+	jar {
+	duplicatesStrategy = "exclude"
+	}
+	/*
+	idea {
+    module {
+        sourceDirs += file('src/main/generated')
+    }
+}
+*/
 }
 
 

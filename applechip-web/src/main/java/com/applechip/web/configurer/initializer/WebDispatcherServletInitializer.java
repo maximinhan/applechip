@@ -36,6 +36,23 @@ public class WebDispatcherServletInitializer extends AbstractAnnotationConfigDis
 //  protected void customizeRegistration(Dynamic registration) {
 //    registration.setInitParameter("dispatchOptionsRequest", "true");
 //  }
+  
+  
+//  EnumSet<DispatcherType> dispatcherTypes = EnumSet.of(DispatcherType.REQUEST, DispatcherType.FORWARD);
+//  
+//  CharacterEncodingFilter characterEncodingFilter = new CharacterEncodingFilter();
+//  characterEncodingFilter.setEncoding("UTF-8");
+//  characterEncodingFilter.setForceEncoding(true);
+//
+//  FilterRegistration.Dynamic characterEncoding = servletContext.addFilter("characterEncoding", characterEncodingFilter);
+//  characterEncoding.addMappingForUrlPatterns(dispatcherTypes, true, "/*");
+//
+//  FilterRegistration.Dynamic security = servletContext.addFilter("springSecurityFilterChain", new DelegatingFilterProxy());
+//  security.addMappingForUrlPatterns(dispatcherTypes, true, "/*");
+//
+//  FilterRegistration.Dynamic sitemesh = servletContext.addFilter("sitemesh", new ConfigurableSiteMeshFilter());
+//  sitemesh.addMappingForUrlPatterns(dispatcherTypes, true, "*.jsp");
+
   // @formatter:on
 
   @Override

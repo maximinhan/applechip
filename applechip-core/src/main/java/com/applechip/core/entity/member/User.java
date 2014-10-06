@@ -107,6 +107,14 @@ public class User extends GenericUpdatedBy<String> implements UserDetails {
   @Column(name = "login_failed_count")
   @NotAudited
   private int loginFailcount;
+  
+//  @Enumerated(EnumType.STRING)
+//  @Column(name = "role", length = 20, nullable = false)
+//  private Role role;
+//
+//  @Enumerated(EnumType.STRING)
+//  @Column(name = "sign_in_provider", length = 20)
+//  private SocialMediaService signInProvider;
 
   @Transient
   private String repeatedPassword;
