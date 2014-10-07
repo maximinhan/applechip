@@ -31,6 +31,8 @@ public class ApplicationProperties extends AbstractObject {
   @Value("${upload.name}")
   private String uploadName;
 
+//  @Value("#{com.applechip.core.util.StringUtil.isBlank('${properties.refresh.delay}')?0:'${properties.refresh.delay}'}")
+//  @Value("#{${properties.refresh.delay1} ?: 0}")
   @Value("${properties.refresh.delay}")
   private long refreshDelay;
 

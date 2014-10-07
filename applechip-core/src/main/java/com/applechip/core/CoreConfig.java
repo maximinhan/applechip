@@ -18,7 +18,6 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.ResourcePropertySource;
 
 import com.applechip.core.constant.ApplicationConstant;
-import com.applechip.core.exception.SystemException;
 import com.applechip.core.properties.ApplicationProperties;
 import com.applechip.core.properties.DatabaseProperties;
 import com.applechip.core.properties.RuntimeProperties;
@@ -31,10 +30,10 @@ import com.applechip.core.util.PropertiesLoaderUtil;
 public class CoreConfig {
 
   @Value("${runtimeProperties}")
-  private Resource runtimeProperties;
+  private String runtimeProperties;
 
   @Value("${databaseProperties}")
-  private Resource databaseProperties;
+  private String databaseProperties;
 
   @PostConstruct
   @Bean
@@ -45,7 +44,7 @@ public class CoreConfig {
   @PostConstruct
   @Bean
   public DatabaseProperties databaseProperties() {
-    return new DatabaseProperties(PropertiesLoaderUtil.loadProperty(databaseProperties));
+    return new DatabaseProperties(PropertiesLoaderUtil.getProperties(this.databaseProperties));
   }
 
   @Bean
@@ -56,14 +55,11 @@ public class CoreConfig {
   private PropertiesConfiguration propertiesConfiguration() {
     PropertiesConfiguration propertiesConfiguration = null;
     try {
-      propertiesConfiguration = new PropertiesConfiguration(runtimeProperties.getFile());
+      propertiesConfiguration = new PropertiesConfiguration(this.runtimeProperties);
       propertiesConfiguration.setReloadingStrategy(this.fileChangedReloadingStrategy());
     } catch (ConfigurationException e) {
       log.error("propertiesConfiguration create fail... e.getMessage(): {}", e.getMessage());
-      throw new SystemException(String.format("propertiesConfiguration create fail... e.getMessage(): %s", e.getMessage()), e);
-    } catch (IOException e) {
-      log.error("propertiesConfiguration create fail... e.getMessage(): {}", e.getMessage());
-      throw new SystemException(String.format("propertiesConfiguration create fail... e.getMessage(): %s", e.getMessage()), e);
+      propertiesConfiguration = new PropertiesConfiguration();
     }
     return propertiesConfiguration;
   }

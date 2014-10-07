@@ -10,6 +10,7 @@ buildscript {
 	dependencies {
 		//classpath("org.gradle.api.plugins:gradle-tomcat-plugin:0.9.8")
 		classpath("org.springframework.build.gradle:propdeps-plugin:0.0.7")
+		classpath("com.sahlbach.gradle:gradle-jetty-eclipse-plugin:1.9.+")
 		//classpath("net.sf.proguard:proguard-gradle:4.10")
 		//classpath("io.github.divinespear:jpa-schema-gradle-plugin:0.1.10")
 	}
@@ -35,6 +36,10 @@ ext {
 }
 
 gradle.taskGraph.afterTask {Task task, TaskState state -> if (state.failure) { println "excuting $task Failure" } else { println "excuting $task Done" }}
+
+configure(allprojects) {
+	apply plugin: 'eclipse'
+}
 
 configure(rootProject) {
 	task wrapper(type: Wrapper) {
@@ -74,7 +79,7 @@ configure(allprojects) { project ->
     ext.commonsDbcpVersion = '1.4'
     ext.commonsNetVersion = '3.3'
     ext.commonsHttpVersion = '4.3.5'
-    ext.slf4jVersion = '1.7.7'
+    ext.slf4jVersion = '1.7.5'
     ext.junitVersion = '4.11'
     ext.mockitoVersion = '1.9.5'
    
@@ -108,13 +113,10 @@ configure(subprojects) { project ->
 		maven { url "http://nexus.bywook.com/content/groups/public" }
 		mavenCentral()
 	}
-	//apply plugin: 'java'
-	//apply plugin: 'eclipse'
 	apply plugin: 'propdeps'
 	apply plugin: 'propdeps-eclipse'
-	//apply plugin: 'propdeps-maven'
+	apply plugin: 'propdeps-maven'
 	apply plugin: 'propdeps-idea'
-    //apply plugin: 'idea'
     
     apply from: "${gradleScriptDir}/gradleScript.gradle"
     apply from: uploadArchivesTask
@@ -131,7 +133,8 @@ configure(subprojects) { project ->
 		provided("commons-dbcp:commons-dbcp:$commonsDbcpVersion")
 		provided("net.lingala.zip4j:zip4j:$zipVersion")
 		provided("org.slf4j:jcl-over-slf4j:$slf4jVersion")
-	    provided("org.slf4j:slf4j-api:$slf4jVersion")
+	    //provided("org.slf4j:slf4j-api:$slf4jVersion")
+	    //provided("org.slf4j:slf4j-log4j12:$slf4jVersion")
 		provided("org.projectlombok:lombok:$lombokVersion")
 		provided("org.apache.httpcomponents:httpclient:$commonsHttpVersion")
 		provided("com.rometools:rome-fetcher:$romeVersion")
@@ -142,7 +145,7 @@ configure(subprojects) { project ->
 	}
 	
 	[compileJava, compileTestJava]*.options*.encoding = "${javaEncoding}"
-	//[configurations.runtime, configurations.default]*.exclude(module: 'commons-logging')
+	[configurations.runtime, configurations.default]*.exclude(module: 'commons-logging')
 	//[compileJava, compileTestJava]*.options*.debug = true
 	//[compileJava, compileTestJava]*.options*.compilerArgs = ["-g"]
 	
@@ -183,36 +186,49 @@ configure(subprojects) { project ->
 			}
 		}
 	}
-	test { testLogging.showStandardStreams = true }
+	test { 
+		testLogging {
+			events 'started', 'passed'
+  			showStandardStreams = true
+  		}
+  	}
 }
 
 configure(webProjects) {
     apply plugin: 'war'
     apply plugin: 'eclipse-wtp'
+    apply plugin: 'jettyEclipse'
     dependencies {
 		provided jdbcDrivers
-		//compile(project(':applechip-core'))
-		//{ transitive = false }
+		provided(project(':applechip-core')) { transitive = false }
     	provided("javax.servlet:javax.servlet-api:${javaxServletApiVersion}")
     	provided("javax.servlet:jstl:${javaxServletJstlVersion}")
     	provided("javax.websocket:javax.websocket-api:${javaxWebsocketVersion}")
-	    provided("org.springframework.security:spring-security-core:${springframeworkSecurityVersion}")
-		provided("org.springframework.data:spring-data-jpa:${springframeworkDataJpaVersion}")
+    	compile("org.springframework.data:spring-data-jpa:$springframeworkDataJpaVersion") { exclude group: 'org.springframework' }
+		compile("org.springframework.data:spring-data-redis:$springframeworkDataRedisVersion") { exclude group: 'org.springframework' }
+		compile("org.springframework.security:spring-security-core:$springframeworkSecurityVersion") { exclude group: 'org.springframework' }
 		provided("org.springframework:spring-orm:$springframeworkVersion")
 		provided("org.springframework:spring-tx:$springframeworkVersion")
 		provided("org.springframework:spring-context-support:$springframeworkVersion")
 		provided("org.springframework:spring-context:$springframeworkVersion")
 		provided("org.springframework:spring-expression:$springframeworkVersion")
 		provided("org.hibernate:hibernate-entitymanager:$hibernateVersion")
+		compile("org.hibernate:hibernate-ehcache:$hibernateVersion")//{ transitive = false }
+	    compile("org.hibernate:hibernate-envers:$hibernateVersion")	    { transitive = false }
+	    compile("org.hibernate:hibernate-validator:$hibernateValidatorVersion")
 		provided("com.fasterxml.jackson.core:jackson-databind:${jacksonVersion}")
 	    provided("com.fasterxml.jackson.core:jackson-annotations:${jacksonVersion}")
-	    provided("com.fasterxml.jackson.core:jackson-core:${jacksonVersion}")
 		provided("org.springframework:spring-webmvc:$springframeworkVersion")
-		provided("org.springframework:spring-web:$springframeworkVersion")
+		//provided("org.springframework:spring-web:springframeworkVersion")
 		provided("org.springframework:spring-beans:$springframeworkVersion")
 		provided("org.springframework:spring-core:$springframeworkVersion")
 		provided("org.springframework:spring-aop:$springframeworkVersion")
 		provided("org.springframework:spring-websocket:$springframeworkVersion")
+		provided("org.aspectj:aspectjweaver:${aspectjVersion}")
+		provided("ch.qos.logback:logback-classic:1.+")
+		compile("redis.clients:jedis:$redisClientVersion")		{ transitive = false }
+		compile("com.mysema.querydsl:querydsl-jpa:$queryDslVersion")
+		compile("com.maxmind.geoip2:geoip2:${geoIpVersion}")
     }
 	war {
     	manifest.attributes["Created-By"] = "${System.getProperty("java.version")} (${System.getProperty("java.specification.vendor")})"
@@ -236,6 +252,7 @@ configure(moduleProjects) {
 			into "META-INF"
 			expand(projectDate: new Date().format("yyyy-MM-dd' 'HH:mm:ss' 'S"), projectVersion: project.version, projectName: project.name, projectBuild: System.env.SOURCE_BUILD_NUMBER)
 		}
+	duplicatesStrategy = "exclude"
 	}
 }
 
@@ -272,39 +289,18 @@ project(":applechip-core") {
 		compile("org.aspectj:aspectjweaver:${aspectjVersion}")		{ transitive = false }
 		compile("javax.servlet:javax.servlet-api:${javaxServletApiVersion}")		{ transitive = false }
 		compile("redis.clients:jedis:$redisClientVersion")		{ transitive = false }
-	}/*
-	task generateQueryDSL(type: JavaCompile, group: 'build', description: 'Generates the QueryDSL query types') {
-	source = sourceSets.main.java
-	classpath = configurations.compile + configurations.provided
-	options.compilerArgs = [
-		"-proc:only",
-		"-processor",
-		"com.mysema.query.apt.jpa.JPAAnnotationProcessor",
-		"-s",
-		sourceSets.main.java.srcDirs.iterator().next()
-	]
-	options.warnings = false
-	destinationDir = sourceSets.main.java.srcDirs.iterator().next()
-	dependencyCacheDir = compileJava.dependencyCacheDir
-}
-*/
+	}
 	compileJava { 
-	dependsOn generateQueryDSL
-	//source generateQueryDSL.destinationDir 
+		dependsOn generateQueryDSL
 	}
 	testClasses {
 		dependsOn generateSchema
 	}
-	jar {
-	duplicatesStrategy = "exclude"
-	}
-	/*
 	idea {
-    module {
-        sourceDirs += file('src/main/generated')
-    }
-}
-*/
+	    module {
+	        sourceDirs += file(generatedSrcDir)
+	    }
+	}
 }
 
 

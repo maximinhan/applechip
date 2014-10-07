@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+	<include resource="META-INF/logging/base.xml" />
+	<logger name="org.springframework" level="WARN" />
+	<logger name="com.applechip" level="DEBUG" />
+	<logger name="org.hibernate.type.descriptor.sql.BasicBinder" level="TRACE" />
+</configuration>

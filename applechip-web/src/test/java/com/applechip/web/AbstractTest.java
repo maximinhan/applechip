@@ -96,7 +96,7 @@ public abstract class AbstractTest {
     return org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl(expectedUrl);
   }
 
-  public <T> Matcher<T> anything(String description) {
+  public Matcher<Object> anything(String description) {
     return org.hamcrest.CoreMatchers.anything(description);
   }
 
