@@ -289,6 +289,8 @@ project(":applechip-core") {
 		compile("org.aspectj:aspectjweaver:${aspectjVersion}")		{ transitive = false }
 		compile("javax.servlet:javax.servlet-api:${javaxServletApiVersion}")		{ transitive = false }
 		compile("redis.clients:jedis:$redisClientVersion")		{ transitive = false }
+		//compile("org.apache.poi:poi-ooxml-schemas:3.9")//		{ transitive = false }
+		compile("org.apache.poi:poi-ooxml:3.9")//		{ transitive = false }
 	}
 	compileJava { 
 		dependsOn generateQueryDSL

@@ -35,7 +35,7 @@ public class ExcelConvertUtilTest {
   @Test
   @Ignore
   public void testGenerateAll() throws Exception {
-//    ExcelToPropertiesUtil.convertForMessage("src/test/resources/resource_message.xls", "src/main/resources/message");
+    ExcelToPropertiesUtil.convertForMessage("src/test/resources/resource_message_.xls", "src/main/resources/message");
 //    String list = null;
 //    assert list == null : "dddd";
   }
