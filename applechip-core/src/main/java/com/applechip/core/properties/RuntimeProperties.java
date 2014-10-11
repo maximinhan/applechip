@@ -9,7 +9,11 @@ public class RuntimeProperties extends ApplicationProperties {
 
   public RuntimeProperties(PropertiesConfiguration propertiesConfiguration) {
     super();
-    this.propertiesConfiguration = propertiesConfiguration;
+    if (propertiesConfiguration == null) {
+      this.propertiesConfiguration = new PropertiesConfiguration();
+    } else {
+      this.propertiesConfiguration = propertiesConfiguration;
+    }
   }
 
   @Override

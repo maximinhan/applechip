@@ -7,8 +7,7 @@ import org.springframework.stereotype.Component;
 @Aspect
 @Component
 public class AspectJRole {
-	@Pointcut("execution (* com..*.*Service.*(..))")
-	//"execution(* com..*.*Service.*(..))"
-	public void servicePointcut() {
-	}
+  @Pointcut("execution (* com..*.*Service.*(..))")
+  // "execution (* *..service.*Manager.*(..))"
+  public void servicePointcut() {}
 }

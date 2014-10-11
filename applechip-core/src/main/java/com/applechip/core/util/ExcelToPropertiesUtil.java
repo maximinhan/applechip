@@ -1,7 +1,7 @@
 package com.applechip.core.util;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -27,30 +27,24 @@ public class ExcelToPropertiesUtil extends ExcelConvertUtil {
   private static final String DEFAULT_LANGUAGE = "en";
   private static final String KEY = "key";
 
-  public static void convertForMessage(String srcFile, String destDirPath) {
+  public static void convertExcelToProperties(String srcFile, String destDirPath) {
     Workbook workbook = getWorkbook(srcFile);
     int numberOfSheets = workbook.getNumberOfSheets();
-    if (numberOfSheets == 0)
-      return;
-
     for (int sheetCount = 0; sheetCount < numberOfSheets; sheetCount++) {
-      generateResources(workbook.getSheetAt(sheetCount), destDirPath);
+      Sheet sheet = workbook.getSheetAt(sheetCount);
+      Map<Integer, Resource> resourceMap = getResourceMap(sheet);
+      generateResource(sheet.getSheetName(), resourceMap, destDirPath);
     }
   }
 
-  private static void generateResources(Sheet sheet, String destDirPath) {
-    String sheetName = sheet.getSheetName();
-    List<Resource> resources = getResourceList(sheet);
-    generateResource(sheetName, resources, destDirPath);
-  }
-
-  private static List<Resource> getResourceList(Sheet sheet) {
-    List<Resource> resources = createResourceLanguageList(sheet.getRow(0));
-    int languageCount = resources.size() + 1;
-    for (Resource resource : resources) {
-      Row row = sheet.getRow(resource.getNumber());
+  private static Map<Integer, Resource> getResourceMap(Sheet sheet) {
+    Map<Integer, Resource> resourceMap = getResourceMap(sheet.getRow(0));
+    int languageCount = resourceMap.size();
+    int physicalNumberOfRows = sheet.getPhysicalNumberOfRows();
+    for (int rowCount = 1; rowCount < physicalNumberOfRows; rowCount++) {
+      Row row = sheet.getRow(rowCount);
       String key = null;
-      for (int cellCount = 0; cellCount < languageCount; cellCount++) {
+      for (int cellCount = 0; cellCount <= languageCount; cellCount++) {
         Cell cell = row.getCell(cellCount);
         if (cellCount == 0) {
           key = getCellValue(cell);
@@ -58,39 +52,39 @@ public class ExcelToPropertiesUtil extends ExcelConvertUtil {
         }
         String value = getCellValue(key, cell);
         try {
-          resources.get(cellCount - 1).getDataMap().put(key, value);
+          resourceMap.get(cellCount).getResourceMap().put(key, value);
         } catch (NullPointerException ex) {
           log.error("sheetName={}, key={}, value={}, cellCount={}", sheet.getSheetName(), key, value, cellCount);
         }
       }
     }
-    return resources;
+    return resourceMap;
   }
 
-  private static List<Resource> createResourceLanguageList(Row row) {
+  private static Map<Integer, Resource> getResourceMap(Row row) {
+    Map<Integer, Resource> resourceMap = new HashMap<Integer, ExcelToPropertiesUtil.Resource>();
     int physicalNumberOfCells = row.getPhysicalNumberOfCells();
-    List<Resource> resources = new ArrayList<Resource>();
-    for (int cellCount = 0; cellCount < physicalNumberOfCells; cellCount++) {
-      Cell cell = row.getCell(cellCount);
-      String cellValue = getCellValue(cell);
+    for (int cellCount = 1; cellCount < physicalNumberOfCells; cellCount++) {
+      String cellValue = getCellValue(row.getCell(cellCount));
       if (StringUtil.equals(KEY, cellValue)) {
         continue;
       }
-      resources.add(new Resource(cellValue, cellCount, new TreeMap<String, String>()));
+      resourceMap.put(cellCount, new Resource(cellValue, new TreeMap<String, String>()));
     }
-    return resources;
+    return resourceMap;
   }
 
-  private static void generateResource(String sheetName, List<Resource> resources, String destDirPath) {
+
+  private static void generateResource(String sheetName, Map<Integer, Resource> resourceMap, String destDirPath) {
     Resource defaultResource = null;
-    for (Resource resource : resources) {
-      if (DEFAULT_LANGUAGE.equals(resource.getLanguage())) {
-        defaultResource = resource;
+    for (Entry<Integer, Resource> entry : resourceMap.entrySet()) {
+      if (StringUtil.equals(DEFAULT_LANGUAGE, entry.getValue().getLanguage())) {
+        defaultResource = entry.getValue();
       }
-      generatePropertiesResource(sheetName, resource, destDirPath, resource.getLanguage());
+      generatePropertiesResource(sheetName, entry.getValue(), destDirPath, entry.getValue().getLanguage());
     }
     if (defaultResource == null) {
-      defaultResource = resources.get(0);
+      defaultResource = resourceMap.get(0);
     }
     generatePropertiesResource(sheetName, defaultResource, destDirPath, "");
   }
@@ -100,10 +94,10 @@ public class ExcelToPropertiesUtil extends ExcelConvertUtil {
     PropertiesConfiguration propertiesConfiguration = new PropertiesConfiguration();
     propertiesConfiguration.setDelimiterParsingDisabled(true);
     propertiesConfiguration.setEncoding(SystemConstant.CHARSET.toString());
-    if (resource.getDataMap() == null) {
+    if (resource.getResourceMap() == null) {
       return;
     }
-    for (Entry<String, String> entry : resource.getDataMap().entrySet()) {
+    for (Entry<String, String> entry : resource.getResourceMap().entrySet()) {
       if (entry != null && entry.getKey() != null) {
         propertiesConfiguration.addProperty(entry.getKey(), entry.getValue());
       }
@@ -127,13 +121,8 @@ public class ExcelToPropertiesUtil extends ExcelConvertUtil {
   @Setter
   @AllArgsConstructor
   public static class Resource extends AbstractObject {
-
     private static final long serialVersionUID = -1025857826795867605L;
-
     private String language;
-
-    private int number;
-
-    private SortedMap<String, String> dataMap;
+    private SortedMap<String, String> resourceMap;
   }
 }

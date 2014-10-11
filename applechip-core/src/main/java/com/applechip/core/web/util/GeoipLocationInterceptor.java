@@ -42,7 +42,7 @@ public class GeoipLocationInterceptor extends HandlerInterceptorAdapter {
       String countryCode = StringUtil.lowerCase(geoipLocation.getCountryCode());
       if (StringUtil.isBlank(countryCode))
         return;
-      String region = String.format("_%s", StringUtil.defaultString(StringUtil.lowerCase(geoipLocation.getRegion()), "*"));
+      String region = String.format("_%s", StringUtil.defaultString(StringUtil.lowerCase(geoipLocation.getSubdivisionCode()), "*"));
       String geoipId = geoipGroupMap.get(countryCode + region);
       if (StringUtil.isBlank(geoipId))
         geoipId = geoipGroupMap.get(countryCode + "_*");

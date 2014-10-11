@@ -1,6 +1,7 @@
 package com.applechip.core.util;
 
-import java.io.FileInputStream;
+import java.io.Closeable;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
@@ -11,30 +12,35 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.ss.usermodel.WorkbookFactory;
 
 import com.applechip.core.constant.SystemConstant;
 
 
 public class ExcelToDataUtil extends ExcelConvertUtil {
 
-  public static void convertForData(String srcFile, String destFile, boolean ignoreSampleData) throws Exception {
-    Workbook workbook = WorkbookFactory.create(new FileInputStream(srcFile));
+  public static void convertExcelToData(String srcFile, String destFile, boolean ignoreSampleData) {
+    Workbook workbook = getWorkbook(srcFile);
     int sheetCount = workbook.getNumberOfSheets();
-    if (sheetCount == 0)
-      return;
-
     StringBuilder stringBuilder = new StringBuilder();
     stringBuilder.append(String.format("%s%s%s", "<?xml version=\"1.0\" encoding=\"", SystemConstant.CHARSET.toString(), "\"?>"));
+    stringBuilder.append(String.format("%s%s", SystemConstant.LINE_SEPARATOR, "<dataset>"));
     for (int i = 0; i < sheetCount; i++) {
       String tableData = getTableData(workbook, i, ignoreSampleData);
       stringBuilder.append(tableData);
     }
     stringBuilder.append(String.format("%s%s", SystemConstant.LINE_SEPARATOR, "</dataset>"));
 
-    PrintWriter printWriter = new PrintWriter(new OutputStreamWriter(new FileOutputStream(destFile), SystemConstant.CHARSET));
-    printWriter.println(stringBuilder.toString());
-    printWriter.close();
+    FileOutputStream fileOutputStream = null;
+    PrintWriter printWriter = null;
+    try {
+      fileOutputStream = new FileOutputStream(destFile);
+      printWriter = new PrintWriter(new OutputStreamWriter(fileOutputStream, SystemConstant.CHARSET));
+      printWriter.println(stringBuilder.toString());
+    } catch (FileNotFoundException e) {
+      e.printStackTrace();
+    } finally {
+      IOUtil.closeQuietly(new Closeable[] {printWriter, fileOutputStream});
+    }
   }
 
   private static String getTableData(Workbook workbook, int i, boolean ignoreSampleData) {
@@ -79,10 +85,14 @@ public class ExcelToDataUtil extends ExcelConvertUtil {
     for (int cellCount = 0; cellCount < physicalNumberOfCells; cellCount++) {
       Cell cell = headerRow.getCell(cellCount);
       if (cellCount == 0 && ignoreSampleData) {
-        if (cell == null || isIgnoreSampleData(cell))
+        if (cell == null) {
           return stringBuilder.toString();
+        }
+        if (isIgnoreSampleData(cell)) {
+          return stringBuilder.toString();
+        }
       }
-      columnName = getCellValue(null, cell);
+      columnName = getCellValue(cell);
       if (StringUtil.isBlank(columnName))
         continue;
       columns.add(columnName);
@@ -97,48 +107,49 @@ public class ExcelToDataUtil extends ExcelConvertUtil {
 
   private static String getRowData(Sheet sheet, List<String> columns, boolean ignoreTestData) {
     int physicalNumberOfRows = sheet.getPhysicalNumberOfRows();
-    StringBuffer sb = new StringBuffer();
+    StringBuilder stringBuilder = new StringBuilder();
     for (int rowCount = 1; rowCount < physicalNumberOfRows; rowCount++) {
       Row row = sheet.getRow(rowCount);
       if (row == null)
         break;
-      StringBuffer rowTag = new StringBuffer("\n    <row>");
+      StringBuilder sb = new StringBuilder(String.format("%s%s%s", SystemConstant.LINE_SEPARATOR, SystemConstant.TAB_SEPARATOR, "<row>"));
       boolean isValidRow = false;
       String value = "";
-
-      for (int k = 0; k < columns.size(); k++) {
-        Cell cell = row.getCell(k);
-        if (k == 0 && ignoreTestData) {
+      int physicalNumberOfCells = columns.size();
+      for (int cellCount = 0; cellCount < physicalNumberOfCells; cellCount++) {
+        Cell cell = row.getCell(cellCount);
+        if (cellCount == 0 && ignoreTestData) {
           if (cell == null) {
             isValidRow = false;
             break;
           }
-          try {
-            isIgnoreSampleData(cell);
-          } catch (Exception ex) {
+          if (isIgnoreSampleData(cell)) {
             isValidRow = false;
             break;
           }
         }
-        value = getCellValue(null, cell);
-        if (k == 0 && StringUtil.isBlank(value)) {
+        value = getCellValue(cell);
+        if (cellCount == 0 && StringUtil.isBlank(value)) {
           isValidRow = false;
           break;
         }
-        if (value == null || "NULL".equalsIgnoreCase(value)) {
-          rowTag.append("\n         ").append("<null />");
+        if (StringUtil.isBlank(value) || StringUtil.equalsIgnoreCase("null", value)) {
+          sb.append(String.format("%s%s%s%s", SystemConstant.LINE_SEPARATOR, SystemConstant.TAB_SEPARATOR, SystemConstant.TAB_SEPARATOR, "<null />"));
           continue;
         }
 
-        if (!value.startsWith("<![CDATA[") || !value.endsWith("]]>"))
+        if (!value.startsWith("<![CDATA[") || !value.endsWith("]]>")) {
           value = StringEscapeUtil.escapeXml(value);
-        rowTag.append("\n         ").append("<value description=\"").append(columns.get(k)).append("\">").append(value).append("</value>");
+        }
+        sb.append(String.format("%s%s%s%s%s%s%s%s", SystemConstant.LINE_SEPARATOR, SystemConstant.TAB_SEPARATOR, SystemConstant.TAB_SEPARATOR, "<value description=\"", columns.get(cellCount), "\">",
+            value, "</value>"));
         isValidRow = true;
       }
-      rowTag.append("\n    </row>");
-      if (isValidRow)
-        sb.append(rowTag);
+      sb.append(String.format("%s%s%s", SystemConstant.LINE_SEPARATOR, SystemConstant.TAB_SEPARATOR, "</row>"));
+      if (isValidRow) {
+        stringBuilder.append(sb);
+      }
     }
-    return sb.toString();
+    return stringBuilder.toString();
   }
 }

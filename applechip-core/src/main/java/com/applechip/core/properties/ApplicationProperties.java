@@ -15,105 +15,74 @@ import com.applechip.core.util.StringUtil;
 @Getter
 public class ApplicationProperties extends AbstractObject {
   private static final long serialVersionUID = 6739078137459063185L;
-
   @Value("${server.id}")
   private String serverId;
-
   @Value("${storage.path}")
   private String storagePath;
-
   @Value("${download.name}")
   private String downloadName;
-
   @Value("${resource.name}")
   private String resourceName;
-
   @Value("${upload.name}")
   private String uploadName;
-
-//  @Value("#{com.applechip.core.util.StringUtil.isBlank('${properties.refresh.delay}')?0:'${properties.refresh.delay}'}")
-//  @Value("#{${properties.refresh.delay1} ?: 0}")
   @Value("${properties.refresh.delay}")
   private long refreshDelay;
-
   @Value("${executor.corePoolSize}")
   private int executorCorePoolSize;
-
   @Value("${executor.maxPoolSize}")
   private int executorMaxPoolSize;
-
   @Value("${executor.queueCapacity}")
   private int executorQueueCapacity;
-
   @Value("${executor.keepAliveSeconds}")
   private int executorKeepAliveSeconds;
-
   @Value("${executor.threadNamePrefix}")
   private String executorThreadNamePrefix;
-
   @Value("${schedule.cronExpression}")
   private String scheduleCronExpression;
-
   @Value("${schedule.timeZoneId}")
   private String scheduleTimeZoneId;
-
   @Value("${schedule.threadPool}")
   private String scheduleThreadPool;
-
   @Value("${monitoring.enabled}")
   private boolean monitoringEnabled;
-
   @Value("${monitoring.frequency}")
   private int monitoringFrequency;
-
   @Value("${monitoring.threshold}")
   private int monitoringThreshold;
-
   @Value("${push.mdm.key}")
   private String pushMdmKey;
-
   @Value("${push.wp.param}")
   private String pushWpParam;
-
   @Value("${server.address}")
   private String serverAddress;
-
+  @Value("${redis.enabled}")
+  private boolean redisEnabled;
   @Value("${redis.host}")
   private String redisHost;
-
   @Value("${redis.port}")
   private int redisPort;
-
   @Value("${redis.timeout}")
   private int redisTimeout;
-
   @Value("${redis.database}")
   private int redisDatabase;
-
   @Value("${redis.usePool}")
   private boolean redisUsePool;
-
   @Value("${redis.pool.testWhileIdle}")
   private boolean redisPoolTestWhileIdle;
-
   @Value("${redis.pool.minEvictableIdleTimeMillis}")
   private int redisPoolMinEvictableIdleTimeMillis;
-
   @Value("${redis.pool.timeBetweenEvictionRunsMillis}")
   private int redisPoolTimeBetweenEvictionRunsMillis;
-
   @Value("${redis.pool.numTestsPerEvictionRun}")
   private int redisPoolNumTestsPerEvictionRun;
-
+  @Value("${ehcache.enabled}")
+  private boolean ehcacheEnabled;
   @Value("${ehcache.shared}")
   private boolean ehcacheShared;
-
   @Value("${ehcache.configLocation}")
   private String ehcacheConfigLocation;
-
   @Value("#{T(java.util.Arrays).asList('${ehcache.cacheNames}')}")
   private List<String> ehcacheCacheNames;
-
   @Value("#{T(com.applechip.core.util.PropertiesLoaderUtil).stringToProperties('${database.transactionProperties}', '|', '=')}")
   private Properties databaseTransactionProperties;
 

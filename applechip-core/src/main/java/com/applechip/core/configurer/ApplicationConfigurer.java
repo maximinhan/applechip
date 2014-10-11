@@ -97,12 +97,12 @@ public class ApplicationConfigurer {
 
   @Bean(name = AbstractApplicationContext.MESSAGE_SOURCE_BEAN_NAME)
   public MessageSource messageSource() {
-    ReloadableResourceBundleMessageSource bean = new ReloadableResourceBundleMessageSource();
-    bean.setBasenames(ApplicationConstant.MessageResource.APPLICATION);//i18n
-    bean.setUseCodeAsDefaultMessage(true);
-    bean.setDefaultEncoding(ApplicationConstant.CHARSET.toString());
-    bean.setCacheSeconds(0);
-    return bean;
+    ReloadableResourceBundleMessageSource reloadableResourceBundleMessageSource = new ReloadableResourceBundleMessageSource();
+    reloadableResourceBundleMessageSource.setBasenames(ApplicationConstant.MessageResource.APPLICATION);// i18n
+    reloadableResourceBundleMessageSource.setUseCodeAsDefaultMessage(true);
+    reloadableResourceBundleMessageSource.setDefaultEncoding(ApplicationConstant.CHARSET.toString());
+    reloadableResourceBundleMessageSource.setCacheSeconds(0);
+    return reloadableResourceBundleMessageSource;
   }
 
   @Bean
@@ -135,28 +135,4 @@ public class ApplicationConfigurer {
     bean.setValidator(localValidatorFactoryBean);
     return bean;
   }
-
-  /*
-   * 추가 되어야 할 것 <bean name="handlerAdapter"
-   * class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter">
-   * <property name="webBindingInitializer"> <bean
-   * class="org.springframework.web.bind.support.ConfigurableWebBindingInitializer"> <property
-   * name="conversionService" ref="conversionService"></property> <property name="validator"> <bean
-   * class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean"> <property
-   * name="providerClass" value="org.hibernate.validator.HibernateValidator"></property> </bean>
-   * </property> </bean> </property> <property name="messageConverters"> <list> <bean
-   * class="org.springframework.http.converter.ByteArrayHttpMessageConverter"></bean> <bean
-   * class="org.springframework.http.converter.StringHttpMessageConverter"></bean> <bean
-   * class="org.springframework.http.converter.ResourceHttpMessageConverter"></bean> <bean
-   * class="org.springframework.http.converter.xml.SourceHttpMessageConverter"></bean> <bean
-   * class="org.springframework.http.converter.xml.XmlAwareFormHttpMessageConverter"></bean> <bean
-   * class="org.springframework.http.converter.xml.Jaxb2RootElementHttpMessageConverter"></bean>
-   * <bean
-   * class="org.springframework.http.converter.json.MappingJacksonHttpMessageConverter"></bean>
-   * </list> </property> </bean>
-   * 
-   * <bean name="handlerMapping"
-   * class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping">
-   * <property name="order" value="2"></property> </bean>
-   */
 }

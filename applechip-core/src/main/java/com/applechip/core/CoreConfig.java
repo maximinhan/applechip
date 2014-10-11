@@ -59,7 +59,6 @@ public class CoreConfig {
       propertiesConfiguration.setReloadingStrategy(this.fileChangedReloadingStrategy());
     } catch (ConfigurationException e) {
       log.error("propertiesConfiguration create fail... e.getMessage(): {}", e.getMessage());
-      propertiesConfiguration = new PropertiesConfiguration();
     }
     return propertiesConfiguration;
   }
@@ -70,6 +69,7 @@ public class CoreConfig {
     return fileChangedReloadingStrategy;
   }
 
+  @SuppressWarnings("resource")
   public static void main(String[] args) throws IOException {
     AnnotationConfigApplicationContext annotationConfigApplicationContext = new AnnotationConfigApplicationContext(CoreConfig.class);
     for (Resource resource : PropertiesLoaderUtil.getResources(ApplicationConstant.PropertiesPath.CONFIG_PROPERTIES, ApplicationConstant.PropertiesPath.APPLICATION_PROPERTIES)) {

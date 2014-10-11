@@ -20,6 +20,7 @@ public class ExcelConvertUtil {
     }
     if (cell.getCellType() == Cell.CELL_TYPE_NUMERIC) {
       result = String.valueOf((double) cell.getNumericCellValue());
+      result = StringUtil.removeEnd(result, ".0");
     } else if (cell.getCellType() == Cell.CELL_TYPE_STRING) {
       result = cell.getStringCellValue();
     } else if (cell.getCellType() == Cell.CELL_TYPE_FORMULA) {

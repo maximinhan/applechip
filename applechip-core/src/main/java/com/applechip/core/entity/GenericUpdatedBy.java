@@ -14,12 +14,7 @@ import com.applechip.core.util.SecurityUtil;
 @SuppressWarnings("serial")
 @MappedSuperclass
 @Getter
-// @EntityListeners({ AuditingEntityListener.class })
 public abstract class GenericUpdatedBy<PK extends Serializable> extends GenericCreatedBy<PK> {
-  // @CreatedDate
-  // @LastModifiedDate
-  // @CreatedBy
-  // @LastModifiedBy
   @Column(name = "updated_by", insertable = true, updatable = true, length = ColumnLengthConstant.UUID)
   protected String updatedBy;
 

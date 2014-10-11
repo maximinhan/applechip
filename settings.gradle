@@ -1,1 +1,1 @@
-include ":applechip-plugin", ":applechip-core", ":applechip-web", ":applechip-api"
+include ":applechip-core", ":applechip-web", ":applechip-api"

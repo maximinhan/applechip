@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dataset>
+<table name="mt_role">
+	<column>id</column>
+	<column>authority</column>
+	<row>
+		<value description="id">1</value>
+		<value description="authority">ROLE_ADMIN</value>
+	</row>
+	<row>
+		<value description="id">2</value>
+		<value description="authority">ROLE_USER</value>
+	</row>
+	<row>
+		<value description="id">3</value>
+		<value description="authority">ROLE_TEST</value>
+	</row>
+</table>
+<table name="mt_user">
+	<column>id</column>
+	<column>account_non_expired</column>
+	<column>account_non_locked</column>
+	<column>credentials_non_expired</column>
+	<column>enabled</column>
+	<column>password</column>
+	<column>username</column>
+	<row>
+		<value description="id">admin</value>
+		<value description="account_non_expired">1</value>
+		<value description="account_non_locked">1</value>
+		<value description="credentials_non_expired">1</value>
+		<value description="enabled">1</value>
+		<value description="password">admin</value>
+		<value description="username">admin</value>
+	</row>
+</table>
+<table name="mt_user_role">
+	<column>user_id</column>
+	<column>role_id</column>
+	<row>
+		<value description="user_id">admin</value>
+		<value description="role_id">1</value>
+	</row>
+	<row>
+		<value description="user_id">admin</value>
+		<value description="role_id">2</value>
+	</row>
+</table>
+<table name="ct_category_group">
+	<column>id</column>
+	<column>name</column>
+	<column>description</column>
+	<row>
+		<value description="id">C00</value>
+		<value description="name">Language</value>
+		<null />
+	</row>
+	<row>
+		<value description="id">C10</value>
+		<value description="name">Technique</value>
+		<null />
+	</row>
+	<row>
+		<value description="id">C20</value>
+		<value description="name">Medical</value>
+		<null />
+	</row>
+</table>
+<table name="ct_category">
+	<column>id</column>
+	<column>group_id</column>
+	<column>name</column>
+	<column>description</column>
+	<column>sort_seq</column>
+	<column>enabled</column>
+	<row>
+		<value description="id">C01</value>
+		<value description="group_id">C00</value>
+		<value description="name">Korean</value>
+		<null />
+		<value description="sort_seq">1</value>
+		<value description="enabled">1</value>
+	</row>
+	<row>
+		<value description="id">C02</value>
+		<value description="group_id">C00</value>
+		<value description="name">English</value>
+		<null />
+		<value description="sort_seq">2</value>
+		<value description="enabled">1</value>
+	</row>
+	<row>
+		<value description="id">C03</value>
+		<value description="group_id">C00</value>
+		<value description="name">Japanese</value>
+		<null />
+		<value description="sort_seq">3</value>
+		<value description="enabled">1</value>
+	</row>
+	<row>
+		<value description="id">C04</value>
+		<value description="group_id">C00</value>
+		<value description="name">Spanish</value>
+		<null />
+		<value description="sort_seq">4</value>
+		<value description="enabled">1</value>
+	</row>
+	<row>
+		<value description="id">C05</value>
+		<value description="group_id">C00</value>
+		<value description="name">Chineese</value>
+		<null />
+		<value description="sort_seq">5</value>
+		<value description="enabled">1</value>
+	</row>
+	<row>
+		<value description="id">C11</value>
+		<value description="group_id">C10</value>
+		<value description="name">Computer</value>
+		<null />
+		<value description="sort_seq">1</value>
+		<value description="enabled">1</value>
+	</row>
+	<row>
+		<value description="id">C12</value>
+		<value description="group_id">C10</value>
+		<value description="name">Mathematician</value>
+		<null />
+		<value description="sort_seq">2</value>
+		<value description="enabled">1</value>
+	</row>
+	<row>
+		<value description="id">C13</value>
+		<value description="group_id">C10</value>
+		<value description="name">Designer</value>
+		<null />
+		<value description="sort_seq">3</value>
+		<value description="enabled">1</value>
+	</row>
+	<row>
+		<value description="id">C21</value>
+		<value description="group_id">C20</value>
+		<value description="name">Doctor</value>
+		<null />
+		<value description="sort_seq">1</value>
+		<value description="enabled">1</value>
+	</row>
+	<row>
+		<value description="id">C22</value>
+		<value description="group_id">C20</value>
+		<value description="name">Nurse</value>
+		<null />
+		<value description="sort_seq">2</value>
+		<value description="enabled">1</value>
+	</row>
+</table>
+</dataset>

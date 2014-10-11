@@ -1,0 +1,792 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dataset>
+<table name="mt_role">
+	<column>id</column>
+	<column>authority</column>
+	<row>
+		<value description="id">1</value>
+		<value description="authority">ROLE_ADMIN</value>
+	</row>
+	<row>
+		<value description="id">2</value>
+		<value description="authority">ROLE_USER</value>
+	</row>
+	<row>
+		<value description="id">3</value>
+		<value description="authority">ROLE_TEST</value>
+	</row>
+</table>
+<table name="mt_user">
+	<column>id</column>
+	<column>account_non_expired</column>
+	<column>account_non_locked</column>
+	<column>credentials_non_expired</column>
+	<column>enabled</column>
+	<column>password</column>
+	<column>username</column>
+	<row>
+		<value description="id">admin</value>
+		<value description="account_non_expired">1</value>
+		<value description="account_non_locked">1</value>
+		<value description="credentials_non_expired">1</value>
+		<value description="enabled">1</value>
+		<value description="password">admin</value>
+		<value description="username">admin</value>
+	</row>
+	<row>
+		<value description="id">user01</value>
+		<value description="account_non_expired">1</value>
+		<value description="account_non_locked">1</value>
+		<value description="credentials_non_expired">1</value>
+		<value description="enabled">1</value>
+		<value description="password">user01</value>
+		<value description="username">user01</value>
+	</row>
+	<row>
+		<value description="id">user02</value>
+		<value description="account_non_expired">1</value>
+		<value description="account_non_locked">1</value>
+		<value description="credentials_non_expired">1</value>
+		<value description="enabled">1</value>
+		<value description="password">user02</value>
+		<value description="username">user02</value>
+	</row>
+	<row>
+		<value description="id">user03</value>
+		<value description="account_non_expired">1</value>
+		<value description="account_non_locked">1</value>
+		<value description="credentials_non_expired">1</value>
+		<value description="enabled">1</value>
+		<value description="password">user03</value>
+		<value description="username">user03</value>
+	</row>
+	<row>
+		<value description="id">user04</value>
+		<value description="account_non_expired">1</value>
+		<value description="account_non_locked">1</value>
+		<value description="credentials_non_expired">1</value>
+		<value description="enabled">1</value>
+		<value description="password">user04</value>
+		<value description="username">user04</value>
+	</row>
+	<row>
+		<value description="id">user05</value>
+		<value description="account_non_expired">1</value>
+		<value description="account_non_locked">1</value>
+		<value description="credentials_non_expired">1</value>
+		<value description="enabled">1</value>
+		<value description="password">user05</value>
+		<value description="username">user05</value>
+	</row>
+	<row>
+		<value description="id">user06</value>
+		<value description="account_non_expired">1</value>
+		<value description="account_non_locked">1</value>
+		<value description="credentials_non_expired">1</value>
+		<value description="enabled">1</value>
+		<value description="password">user06</value>
+		<value description="username">user06</value>
+	</row>
+	<row>
+		<value description="id">user07</value>
+		<value description="account_non_expired">1</value>
+		<value description="account_non_locked">1</value>
+		<value description="credentials_non_expired">1</value>
+		<value description="enabled">1</value>
+		<value description="password">user07</value>
+		<value description="username">user07</value>
+	</row>
+	<row>
+		<value description="id">user08</value>
+		<value description="account_non_expired">1</value>
+		<value description="account_non_locked">1</value>
+		<value description="credentials_non_expired">1</value>
+		<value description="enabled">1</value>
+		<value description="password">user08</value>
+		<value description="username">user08</value>
+	</row>
+	<row>
+		<value description="id">user09</value>
+		<value description="account_non_expired">1</value>
+		<value description="account_non_locked">1</value>
+		<value description="credentials_non_expired">1</value>
+		<value description="enabled">1</value>
+		<value description="password">user09</value>
+		<value description="username">user09</value>
+	</row>
+</table>
+<table name="mt_user_role">
+	<column>user_id</column>
+	<column>role_id</column>
+	<row>
+		<value description="user_id">admin</value>
+		<value description="role_id">1</value>
+	</row>
+	<row>
+		<value description="user_id">admin</value>
+		<value description="role_id">2</value>
+	</row>
+</table>
+<table name="ct_category_group">
+	<column>id</column>
+	<column>name</column>
+	<column>description</column>
+	<row>
+		<value description="id">C00</value>
+		<value description="name">Language</value>
+		<null />
+	</row>
+	<row>
+		<value description="id">C10</value>
+		<value description="name">Technique</value>
+		<null />
+	</row>
+	<row>
+		<value description="id">C20</value>
+		<value description="name">Medical</value>
+		<null />
+	</row>
+</table>
+<table name="ct_category">
+	<column>id</column>
+	<column>group_id</column>
+	<column>name</column>
+	<column>description</column>
+	<column>sort_seq</column>
+	<column>enabled</column>
+	<row>
+		<value description="id">C01</value>
+		<value description="group_id">C00</value>
+		<value description="name">Korean</value>
+		<null />
+		<value description="sort_seq">1</value>
+		<value description="enabled">1</value>
+	</row>
+	<row>
+		<value description="id">C02</value>
+		<value description="group_id">C00</value>
+		<value description="name">English</value>
+		<null />
+		<value description="sort_seq">2</value>
+		<value description="enabled">1</value>
+	</row>
+	<row>
+		<value description="id">C03</value>
+		<value description="group_id">C00</value>
+		<value description="name">Japanese</value>
+		<null />
+		<value description="sort_seq">3</value>
+		<value description="enabled">1</value>
+	</row>
+	<row>
+		<value description="id">C04</value>
+		<value description="group_id">C00</value>
+		<value description="name">Spanish</value>
+		<null />
+		<value description="sort_seq">4</value>
+		<value description="enabled">1</value>
+	</row>
+	<row>
+		<value description="id">C05</value>
+		<value description="group_id">C00</value>
+		<value description="name">Chineese</value>
+		<null />
+		<value description="sort_seq">5</value>
+		<value description="enabled">1</value>
+	</row>
+	<row>
+		<value description="id">C11</value>
+		<value description="group_id">C10</value>
+		<value description="name">Computer</value>
+		<null />
+		<value description="sort_seq">1</value>
+		<value description="enabled">1</value>
+	</row>
+	<row>
+		<value description="id">C12</value>
+		<value description="group_id">C10</value>
+		<value description="name">Mathematician</value>
+		<null />
+		<value description="sort_seq">2</value>
+		<value description="enabled">1</value>
+	</row>
+	<row>
+		<value description="id">C13</value>
+		<value description="group_id">C10</value>
+		<value description="name">Designer</value>
+		<null />
+		<value description="sort_seq">3</value>
+		<value description="enabled">1</value>
+	</row>
+	<row>
+		<value description="id">C21</value>
+		<value description="group_id">C20</value>
+		<value description="name">Doctor</value>
+		<null />
+		<value description="sort_seq">1</value>
+		<value description="enabled">1</value>
+	</row>
+	<row>
+		<value description="id">C22</value>
+		<value description="group_id">C20</value>
+		<value description="name">Nurse</value>
+		<null />
+		<value description="sort_seq">2</value>
+		<value description="enabled">1</value>
+	</row>
+</table>
+<table name="ht_help_log">
+	<column>id</column>
+	<column>request</column>
+	<column>response</column>
+	<column>category</column>
+	<column>like_count</column>
+	<column>updated_dt</column>
+	<row>
+		<value description="id">help01</value>
+		<value description="request">request01</value>
+		<value description="response">response01</value>
+		<value description="category">category01</value>
+		<value description="like_count">1</value>
+		<value description="updated_dt">${project.build_date}</value>
+	</row>
+	<row>
+		<value description="id">help02</value>
+		<value description="request">request02</value>
+		<value description="response">response02</value>
+		<value description="category">category02</value>
+		<value description="like_count">2</value>
+		<value description="updated_dt">${project.build_date}</value>
+	</row>
+	<row>
+		<value description="id">help03</value>
+		<value description="request">request03</value>
+		<value description="response">response03</value>
+		<value description="category">category03</value>
+		<value description="like_count">3</value>
+		<value description="updated_dt">${project.build_date}</value>
+	</row>
+	<row>
+		<value description="id">help04</value>
+		<value description="request">request04</value>
+		<value description="response">response04</value>
+		<value description="category">category04</value>
+		<value description="like_count">4</value>
+		<value description="updated_dt">${project.build_date}</value>
+	</row>
+	<row>
+		<value description="id">help05</value>
+		<value description="request">request05</value>
+		<value description="response">response05</value>
+		<value description="category">category05</value>
+		<value description="like_count">5</value>
+		<value description="updated_dt">${project.build_date}</value>
+	</row>
+	<row>
+		<value description="id">help06</value>
+		<value description="request">request06</value>
+		<value description="response">response06</value>
+		<value description="category">category06</value>
+		<value description="like_count">6</value>
+		<value description="updated_dt">${project.build_date}</value>
+	</row>
+	<row>
+		<value description="id">help07</value>
+		<value description="request">request07</value>
+		<value description="response">response07</value>
+		<value description="category">category07</value>
+		<value description="like_count">7</value>
+		<value description="updated_dt">${project.build_date}</value>
+	</row>
+	<row>
+		<value description="id">help08</value>
+		<value description="request">request08</value>
+		<value description="response">response08</value>
+		<value description="category">category08</value>
+		<value description="like_count">8</value>
+		<value description="updated_dt">${project.build_date}</value>
+	</row>
+	<row>
+		<value description="id">help09</value>
+		<value description="request">request09</value>
+		<value description="response">response09</value>
+		<value description="category">category09</value>
+		<value description="like_count">9</value>
+		<value description="updated_dt">${project.build_date}</value>
+	</row>
+	<row>
+		<value description="id">help10</value>
+		<value description="request">request10</value>
+		<value description="response">response10</value>
+		<value description="category">category10</value>
+		<value description="like_count">10</value>
+		<value description="updated_dt">${project.build_date}</value>
+	</row>
+	<row>
+		<value description="id">help11</value>
+		<value description="request">request11</value>
+		<value description="response">response11</value>
+		<value description="category">category11</value>
+		<value description="like_count">11</value>
+		<value description="updated_dt">${project.build_date}</value>
+	</row>
+	<row>
+		<value description="id">help12</value>
+		<value description="request">request12</value>
+		<value description="response">response12</value>
+		<value description="category">category12</value>
+		<value description="like_count">12</value>
+		<value description="updated_dt">${project.build_date}</value>
+	</row>
+	<row>
+		<value description="id">help13</value>
+		<value description="request">request13</value>
+		<value description="response">response13</value>
+		<value description="category">category13</value>
+		<value description="like_count">13</value>
+		<value description="updated_dt">${project.build_date}</value>
+	</row>
+	<row>
+		<value description="id">help14</value>
+		<value description="request">request14</value>
+		<value description="response">response14</value>
+		<value description="category">category14</value>
+		<value description="like_count">14</value>
+		<value description="updated_dt">${project.build_date}</value>
+	</row>
+	<row>
+		<value description="id">help15</value>
+		<value description="request">request15</value>
+		<value description="response">response15</value>
+		<value description="category">category15</value>
+		<value description="like_count">15</value>
+		<value description="updated_dt">${project.build_date}</value>
+	</row>
+	<row>
+		<value description="id">help16</value>
+		<value description="request">request16</value>
+		<value description="response">response16</value>
+		<value description="category">category16</value>
+		<value description="like_count">16</value>
+		<value description="updated_dt">${project.build_date}</value>
+	</row>
+	<row>
+		<value description="id">help17</value>
+		<value description="request">request17</value>
+		<value description="response">response17</value>
+		<value description="category">category17</value>
+		<value description="like_count">17</value>
+		<value description="updated_dt">${project.build_date}</value>
+	</row>
+	<row>
+		<value description="id">help18</value>
+		<value description="request">request18</value>
+		<value description="response">response18</value>
+		<value description="category">category18</value>
+		<value description="like_count">18</value>
+		<value description="updated_dt">${project.build_date}</value>
+	</row>
+	<row>
+		<value description="id">help19</value>
+		<value description="request">request19</value>
+		<value description="response">response19</value>
+		<value description="category">category19</value>
+		<value description="like_count">19</value>
+		<value description="updated_dt">${project.build_date}</value>
+	</row>
+	<row>
+		<value description="id">help20</value>
+		<value description="request">request20</value>
+		<value description="response">response20</value>
+		<value description="category">category20</value>
+		<value description="like_count">20</value>
+		<value description="updated_dt">${project.build_date}</value>
+	</row>
+	<row>
+		<value description="id">help21</value>
+		<value description="request">request21</value>
+		<value description="response">response21</value>
+		<value description="category">category21</value>
+		<value description="like_count">21</value>
+		<value description="updated_dt">${project.build_date}</value>
+	</row>
+	<row>
+		<value description="id">help22</value>
+		<value description="request">request22</value>
+		<value description="response">response22</value>
+		<value description="category">category22</value>
+		<value description="like_count">22</value>
+		<value description="updated_dt">${project.build_date}</value>
+	</row>
+	<row>
+		<value description="id">help23</value>
+		<value description="request">request23</value>
+		<value description="response">response23</value>
+		<value description="category">category23</value>
+		<value description="like_count">23</value>
+		<value description="updated_dt">${project.build_date}</value>
+	</row>
+	<row>
+		<value description="id">help24</value>
+		<value description="request">request24</value>
+		<value description="response">response24</value>
+		<value description="category">category24</value>
+		<value description="like_count">24</value>
+		<value description="updated_dt">${project.build_date}</value>
+	</row>
+	<row>
+		<value description="id">help25</value>
+		<value description="request">request25</value>
+		<value description="response">response25</value>
+		<value description="category">category25</value>
+		<value description="like_count">25</value>
+		<value description="updated_dt">${project.build_date}</value>
+	</row>
+	<row>
+		<value description="id">help26</value>
+		<value description="request">request26</value>
+		<value description="response">response26</value>
+		<value description="category">category26</value>
+		<value description="like_count">26</value>
+		<value description="updated_dt">${project.build_date}</value>
+	</row>
+	<row>
+		<value description="id">help27</value>
+		<value description="request">request27</value>
+		<value description="response">response27</value>
+		<value description="category">category27</value>
+		<value description="like_count">27</value>
+		<value description="updated_dt">${project.build_date}</value>
+	</row>
+	<row>
+		<value description="id">help28</value>
+		<value description="request">request28</value>
+		<value description="response">response28</value>
+		<value description="category">category28</value>
+		<value description="like_count">28</value>
+		<value description="updated_dt">${project.build_date}</value>
+	</row>
+	<row>
+		<value description="id">help29</value>
+		<value description="request">request29</value>
+		<value description="response">response29</value>
+		<value description="category">category29</value>
+		<value description="like_count">29</value>
+		<value description="updated_dt">${project.build_date}</value>
+	</row>
+	<row>
+		<value description="id">help30</value>
+		<value description="request">request30</value>
+		<value description="response">response30</value>
+		<value description="category">category30</value>
+		<value description="like_count">30</value>
+		<value description="updated_dt">${project.build_date}</value>
+	</row>
+	<row>
+		<value description="id">help31</value>
+		<value description="request">request31</value>
+		<value description="response">response31</value>
+		<value description="category">category31</value>
+		<value description="like_count">31</value>
+		<value description="updated_dt">${project.build_date}</value>
+	</row>
+	<row>
+		<value description="id">help32</value>
+		<value description="request">request32</value>
+		<value description="response">response32</value>
+		<value description="category">category32</value>
+		<value description="like_count">32</value>
+		<value description="updated_dt">${project.build_date}</value>
+	</row>
+	<row>
+		<value description="id">help33</value>
+		<value description="request">request33</value>
+		<value description="response">response33</value>
+		<value description="category">category33</value>
+		<value description="like_count">33</value>
+		<value description="updated_dt">${project.build_date}</value>
+	</row>
+	<row>
+		<value description="id">help34</value>
+		<value description="request">request34</value>
+		<value description="response">response34</value>
+		<value description="category">category34</value>
+		<value description="like_count">34</value>
+		<value description="updated_dt">${project.build_date}</value>
+	</row>
+	<row>
+		<value description="id">help35</value>
+		<value description="request">request35</value>
+		<value description="response">response35</value>
+		<value description="category">category35</value>
+		<value description="like_count">35</value>
+		<value description="updated_dt">${project.build_date}</value>
+	</row>
+	<row>
+		<value description="id">help36</value>
+		<value description="request">request36</value>
+		<value description="response">response36</value>
+		<value description="category">category36</value>
+		<value description="like_count">36</value>
+		<value description="updated_dt">${project.build_date}</value>
+	</row>
+	<row>
+		<value description="id">help37</value>
+		<value description="request">request37</value>
+		<value description="response">response37</value>
+		<value description="category">category37</value>
+		<value description="like_count">37</value>
+		<value description="updated_dt">${project.build_date}</value>
+	</row>
+	<row>
+		<value description="id">help38</value>
+		<value description="request">request38</value>
+		<value description="response">response38</value>
+		<value description="category">category38</value>
+		<value description="like_count">38</value>
+		<value description="updated_dt">${project.build_date}</value>
+	</row>
+	<row>
+		<value description="id">help39</value>
+		<value description="request">request39</value>
+		<value description="response">response39</value>
+		<value description="category">category39</value>
+		<value description="like_count">39</value>
+		<value description="updated_dt">${project.build_date}</value>
+	</row>
+	<row>
+		<value description="id">help40</value>
+		<value description="request">request40</value>
+		<value description="response">response40</value>
+		<value description="category">category40</value>
+		<value description="like_count">40</value>
+		<value description="updated_dt">${project.build_date}</value>
+	</row>
+	<row>
+		<value description="id">help41</value>
+		<value description="request">request41</value>
+		<value description="response">response41</value>
+		<value description="category">category41</value>
+		<value description="like_count">41</value>
+		<value description="updated_dt">${project.build_date}</value>
+	</row>
+	<row>
+		<value description="id">help42</value>
+		<value description="request">request42</value>
+		<value description="response">response42</value>
+		<value description="category">category42</value>
+		<value description="like_count">42</value>
+		<value description="updated_dt">${project.build_date}</value>
+	</row>
+	<row>
+		<value description="id">help43</value>
+		<value description="request">request43</value>
+		<value description="response">response43</value>
+		<value description="category">category43</value>
+		<value description="like_count">43</value>
+		<value description="updated_dt">${project.build_date}</value>
+	</row>
+	<row>
+		<value description="id">help44</value>
+		<value description="request">request44</value>
+		<value description="response">response44</value>
+		<value description="category">category44</value>
+		<value description="like_count">44</value>
+		<value description="updated_dt">${project.build_date}</value>
+	</row>
+	<row>
+		<value description="id">help45</value>
+		<value description="request">request45</value>
+		<value description="response">response45</value>
+		<value description="category">category45</value>
+		<value description="like_count">45</value>
+		<value description="updated_dt">${project.build_date}</value>
+	</row>
+</table>
+<table name="ht_client">
+	<column>id</column>
+	<column>latitude</column>
+	<column>longitude</column>
+	<column>cos_latitude</column>
+	<column>sin_latitude</column>
+	<column>status</column>
+	<row>
+		<value description="id">user01</value>
+		<value description="latitude">0.6531065868727</value>
+		<value description="longitude">2.21237387949416</value>
+		<value description="cos_latitude">0.794199895977193</value>
+		<value description="sin_latitude">0.607656584947299</value>
+		<value description="status">1</value>
+	</row>
+	<row>
+		<value description="id">user02</value>
+		<value description="latitude">0.6531065868727</value>
+		<value description="longitude">2.21237387949416</value>
+		<value description="cos_latitude">0.794199895977193</value>
+		<value description="sin_latitude">0.607656584947299</value>
+		<value description="status">1</value>
+	</row>
+	<row>
+		<value description="id">user03</value>
+		<value description="latitude">0.6531065868727</value>
+		<value description="longitude">2.21237387949416</value>
+		<value description="cos_latitude">0.794199895977193</value>
+		<value description="sin_latitude">0.607656584947299</value>
+		<value description="status">1</value>
+	</row>
+	<row>
+		<value description="id">user04</value>
+		<value description="latitude">0.6531065868727</value>
+		<value description="longitude">2.21237387949416</value>
+		<value description="cos_latitude">0.794199895977193</value>
+		<value description="sin_latitude">0.607656584947299</value>
+		<value description="status">1</value>
+	</row>
+	<row>
+		<value description="id">user05</value>
+		<value description="latitude">0.6531065868727</value>
+		<value description="longitude">2.21237387949416</value>
+		<value description="cos_latitude">0.794199895977193</value>
+		<value description="sin_latitude">0.607656584947299</value>
+		<value description="status">1</value>
+	</row>
+	<row>
+		<value description="id">user06</value>
+		<value description="latitude">0.6531065868727</value>
+		<value description="longitude">2.21237387949416</value>
+		<value description="cos_latitude">0.794199895977193</value>
+		<value description="sin_latitude">0.607656584947299</value>
+		<value description="status">1</value>
+	</row>
+	<row>
+		<value description="id">user07</value>
+		<value description="latitude">0.6531065868727</value>
+		<value description="longitude">2.21237387949416</value>
+		<value description="cos_latitude">0.794199895977193</value>
+		<value description="sin_latitude">0.607656584947299</value>
+		<value description="status">1</value>
+	</row>
+	<row>
+		<value description="id">user08</value>
+		<value description="latitude">0.6531065868727</value>
+		<value description="longitude">2.21237387949416</value>
+		<value description="cos_latitude">0.794199895977193</value>
+		<value description="sin_latitude">0.607656584947299</value>
+		<value description="status">1</value>
+	</row>
+	<row>
+		<value description="id">user09</value>
+		<value description="latitude">0.6531065868727</value>
+		<value description="longitude">2.21237387949416</value>
+		<value description="cos_latitude">0.794199895977193</value>
+		<value description="sin_latitude">0.607656584947299</value>
+		<value description="status">1</value>
+	</row>
+</table>
+<table name="mt_user_category">
+	<column>category</column>
+	<column>user_id</column>
+	<row>
+		<value description="category">Korean</value>
+		<value description="user_id">user01</value>
+	</row>
+	<row>
+		<value description="category">Japanese</value>
+		<value description="user_id">user01</value>
+	</row>
+	<row>
+		<value description="category">Chineese</value>
+		<value description="user_id">user01</value>
+	</row>
+	<row>
+		<value description="category">Mathematician</value>
+		<value description="user_id">user01</value>
+	</row>
+	<row>
+		<value description="category">Doctor</value>
+		<value description="user_id">user01</value>
+	</row>
+	<row>
+		<value description="category">English</value>
+		<value description="user_id">user02</value>
+	</row>
+	<row>
+		<value description="category">Spanish</value>
+		<value description="user_id">user02</value>
+	</row>
+	<row>
+		<value description="category">Computer</value>
+		<value description="user_id">user02</value>
+	</row>
+	<row>
+		<value description="category">Designer</value>
+		<value description="user_id">user02</value>
+	</row>
+	<row>
+		<value description="category">Nurse</value>
+		<value description="user_id">user02</value>
+	</row>
+</table>
+<table name="ht_help">
+	<column>id</column>
+	<column>request</column>
+	<column>updated_dt</column>
+	<column>content</column>
+	<row>
+		<value description="id">help01</value>
+		<value description="request">user01</value>
+		<value description="updated_dt">${build.timestamp}</value>
+		<value description="content">help me</value>
+	</row>
+	<row>
+		<value description="id">help02</value>
+		<value description="request">user02</value>
+		<value description="updated_dt">${build.timestamp}</value>
+		<value description="content">help me</value>
+	</row>
+</table>
+<table name="ht_help_category">
+	<column>category</column>
+	<column>help_id</column>
+	<row>
+		<value description="category">Korean</value>
+		<value description="help_id">help02</value>
+	</row>
+	<row>
+		<value description="category">Japanese</value>
+		<value description="help_id">help02</value>
+	</row>
+	<row>
+		<value description="category">Chineese</value>
+		<value description="help_id">help02</value>
+	</row>
+	<row>
+		<value description="category">Mathematician</value>
+		<value description="help_id">help02</value>
+	</row>
+	<row>
+		<value description="category">Doctor</value>
+		<value description="help_id">help02</value>
+	</row>
+	<row>
+		<value description="category">English</value>
+		<value description="help_id">help01</value>
+	</row>
+	<row>
+		<value description="category">Spanish</value>
+		<value description="help_id">help01</value>
+	</row>
+	<row>
+		<value description="category">Computer</value>
+		<value description="help_id">help01</value>
+	</row>
+	<row>
+		<value description="category">Designer</value>
+		<value description="help_id">help01</value>
+	</row>
+	<row>
+		<value description="category">Nurse</value>
+		<value description="help_id">help01</value>
+	</row>
+</table>
+</dataset>

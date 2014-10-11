@@ -1,5 +1,6 @@
 package com.applechip.core.util;
 
+import java.io.Closeable;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -15,6 +16,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.FileUtils;
+import org.springframework.core.env.StandardEnvironment;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.applechip.core.constant.SystemConstant;
@@ -79,11 +81,12 @@ public class FileUtil extends FileUtils {
     } catch (IOException e) {
       throw new RuntimeException(String.format("file(%s) download error.., message:%s", file.getAbsolutePath(), e.getMessage()), e);
     } finally {
-      IOUtil.closeQuietly(fileInputStream, outputStream);
+      IOUtil.closeQuietly(new Closeable[] {fileInputStream, outputStream});
     }
   }
 
   public void test(HttpServletResponse response, ServletContext servletContext) {
+    // String ss = StandardEnvironment.SYSTEM_PROPERTIES_PROPERTY_SOURCE_NAME;
     FileChannel fileChannel = null;
     WritableByteChannel writableByteChannel = null;
     String fileName = "영상1";
@@ -106,7 +109,7 @@ public class FileUtil extends FileUtils {
     } catch (Exception e) {
       e.printStackTrace();
     } finally {
-      IOUtil.closeQuietly(writableByteChannel, fileChannel);
+      IOUtil.closeQuietly(new Closeable[] {writableByteChannel, fileChannel});
     }
   }
 }

@@ -7,6 +7,7 @@ import java.net.InetAddress;
 import javax.annotation.PostConstruct;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
@@ -39,55 +40,47 @@ public class GeoipUtil {
     }
   }
 
-  public GeoipLocation getGeoipLocation(String ipAddress) {
-    CityResponse cityResponse = getCityResponse(ipAddress);
-    GeoipLocation geoipLocation = GeoipLocation.newInstance(cityResponse);
-    return geoipLocation;
-  }
-
-  public String getCountryCode(String ipAddress) {
-    return getGeoipLocation(ipAddress).getCountryCode();
-  }
-
-  public String getTimezone(String ipAddress) {
-    return getGeoipLocation(ipAddress).getTimezone();
-  }
-
-  private CityResponse getCityResponse(String ipAddress) {
+  public GeoipLocation getGeoipLocation(String host) {
     CityResponse cityResponse = null;
     try {
-      cityResponse = databaseReader.city(InetAddress.getByName(ipAddress));
+      cityResponse = databaseReader.city(InetAddress.getByName(host));
       databaseReader.close();
     } catch (Exception e) {
-      log.debug(String.format("error. ipAddress:%s, errorMessage:%s", ipAddress, e.toString()));
+      log.debug("error. host: {}, errorMessage: {}", host, e.toString());
+      return new GeoipLocation();
     }
-    return cityResponse;
+    return new GeoipLocation(cityResponse.getCountry().getIsoCode(), cityResponse.getMostSpecificSubdivision().getIsoCode(), cityResponse.getCity().getName(), cityResponse.getLocation().getTimeZone());
+  }
+
+  public String getCountryCode(String host) {
+    return getGeoipLocation(host).getCountryCode();
+  }
+
+  public String getLocationTimezone(String host) {
+    return getGeoipLocation(host).getLocationTimezone();
   }
 
   @Getter
   @Setter
+  @NoArgsConstructor
   public final static class GeoipLocation extends AbstractObject {
 
     private static final long serialVersionUID = 9025882291800096156L;
 
     private String countryCode;
 
-    private String region;
+    private String subdivisionCode;
 
     private String cityName;
 
-    private String timezone;
+    private String locationTimezone;
 
-    public static GeoipLocation newInstance(CityResponse cityResponse) {
-      GeoipLocation geoipLocation = new GeoipLocation();
-      if (cityResponse == null)
-        return geoipLocation;
-
-      geoipLocation.setCountryCode(cityResponse.getCountry().getIsoCode());
-      geoipLocation.setRegion(cityResponse.getMostSpecificSubdivision().getIsoCode());
-      geoipLocation.setTimezone(cityResponse.getLocation().getTimeZone());
-      geoipLocation.setCityName(cityResponse.getCity().getName());
-      return geoipLocation;
+    public GeoipLocation(String countryCode, String subdivisionCode, String cityName, String locationTimezone) {
+      super();
+      this.countryCode = countryCode;
+      this.subdivisionCode = subdivisionCode;
+      this.cityName = cityName;
+      this.locationTimezone = locationTimezone;
     }
   }
 }
