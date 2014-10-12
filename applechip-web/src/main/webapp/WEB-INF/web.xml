@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<web-app xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
+<web-app xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee
+  http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
 	version="3.0">
 	<!-- http://lng1982.tistory.com/m/post/204 -->
 	<!-- 정리하면 web.xml에 404 에러 코드를 선언하게 될 경우 웹 ROOT에 존재하는 index.jsp를 호출하게 되고, 만약 해당 디렉토리에 index.jsp 파일이 없다면 web.xml에 정의되어 있는 404로 요청이 forward된다. -->
