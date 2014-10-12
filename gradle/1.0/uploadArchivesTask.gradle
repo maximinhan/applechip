@@ -1,5 +1,5 @@
 apply plugin: 'maven'
-task uploadSnapshots(type: Upload, dependsOn: build)  { 
+task uploadSnapshots(type: Upload, dependsOn: install)  { 
 	configuration = configurations.archives
 	uploadArchives {
 		repositories {

@@ -4,7 +4,7 @@ buildscript {
 		mavenCentral()
 	}
 	dependencies {
-		classpath "org.hibernate:hibernate-core:$hibernateVersion"
+		classpath "org.hibernate:hibernate-core:${versions.hibernate}"
 	}
 }
 dependencies {

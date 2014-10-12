@@ -2,16 +2,16 @@ dependencies {
 	provided gradleApi()
 }
 task generateQueryDSL(type: JavaCompile, group: 'build', description: 'Generates the QueryDSL query types') {
-	source = mainSrcDir
+	source = javaMainDir
 	classpath = configurations.compile + configurations.provided
 	options.compilerArgs = [
 		"-proc:only",
 		"-processor",
 		"com.mysema.query.apt.jpa.JPAAnnotationProcessor",
 		"-s",
-		generatedSrcDir
+		generatedSrcJavaDir
 	]
 	options.warnings = false
-	destinationDir = generatedSrcDir
+	destinationDir = generatedSrcJavaDir
 	dependencyCacheDir = compileJava.dependencyCacheDir
 }

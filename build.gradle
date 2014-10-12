@@ -1,31 +1,26 @@
-final String DEFAULT_PROFILE = 'development'
 buildscript {
-    repositories {
-        maven { url "http://nexus.bywook.com/content/groups/public" }
-        mavenCentral()
-        jcenter()
-        maven { url "http://download.java.net/maven/2" }
-        maven { url "http://repo.springsource.org/plugins-release" }
+	repositories {
+		maven { url "http://nexus.bywook.com/content/groups/public" }
+		mavenCentral()
+		jcenter()
+		maven { url "http://download.java.net/maven/2" }
+		maven { url "http://repo.springsource.org/plugins-release" }
 	}
 	dependencies {
-		//classpath("org.gradle.api.plugins:gradle-tomcat-plugin:0.9.8")
 		classpath("org.springframework.build.gradle:propdeps-plugin:0.0.7")
-		classpath("com.sahlbach.gradle:gradle-jetty-eclipse-plugin:1.9.+")
-		//classpath("net.sf.proguard:proguard-gradle:4.10")
-		//classpath("io.github.divinespear:jpa-schema-gradle-plugin:0.1.10")
+		classpath("com.sahlbach.gradle:gradle-jetty-eclipse-plugin:1.9.2")
+		classpath("com.android.tools.build:gradle:0.13.3")
 	}
 }
-
 ext {
 	linkHomepage = 'http://applechip.bywook.com'
-	linkCi = 'https://jenkins.bywook.com'
-	linkIssue = 'https://redmine.bywook.com'
-	linkScmUrl = 'https://github.com/maximinhan/applechip'
+	linkCi = 'http://jenkins.bywook.com'
+	linkIssue = 'http://redmine.bywook.com'
+	linkScmUrl = 'http://github.com/maximinhan/applechip'
 	linkScmConnection = 'scm:git:git://github.com/maximinhan/applechip.git'
 	linkScmDevConnection = 'scm:git:ssh://git@github.com:maximinhan/applechip.git'
-
-	moduleProjects  = subprojects.findAll {
-		it.name.equals('applechip-core')
+	javaProjects  = subprojects.findAll {
+		it.name.equals('applechip-core') || it.name.equals('applechip-api') || it.name.equals('applechip-web')
 	}
 	webProjects  = subprojects.findAll {
 		it.name.equals('applechip-api') || it.name.equals('applechip-web')
@@ -33,6 +28,13 @@ ext {
 	appProjects  = subprojects.findAll {
 		it.name.equals('applechip-android')
 	}
+	jdbcDrivers = [ "mysql:mysql-connector-java:5.1.31", "com.microsoft.sqlserver:sqljdbc4:4.0", "com.oracle:ojdbc7:12.1.0.2", "org.hsqldb:hsqldb:2.3.2", "com.h2database:h2:1.4.181" ]
+	versions = [
+		commonsConfiguration: '1.10', commonsLang: '2.6', commonsIo: '2.4', commonsCollections: '3.2.1', commonsDbcp: '1.4', commonsCodec: '1.9', commonsDbcp: '1.4', commonsNet: '3.3', commonsHttp: '4.3.5',
+		lombok: '1.14.4', logback: '1.1.2', javaxServletApi: '3.1.0', javaxServletJstl: '1.2', javaxWs: '1.1.1', javaxWebsocket: '1.0', simple: '2.6.9', jackson:'2.1.2', gson: '2.2.2',
+		springAndroidRest: '1.0.1.RELEASE', springBootStarter: '1.1.8.RELEASE', hibernate: '4.3.6.Final', ehcache: '2.4.3', queryDsl: '3.4.3',
+		geoIp: '0.9.0', crawler: '3.5', zip: '1.3.2', rome: '1.5.0'
+	]
 }
 
 gradle.taskGraph.afterTask {Task task, TaskState state -> if (state.failure) { println "excuting $task Failure" } else { println "excuting $task Done" }}
@@ -40,190 +42,156 @@ gradle.taskGraph.afterTask {Task task, TaskState state -> if (state.failure) { p
 configure(rootProject) {
 	task wrapper(type: Wrapper) {
 		description = 'Generates gradlew[.bat] scripts'
-		gradleVersion = "2.0"
+		gradleVersion = "2.1"
 	}
 }
-/*
-ext {
-versions = [
-modelmapper: '0.6.3',
-tomcat: '7.0.50'
-    ]
-    compile 'org.springframework:spring-core:'+ versions.spring_core, 
-		    'org.springframework:spring-context:'+ versions.spring_core,
-*/
 configure(allprojects) { project ->
-	//system
-	ext.gradleScriptDir = "${rootProject.projectDir}/gradle"
+	ext.gradleDir = "${rootProject.projectDir}/gradle"
 	ext.javaVersion = "1.7"
-    ext.javaEncoding = "UTF-8"
-    ext.buildDir = "build"
-    ext.generatedSrcDir = file("${buildDir}/generated-sources/java")
-    ext.mainSrcDir = 'src/main'
-    ext.testSrcDir = 'src/test'
-    
-    //dependencies-common
-    ext.jdbcDrivers = [ "mysql:mysql-connector-java:5.1.31", "com.microsoft.sqlserver:sqljdbc4:4.0", "com.oracle:ojdbc7:12.1.0.2", "org.hsqldb:hsqldb:2.3.2", "com.h2database:h2:1.4.181" ] 
-    ext.lombokVersion = '1.14.4'
-    ext.commonsConfigurationVersion = '1.10'
-    ext.commonsLangVersion = '2.6'
-    ext.commonsIoVersion = '2.4'
-    ext.commonsCollectionsVersion = '3.2.1'
-    ext.commonsDbcpVersion = '1.4'
-    ext.commonsCodecVersion = '1.9'
-    ext.commonsDbcpVersion = '1.4'
-    ext.commonsNetVersion = '3.3'
-    ext.commonsHttpVersion = '4.3.5'
-    ext.slf4jVersion = '1.7.5'
-    ext.logbackVersion = '1.1.2'
-   
-    //java
-    ext.javaxServletApiVersion = '3.1.0'
-    ext.javaxServletJstlVersion = '1.2'
-    ext.javaxWsVersion = '1.1.1'
-    ext.javaxWebsocketVersion = '1.0'
-    
-	//dependencies
-	ext.springBootStarterVersion = '1.1.8.RELEASE'
-    ext.hibernateVersion = '4.3.6.Final'
-    ext.ehcacheVersion = '2.4.3'
-    ext.queryDslVersion = '3.4.3'
-   
-    //util
-    ext.geoIpVersion = '0.9.0'
-    ext.crawlerVersion = '3.5'
-    ext.zipVersion = '1.3.2'
-    ext.romeVersion = '1.5.0'
+	ext.javaEncoding = "UTF-8"
+	ext.srcDir = "src"
+	ext.javaMainDir = "${srcDir}/main"
+	ext.javaTestDir = "${srcDir}/test"
+	ext.appResDir = "res"
+	ext.appAssetsDir = "assets"
+	ext.buildDir = "build"
+	ext.generatedSrcJavaDir = file("${buildDir}/generated-sources/java")
 }
-
 configure(subprojects) { project ->
 	repositories {
 		maven { url "http://nexus.bywook.com/content/groups/public" }
 		mavenCentral()
+		maven { url "http://repo.spring.io/libs-release" }
 	}
+	apply from: "${gradleDir}/gradleScript.gradle"
+}
+configure(javaProjects) { project ->
 	apply plugin: 'propdeps'
 	apply plugin: 'propdeps-eclipse'
 	apply plugin: 'propdeps-maven'
 	apply plugin: 'propdeps-idea'
-    
-    apply from: "${gradleScriptDir}/gradleScript.gradle"
-    apply from: uploadArchivesTask
-    apply from: settingPropertiesTask
-    
+	apply from: settingPropertiesTask
+	apply from: uploadArchivesTask
 	dependencies {
-		provided("commons-configuration:commons-configuration:$commonsConfigurationVersion")
-		provided("commons-lang:commons-lang:$commonsLangVersion")
-		provided("commons-io:commons-io:$commonsIoVersion")
-		provided("commons-collections:commons-collections:$commonsCollectionsVersion")
-		provided("commons-codec:commons-codec:$commonsCodecVersion")
-		provided("commons-net:commons-net:$commonsNetVersion")
-		provided("commons-dbcp:commons-dbcp:$commonsDbcpVersion")
-		provided("net.lingala.zip4j:zip4j:$zipVersion")
-		provided("org.slf4j:jcl-over-slf4j:$slf4jVersion")
-		provided("org.projectlombok:lombok:$lombokVersion")
-		provided("com.rometools:rome-fetcher:$romeVersion")
-		testCompile("org.springframework.boot:spring-boot-starter-test:$springBootStarterVersion")
+		provided("commons-configuration:commons-configuration:${versions.commonsConfiguration}")
+		provided("commons-lang:commons-lang:${versions.commonsLang}")
+		provided("commons-io:commons-io:${versions.commonsIo}")
+		provided("commons-collections:commons-collections:${versions.commonsCollections}")
+		provided("commons-codec:commons-codec:${versions.commonsCodec}")
+		provided("commons-net:commons-net:${versions.commonsNet}")
+		provided("commons-dbcp:commons-dbcp:${versions.commonsDbcp}")
+		provided("org.projectlombok:lombok:${versions.lombok}")
+		testCompile("org.springframework.boot:spring-boot-starter-test:${versions.springBootStarter}")
 	}
-	
 	[compileJava, compileTestJava]*.options*.encoding = "${javaEncoding}"
-	[configurations.runtime, configurations.default]*.exclude(module: 'commons-logging')
-	//[compileJava, compileTestJava]*.options*.debug = true
-	//[compileJava, compileTestJava]*.options*.compilerArgs = ["-g"]
-	
 	tasks.eclipse.dependsOn processResources
 	[processResources, processTestResources]*.dependsOn settingProperties
-	//sourceCompatibility = 1.8
-    //targetCompatibility = 1.8
-    sourceSets {
+	sourceSets {
 		main {
 			output.classesDir = output.resourcesDir = "${buildDir}/classes"
-			java.srcDirs = [ generatedSrcDir, "${mainSrcDir}/java", "${mainSrcDir}/webapp" ]
-			resources.srcDirs = [ "${mainSrcDir}/resources" ]
+			java.srcDirs = [ generatedSrcJavaDir, "${javaMainDir}/java", "${javaMainDir}/webapp" ]
+			resources.srcDirs = [ "${javaMainDir}/resources" ]
 		}
 		test {
 			output.classesDir = output.resourcesDir = "${buildDir}/test-classes"
-			java.srcDirs = [ "${testSrcDir}/java" ]
-			resources.srcDirs = [ "${testSrcDir}/resources" ]
+			java.srcDirs = [ "${javaTestDir}/java" ]
+			resources.srcDirs = [ "${javaTestDir}/resources" ]
 		}
 	}
-	eclipse {
-/*
-		project {
-			natures += 'org.springframework.ide.eclipse.core.springnature'
-		}
-		*/
-		classpath {
-			downloadSources = true
-			defaultOutputDir = file("${buildDir}/classes")
-			file {
-			    beforeMerged { classpath -> 
-			        classpath.entries.clear()
-			    }
-				whenMerged { classpath ->
-					classpath.entries.findAll { it instanceof org.gradle.plugins.ide.eclipse.model.SourceFolder && it.path.startsWith("${mainSrcDir}/") }*.output = file("${buildDir}").name + "/classes"
-			        classpath.entries.findAll { it instanceof org.gradle.plugins.ide.eclipse.model.SourceFolder && it.path.startsWith("${testSrcDir}/") }*.output = file("${buildDir}").name + "/test-classes" 
-			        classpath.entries.removeAll { it.kind == "bin" }
-				}
+	eclipse.classpath {
+		downloadSources = true
+		defaultOutputDir = file("${buildDir}/classes")
+		file {
+			beforeMerged { classpath -> 
+				classpath.entries.clear()
+			}
+			whenMerged { classpath ->
+				classpath.entries.findAll { it instanceof org.gradle.plugins.ide.eclipse.model.SourceFolder && it.path.startsWith("${javaMainDir}/") }*.output = file("${buildDir}").name + "/classes"
+				classpath.entries.findAll { it instanceof org.gradle.plugins.ide.eclipse.model.SourceFolder && it.path.startsWith("${javaTestDir}/") }*.output = file("${buildDir}").name + "/test-classes" 
+				classpath.entries.removeAll { it.kind == "bin" }
 			}
 		}
 	}
-	test { 
-		testLogging {
-			events 'started', 'passed'
-  			showStandardStreams = true
-  		}
-  	}
+	test.testLogging{
+	events 'started', 'passed'
+	showStandardStreams = true
+	}
+	jar.duplicatesStrategy = "exclude"
 }
-
 configure(webProjects) {
-    apply plugin: 'war'
-    apply plugin: 'eclipse-wtp'
-    apply plugin: 'jettyEclipse'
-    dependencies {
+	description = "Applechip Web"
+	apply plugin: 'war'
+	apply plugin: 'eclipse-wtp'
+	apply plugin: 'jettyEclipse'
+	dependencies {
 		provided jdbcDrivers
-		provided("javax.servlet:jstl:${javaxServletJstlVersion}")
-    	provided("javax.servlet:javax.servlet-api:${javaxServletApiVersion}")
-    	provided("javax.websocket:javax.websocket-api:${javaxWebsocketVersion}")
-    	
+		provided("javax.servlet:jstl:${versions.javaxServletJstl}")
+		provided("javax.servlet:javax.servlet-api:${versions.javaxServletApi}")
+		provided("javax.websocket:javax.websocket-api:${versions.javaxWebsocket}")
 		provided(project(':applechip-core')) { transitive = false }
-    	provided("org.springframework.boot:spring-boot-starter-data-jpa:$springBootStarterVersion")
-		provided("org.springframework.boot:spring-boot-starter-redis:$springBootStarterVersion")
-		provided("org.springframework.boot:spring-boot-starter-security:$springBootStarterVersion")
-		provided("org.springframework.boot:spring-boot-starter-web:$springBootStarterVersion")
-		provided("org.springframework.boot:spring-boot-starter-websocket:$springBootStarterVersion")
-		provided("org.springframework.boot:spring-boot-starter-ws:$springBootStarterVersion")
-		provided("org.springframework.boot:spring-boot-starter-social-twitter:$springBootStarterVersion")
-		provided("org.springframework.boot:spring-boot-starter-social-facebook:$springBootStarterVersion")
-		provided("org.hibernate:hibernate-ehcache:$hibernateVersion") { transitive = false }
-		provided("net.sf.ehcache:ehcache-core:$ehcacheVersion") { transitive = false }
-	    provided("org.hibernate:hibernate-envers:$hibernateVersion") { transitive = false }
-		provided("ch.qos.logback:logback-classic:$logbackVersion")
-		provided("com.mysema.querydsl:querydsl-jpa:$queryDslVersion")
-		provided("com.maxmind.geoip2:geoip2:${geoIpVersion}")
-    }
+		provided("org.springframework.boot:spring-boot-starter-data-jpa:${versions.springBootStarter}")
+		provided("org.springframework.boot:spring-boot-starter-redis:${versions.springBootStarter}")
+		provided("org.springframework.boot:spring-boot-starter-security:${versions.springBootStarter}")
+		provided("org.springframework.boot:spring-boot-starter-web:${versions.springBootStarter}")
+		provided("org.springframework.boot:spring-boot-starter-websocket:${versions.springBootStarter}")
+		provided("org.springframework.boot:spring-boot-starter-ws:${versions.springBootStarter}")
+		provided("org.springframework.boot:spring-boot-starter-social-twitter:${versions.springBootStarter}")
+		provided("org.springframework.boot:spring-boot-starter-social-facebook:${versions.springBootStarter}")
+		provided("org.hibernate:hibernate-ehcache:${versions.hibernate}") { transitive = false }
+		provided("net.sf.ehcache:ehcache-core:${versions.ehcache}") { transitive = false }
+		provided("org.hibernate:hibernate-envers:${versions.hibernate}") { transitive = false }
+		provided("ch.qos.logback:logback-classic:${versions.logback}")
+		provided("com.mysema.querydsl:querydsl-jpa:${versions.queryDsl}")
+		provided("com.maxmind.geoip2:geoip2:${versions.geoIp}")
+	}
 	war {
-    	manifest.attributes["Created-By"] = "${System.getProperty("java.version")} (${System.getProperty("java.specification.vendor")})"
+		manifest.attributes["Created-By"] = "${System.getProperty("java.version")}"
 		manifest.attributes["Implementation-Title"] = project.name
 		manifest.attributes["Implementation-Version"] = project.version
-		from("${gradleScriptDir}") {
+		manifest.attributes["Implementation-Vendor"] = "${System.getProperty("java.specification.vendor")}"
+		manifest.attributes["Built-Date"] = new Date().getDateTimeString()
+		manifest.attributes["Built-With"] = project.gradle.gradleVersion
+		from("${gradleDir}") {
 			include 'version.txt'
 			into "META-INF"
 			expand(projectDate: new Date().format("yyyy-MM-dd' 'HH:mm:ss' 'S"), projectVersion: project.version, projectName: project.name, projectBuild: System.env.SOURCE_BUILD_NUMBER)
 		}
-    }
+	}
 }
 
-configure(moduleProjects) {
-	jar {
-		manifest.attributes["Created-By"] = "${System.getProperty("java.version")} (${System.getProperty("java.specification.vendor")})"
-		manifest.attributes["Implementation-Title"] = project.name
-		manifest.attributes["Implementation-Version"] = project.version
-		from("${gradleScriptDir}") {
-			include 'version.txt'
-			into "META-INF"
-			expand(projectDate: new Date().format("yyyy-MM-dd' 'HH:mm:ss' 'S"), projectVersion: project.version, projectName: project.name, projectBuild: System.env.SOURCE_BUILD_NUMBER)
+project(":applechip-android") {
+	description = "Applechip Android"
+	apply plugin: 'android'
+	dependencies {
+		compile("org.springframework.android:spring-android-rest-template:${versions.springAndroidRest}")
+		compile("com.fasterxml.jackson.core:jackson-databind:${versions.jackson}")
+		compile("com.google.code.gson:gson:${versions.gson}")
+		compile("org.simpleframework:simple-xml:${versions.simple}") { exclude group: 'stax' exclude group: 'xpp3' } 
+	}
+	android {
+		buildToolsVersion '20.0.0'
+		compileSdkVersion 20
+		defaultConfig {
+			minSdkVersion 10
+			targetSdkVersion 20
 		}
-	duplicatesStrategy = "exclude"
+		sourceSets.main {
+			manifest.srcFile 'AndroidManifest.xml'
+			java.srcDirs = ["${srcDir}"]
+			res.srcDirs = ["${appResDir}"]
+			assets.srcDirs = ["${appAssetsDir}"]
+			resources.srcDirs = ["${srcDir}"]
+			aidl.srcDirs = ["${srcDir}"]
+			renderscript.srcDirs = ["${srcDir}"]
+		}
+		packagingOptions {
+			exclude 'META-INF/ASL2.0'
+			exclude 'META-INF/LICENSE'
+			exclude 'META-INF/license.txt'
+			exclude 'META-INF/NOTICE'
+			exclude 'META-INF/notice.txt'
+		}
+		lintOptions { abortOnError false }
 	}
 }
 
@@ -233,26 +201,24 @@ project(":applechip-core") {
 	apply from: generateQueryDSLTask
 	dependencies {
 		compile jdbcDrivers
-		compile("org.springframework.boot:spring-boot-starter-data-jpa:$springBootStarterVersion")
-		compile("org.springframework.boot:spring-boot-starter-redis:$springBootStarterVersion")
-		compile("org.springframework.boot:spring-boot-starter-security:$springBootStarterVersion")
-		compile("org.springframework.boot:spring-boot-starter-web:$springBootStarterVersion")
-		compile("org.hibernate:hibernate-ehcache:$hibernateVersion") { transitive = false }
-		compile("net.sf.ehcache:ehcache-core:$ehcacheVersion") { transitive = false }
-	    compile("org.hibernate:hibernate-envers:$hibernateVersion") { transitive = false }
-		compile("edu.uci.ics:crawler4j:${crawlerVersion}") { transitive = false }
-		compile("javax.servlet:javax.servlet-api:${javaxServletApiVersion}") { transitive = false }
-	    compile("com.mysema.querydsl:querydsl-jpa:$queryDslVersion") //{ transitive = false }
-		compile("com.mysema.querydsl:querydsl-apt:$queryDslVersion") //{ transitive = false }
-	    compile("com.maxmind.geoip2:geoip2:${geoIpVersion}") //{ transitive = false }
+		compile("org.springframework.boot:spring-boot-starter-data-jpa:${versions.springBootStarter}")
+		compile("org.springframework.boot:spring-boot-starter-redis:${versions.springBootStarter}")
+		compile("org.springframework.boot:spring-boot-starter-security:${versions.springBootStarter}")
+		compile("org.springframework.boot:spring-boot-starter-web:${versions.springBootStarter}")
+		compile("org.hibernate:hibernate-ehcache:${versions.hibernate}") { transitive = false }
+		compile("net.sf.ehcache:ehcache-core:${versions.ehcache}") { transitive = false }
+		compile("org.hibernate:hibernate-envers:${versions.hibernate}") { transitive = false }
+		compile("edu.uci.ics:crawler4j:${versions.crawler}") { transitive = false }
+		compile("javax.servlet:javax.servlet-api:${versions.javaxServletApi}") { transitive = false }
+		compile("com.mysema.querydsl:querydsl-jpa:${versions.queryDsl}") //{ transitive = false }
+		compile("com.mysema.querydsl:querydsl-apt:${versions.queryDsl}") //{ transitive = false }
+		compile("com.maxmind.geoip2:geoip2:${versions.geoIp}") //{ transitive = false }
 		compile("org.apache.poi:poi-ooxml:3.9") //{ transitive = false }
+		compile("net.lingala.zip4j:zip4j:${versions.zip}")
+		compile("com.rometools:rome-fetcher:${versions.rome}")
 	}
-	compileJava { 
-		dependsOn generateQueryDSL
-	}
-	testClasses {
-		dependsOn generateSchema
-	}
+	compileJava { dependsOn generateQueryDSL }
+	testClasses { dependsOn generateSchema }
 }
 
 /* module check */
@@ -267,3 +233,4 @@ project(":applechip-core") {
 	  }
 	}
 */
+
