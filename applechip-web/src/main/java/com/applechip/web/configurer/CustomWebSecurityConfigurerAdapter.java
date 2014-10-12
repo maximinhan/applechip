@@ -3,6 +3,16 @@ package com.applechip.web.configurer;
 // @Configuration
 // @EnableWebSecurity
 public class CustomWebSecurityConfigurerAdapter {
+  
+  
+//  <port-mappings>
+//  <port-mapping http="${web.port}" https="${web.httpsPort}"/>
+//</port-mappings>
+//
+//<intercept-url pattern="/" requires-channel="${web.requiresChannel}"/>
+
+
+
   // public class CustomWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapter {
   //
   // @Autowired

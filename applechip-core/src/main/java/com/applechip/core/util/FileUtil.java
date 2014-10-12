@@ -16,7 +16,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.FileUtils;
-import org.springframework.core.env.StandardEnvironment;
+import org.apache.tika.Tika;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.applechip.core.constant.SystemConstant;
@@ -28,6 +28,16 @@ import com.applechip.core.constant.SystemConstant;
  */
 public class FileUtil extends FileUtils {
   private FileUtil() {}
+
+  public static String getMimeType(File file) {
+    String mimeType = null;
+    try {
+      mimeType = new Tika().detect(file);
+    } catch (IOException e) {
+      throw new RuntimeException(String.format("file getMimeType error:%s", file), e);
+    }
+    return StringUtil.defaultString(mimeType);
+  }
 
   /**
    * <p>

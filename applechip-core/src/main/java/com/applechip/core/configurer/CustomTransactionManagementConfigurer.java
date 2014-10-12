@@ -17,6 +17,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
 import org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
+import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.Database;
@@ -40,6 +42,17 @@ public class CustomTransactionManagementConfigurer implements TransactionManagem
 
   @Autowired
   private CustomEventListener entityListener;
+
+  // @Configuration
+  // @ComponentScan("springweb.data")
+  // public static class RootConfig {
+  // @Bean
+  // public DataSource dataSsource() {
+  // DataSource bean = new
+  // EmbeddedDatabaseBuilder().setType(EmbeddedDatabaseType.H2).addScript("classpath:schema.sql").ignoreFailedDrops(Boolean.TRUE).build();
+  // return bean;
+  // }
+  // }
 
   @Override
   @Bean
