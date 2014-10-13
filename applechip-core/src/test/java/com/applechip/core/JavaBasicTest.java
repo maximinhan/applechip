@@ -52,8 +52,8 @@ public class JavaBasicTest {
         myList.remove(value);
     }
 
-    // Map<String,String> myMap = new ConcurrentHashMap<String,String>();
-    Map<String, String> myMap = new HashMap<String, String>();
+     Map<String,String> myMap = new ConcurrentHashMap<String,String>();
+//    Map<String, String> myMap = new HashMap<String, String>();
     myMap.put("1", "1");
     myMap.put("2", "2");
     myMap.put("3", "3");
