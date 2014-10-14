@@ -14,6 +14,6 @@ public class ExcelConvertUtilTest {
   @Test
   @Ignore
   public void testGenerateAll() throws Exception {
-    ExcelToPropertiesUtil.convertExcelToProperties("src/test/resources/resource_message.xls", "src/main/resources/message");
+    ExcelToPropertiesUtil.convertExcelToProperties("src/test/resources/resource_message.xls", "src/main/resources/META-INF/message");
   }
 }
