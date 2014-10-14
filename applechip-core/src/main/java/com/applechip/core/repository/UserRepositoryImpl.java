@@ -15,6 +15,7 @@ public class UserRepositoryImpl extends GenericRepositoryImpl<User, String> impl
 
   @Override
   public User getUserByUsername(String username) {
+    entityManager.createQuery("from User where username = :username").setParameter("username", username).getSingleResult();
     JPAQuery query = new JPAQuery(entityManager);
     QUser user = QUser.user;
     query.from(user).where(user.username.eq(username));
@@ -22,14 +23,10 @@ public class UserRepositoryImpl extends GenericRepositoryImpl<User, String> impl
   }
 
   // final List<Predicate> predicates = new ArrayList<Predicate>();
-  //
   // for (final Entry<String, String> e : myPredicateMap.entrySet()) {
-  //
   // final String key = e.getKey();
   // final String value = e.getValue();
-  //
   // if ((key != null) && (value != null)) {
-  //
   // if (value.contains("%")) {
   // predicates.add(criteriaBuilder.like(root.<String> get(key), value));
   // } else {
@@ -40,6 +37,9 @@ public class UserRepositoryImpl extends GenericRepositoryImpl<User, String> impl
   //
   // query.where(criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()])));
   // query.select(count);
+
+  // entityManager.createQuery("from User where username = :username").setParameter("username",
+  // username).getSingleResult();
 
   // CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
   // CriteriaQuery<User> criteriaQuery = criteriaBuilder.createQuery(User.class);

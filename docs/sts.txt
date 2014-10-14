@@ -5,7 +5,6 @@ D:/Program Files/Java/jdk1.7.0_45/bin/javaw.exe
 -Xverify:none
 -XX:+UseParallelGC
 -XX:-UseConcMarkSweepGC
--XX:+CMSIncrementalMode=true
 -Dhelp.lucene.tokenizer=standard
 -XX:PermSize=2048m
 -XX:MaxPermSize=2048m
@@ -14,6 +13,8 @@ D:/Program Files/Java/jdk1.7.0_45/bin/javaw.exe
 -Xms2048m
 -Xmx2048m
 -Dfile.encoding=UTF-8
+-javaagent:lombok-1.14.8.jar
+-Xbootclasspath/a:lombok-1.14.8.jar
 
 Tip
 CTRL + SHIFT + T : jar 파일 내 class 찾기
@@ -49,6 +50,9 @@ Preferences > Java > Compiler > Errors/Warnings > Annotations > Unhandled token 
 Preferences > Java > Editor > Content Assist > Enable auto activation
 Preferences > Spring > Dashboard > Dashboard RSS Feed URLs
 Preferences > Spring > Spring UAA > Disable UAA
+
+JVM Args
+-javaagent:<pathTo>/springloaded-1.2.1.RELEASE.jar -noverify
 
 -Dosgi.requiredJavaVersion=1.6 => JDK 1.6 이상을 설치했을 경우에 1.6으로 설정하면 속도가 빨라진다.
 -Xverify:none => 클래스의 유효성을 검사 생략. (시작 시간이 줄어 빨라진다.)
