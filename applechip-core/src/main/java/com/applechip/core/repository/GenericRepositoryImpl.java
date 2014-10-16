@@ -12,6 +12,7 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Order;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
@@ -41,7 +42,7 @@ public class GenericRepositoryImpl<T extends GenericEntity<PK>, PK extends Seria
   public Iterable<T> findAll(Sort sort) {
     CriteriaQuery<T> criteriaQuery = this.getCriteriaBuilder().createQuery(this.clazz);
     criteriaQuery.select(criteriaQuery.from(this.clazz));
-    criteriaQuery.orderBy(IteratorUtil.toList(sort.iterator()));// IteratorUtil.newArrayList(sort.iterator());
+    criteriaQuery.orderBy((Order[]) IteratorUtil.toArray(sort.iterator()));// IteratorUtil.newArrayList(sort.iterator());
     return this.entityManager.createQuery(criteriaQuery).getResultList();
   }
 
@@ -56,7 +57,7 @@ public class GenericRepositoryImpl<T extends GenericEntity<PK>, PK extends Seria
   public Page<T> findAll(Pageable pageable) {
     CriteriaQuery<T> criteriaQuery = this.getCriteriaBuilder().createQuery(this.clazz);
     criteriaQuery.select(criteriaQuery.from(this.clazz));
-    criteriaQuery.orderBy(IteratorUtil.toList(pageable.getSort().iterator()));
+    criteriaQuery.orderBy((Order[]) IteratorUtil.toArray(pageable.getSort().iterator()));
     TypedQuery<T> typedQuery = this.entityManager.createQuery(criteriaQuery);
     typedQuery.setFirstResult(pageable.getOffset());
     typedQuery.setMaxResults((pageable.getOffset() * pageable.getPageNumber()) + pageable.getPageSize());
@@ -80,12 +81,16 @@ public class GenericRepositoryImpl<T extends GenericEntity<PK>, PK extends Seria
 
   @Override
   public T findOne(PK id) {
-    return this.entityManager.find(this.clazz, id);
+    T entity = this.entityManager.find(this.clazz, id);
+    if (entity == null) {
+      throw new NoResultException(String.format("%s (id:%s) not found...", this.clazz.getSimpleName(), id));
+    }
+    return entity;
   }
 
   @Override
   public boolean exists(PK id) {
-    return this.findOne(id) != null;
+    return null != this.entityManager.find(this.clazz, id);
   }
 
   @Override

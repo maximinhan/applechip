@@ -1,5 +1,7 @@
 package com.applechip.core.service;
 
+import javax.persistence.NoResultException;
+
 import lombok.extern.slf4j.Slf4j;
 
 import org.apache.commons.dbcp.BasicDataSource;
@@ -21,5 +23,10 @@ public class UserServiceImplTest extends AbstractTest {
   @Test(expected = UsernameNotFoundException.class)
   public void testLoadUserByUsername() throws Exception {
     log.debug("{}", userService.loadUserByUsername("usernameZx"));
+  }
+
+  @Test(expected = NoResultException.class)
+  public void testGet() throws Exception {
+    log.debug("{}", userService.findOne("usernameZx"));
   }
 }
