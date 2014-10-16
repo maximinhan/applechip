@@ -174,19 +174,43 @@ project(":applechip-android") {
 	}
 	android {
 		buildToolsVersion '20.0.0'
-		compileSdkVersion 20
+		compileSdkVersion 'android-20'
 		defaultConfig {
 			minSdkVersion 10
 			targetSdkVersion 20
 		}
-		sourceSets.main {
-			manifest.srcFile 'AndroidManifest.xml'
-			java.srcDirs = ["${srcDir}"]
-			res.srcDirs = ["${appResDir}"]
-			assets.srcDirs = ["${appAssetsDir}"]
-			resources.srcDirs = ["${srcDir}"]
-			aidl.srcDirs = ["${srcDir}"]
-			renderscript.srcDirs = ["${srcDir}"]
+		/*
+		signingConfigs {
+			release {
+				storeFile file('release.keystore')
+				storePassword 'android'
+				keyAlias 'releasekey'
+				keyPassword 'android'
+			}
+		}
+		buildTypes {
+			debug {
+				debuggable = true
+				runProguard = false
+			}
+			release {
+				debuggable = false
+				runProguard = true
+				signingConfig signingConfigs.release
+			}
+		}
+		*/
+		sourceSets {
+			main {
+				manifest.srcFile 'AndroidManifest.xml'
+				java.srcDirs = ["${srcDir}"]
+				res.srcDirs = ["${appResDir}"]
+				assets.srcDirs = ["${appAssetsDir}"]
+				resources.srcDirs = ["${srcDir}"]
+				aidl.srcDirs = ["${srcDir}"]
+				renderscript.srcDirs = ["${srcDir}"]
+			}
+			instrumentTest.setRoot('tests')
 		}
 		packagingOptions {
 			exclude 'META-INF/ASL2.0'
@@ -196,6 +220,33 @@ project(":applechip-android") {
 			exclude 'META-INF/notice.txt'
 		}
 		lintOptions { abortOnError false }
+	}
+	eclipse.classpath {
+		plusConfigurations += [ configurations.compile ]
+		downloadSources = true
+		defaultOutputDir = file("${buildDir}/classes")
+		file {
+			beforeMerged { classpath ->
+				classpath.entries.clear()
+			}
+			withXml {
+				def node = it.asNode()
+				node.appendNode('classpathentry kind="src" path="src"')
+				node.appendNode('classpathentry kind="src" path="gen"')
+				node.appendNode('classpathentry kind="con" path="com.android.ide.eclipse.adt.ANDROID_FRAMEWORK"')
+				node.appendNode('classpathentry exported="true" kind="con" path="com.android.ide.eclipse.adt.LIBRARIES"')
+				node.appendNode('classpathentry exported="true" kind="con" path="com.android.ide.eclipse.adt.DEPENDENCIES"')
+			}
+		}
+	}
+	eclipse.project {
+		name = 'Applechip Android'
+		natures 'com.android.ide.eclipse.adt.AndroidNature'
+		natures 'org.eclipse.jdt.core.javanature'
+		buildCommand 'com.android.ide.eclipse.adt.ResourceManagerBuilder'
+		buildCommand 'com.android.ide.eclipse.adt.PreCompilerBuilder'
+		buildCommand 'com.android.ide.eclipse.adt.ApkBuilder'
+		buildCommand 'org.eclipse.jdt.core.javabuilder'
 	}
 }
 

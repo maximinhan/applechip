@@ -10,6 +10,7 @@ import java.nio.ByteBuffer;
 import java.nio.channels.Channels;
 import java.nio.channels.FileChannel;
 import java.nio.channels.WritableByteChannel;
+import java.util.Arrays;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -91,7 +92,7 @@ public class FileUtil extends FileUtils {
     } catch (IOException e) {
       throw new RuntimeException(String.format("file(%s) download error.., message:%s", file.getAbsolutePath(), e.getMessage()), e);
     } finally {
-      IOUtil.closeQuietly(new Closeable[] {fileInputStream, outputStream});
+      IOUtil.closeQuietly(Arrays.asList(fileInputStream, outputStream));
     }
   }
 
@@ -119,7 +120,7 @@ public class FileUtil extends FileUtils {
     } catch (Exception e) {
       e.printStackTrace();
     } finally {
-      IOUtil.closeQuietly(new Closeable[] {writableByteChannel, fileChannel});
+      IOUtil.closeQuietly(Arrays.asList(writableByteChannel, fileChannel));
     }
   }
 }

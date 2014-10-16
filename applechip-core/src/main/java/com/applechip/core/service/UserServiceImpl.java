@@ -22,7 +22,7 @@ public class UserServiceImpl extends GenericServiceImpl<User, String> implements
 	@Override
 //	@Cacheable(value = "loadUserByUsername", key = "#username")
 	public User loadUserByUsername(String username) throws UsernameNotFoundException {
-		User user = userRepository.getUserByUsername(username);
+		User user = userRepository.findByUsername(username);
 		if (user == null) {
 			throw new UsernameNotFoundException(username);
 		}

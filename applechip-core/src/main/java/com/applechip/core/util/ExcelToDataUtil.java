@@ -1,11 +1,11 @@
 package com.applechip.core.util;
 
-import java.io.Closeable;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.poi.ss.usermodel.Cell;
@@ -39,7 +39,7 @@ public class ExcelToDataUtil extends ExcelConvertUtil {
     } catch (FileNotFoundException e) {
       e.printStackTrace();
     } finally {
-      IOUtil.closeQuietly(new Closeable[] {printWriter, fileOutputStream});
+      IOUtil.closeQuietly(Arrays.asList(printWriter, fileOutputStream));
     }
   }
 

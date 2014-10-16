@@ -17,8 +17,8 @@ import org.springframework.transaction.interceptor.TransactionAttributeSource;
 import org.springframework.transaction.interceptor.TransactionInterceptor;
 
 import com.applechip.core.configurer.support.AspectJRole;
+import com.applechip.core.interceptor.MonitoringInterceptor;
 import com.applechip.core.properties.ApplicationProperties;
-import com.applechip.core.util.MonitoringInterceptor;
 
 @Configuration
 @EnableAspectJAutoProxy(proxyTargetClass = true)

@@ -4,60 +4,48 @@ import java.io.File;
 import java.io.IOException;
 import java.net.InetAddress;
 
-import javax.annotation.PostConstruct;
-
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
 import com.applechip.core.AbstractObject;
-import com.applechip.core.properties.ApplicationProperties;
 import com.maxmind.geoip2.DatabaseReader;
 import com.maxmind.geoip2.model.CityResponse;
 
-@Component
 @Slf4j
 public class GeoipUtil {
-  @Autowired
-  private ApplicationProperties applicationProperties;
+  private static DatabaseReader databaseReader;
 
-  private DatabaseReader databaseReader;
-
-  public GeoipUtil() {}
-
-  @PostConstruct
-  public void init() {
-    String geoipFilePath = applicationProperties.getGeoipFilePath();
-    File database = new File(geoipFilePath);
-    try {
-      databaseReader = new DatabaseReader.Builder(database).build();
-    } catch (IOException ex) {
-      throw new RuntimeException(ex);
+  private GeoipUtil(String geoipFilePath) {
+    if (databaseReader == null) {
+      File database = new File(geoipFilePath);
+      try {
+        databaseReader = new DatabaseReader.Builder(database).build();
+      } catch (IOException e) {
+        throw new RuntimeException(e);
+      }
     }
   }
 
-  public GeoipLocation getGeoipLocation(String host) {
+  public GeoipLocation getGeoipLocation(String ip) {
     CityResponse cityResponse = null;
     try {
-      cityResponse = databaseReader.city(InetAddress.getByName(host));
+      cityResponse = databaseReader.city(InetAddress.getByName(ip));
       databaseReader.close();
     } catch (Exception e) {
-      log.debug("error. host: {}, errorMessage: {}", host, e.toString());
+      log.debug("error ip: {}, errorMessage: {}", ip, e.toString());
       return new GeoipLocation();
     }
-    return new GeoipLocation(cityResponse.getCountry().getIsoCode(), cityResponse.getMostSpecificSubdivision().getIsoCode(), cityResponse.getCity().getName(), cityResponse.getLocation().getTimeZone());
+    return new GeoipLocation(cityResponse);
   }
 
-  public String getCountryCode(String host) {
-    return getGeoipLocation(host).getCountryCode();
+  public String getCountryCode(String ip) {
+    return getGeoipLocation(ip).getCountryCode();
   }
 
-  public String getLocationTimezone(String host) {
-    return getGeoipLocation(host).getLocationTimezone();
+  public String getLocationTimezone(String ip) {
+    return getGeoipLocation(ip).getLocationTimezone();
   }
 
   @Getter
@@ -69,18 +57,21 @@ public class GeoipUtil {
 
     private String countryCode;
 
-    private String subdivisionCode;
+    private String mostSpecificSubdivisionCode;
 
     private String cityName;
 
     private String locationTimezone;
 
-    public GeoipLocation(String countryCode, String subdivisionCode, String cityName, String locationTimezone) {
-      super();
-      this.countryCode = countryCode;
-      this.subdivisionCode = subdivisionCode;
-      this.cityName = cityName;
-      this.locationTimezone = locationTimezone;
+    public GeoipLocation(CityResponse cityResponse) {
+      this.countryCode = cityResponse.getCountry().getIsoCode();
+      this.mostSpecificSubdivisionCode = cityResponse.getMostSpecificSubdivision().getIsoCode();
+      this.cityName = cityResponse.getCity().getName();
+      this.locationTimezone = cityResponse.getLocation().getTimeZone();
     }
+  }
+
+  public static GeoipUtil getInstance(String geoipFilePath) {
+    return new GeoipUtil(geoipFilePath);
   }
 }

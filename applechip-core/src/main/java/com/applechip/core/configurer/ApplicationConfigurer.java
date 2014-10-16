@@ -7,6 +7,7 @@ import javax.xml.transform.Source;
 
 import org.apache.commons.pool2.impl.GenericKeyedObjectPool;
 import org.hibernate.validator.HibernateValidator;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -30,12 +31,28 @@ import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandl
 
 import com.applechip.core.constant.ApplicationConstant;
 import com.applechip.core.constant.SystemConstant;
+import com.applechip.core.properties.ApplicationProperties;
 import com.applechip.core.socket.CustomBaseKeyedPoolableObjectFactory;
 import com.applechip.core.socket.CustomSocketClient;
 import com.applechip.core.socket.SocketClientUtil;
+import com.applechip.core.util.ApplicationUtil;
+import com.applechip.core.util.GeoipUtil;
 
 @Configuration
 public class ApplicationConfigurer {
+
+  @Autowired
+  private ApplicationProperties applicationProperties;
+
+  @Bean
+  public GeoipUtil geoipUtil() {
+    return GeoipUtil.getInstance(applicationProperties.getGeoipFilePath());
+  }
+
+  @Bean
+  public ApplicationUtil ApplicationUtil() {
+    return ApplicationUtil.getInstance(this.messageSourceAccessor());
+  }
 
   @Bean
   public SocketClientUtil socketClientUtil() {

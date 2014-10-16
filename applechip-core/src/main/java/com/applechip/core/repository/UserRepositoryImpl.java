@@ -14,7 +14,7 @@ public class UserRepositoryImpl extends GenericRepositoryImpl<User, String> impl
   }
 
   @Override
-  public User getUserByUsername(String username) {
+  public User findByUsername(String username) {
     JPAQuery query = new JPAQuery(entityManager);
     QUser user = QUser.user;
     query.from(user).where(user.username.eq(username));

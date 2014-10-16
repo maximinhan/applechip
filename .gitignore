@@ -23,6 +23,7 @@ local.properties
 classes
 .metadata
 .classes
+.factorypath
 assets
 gen
 generated

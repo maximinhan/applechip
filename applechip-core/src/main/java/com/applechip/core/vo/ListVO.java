@@ -14,17 +14,15 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 @Getter
 @Setter
 public class ListVO<T> extends ResponseVO {
-
-  private static final long serialVersionUID = 923800543461020152L;
-
+  private static final long serialVersionUID = -6912212857026691229L;
   @JsonProperty("list")
   @XmlElement(name = "list")
   private List<T> list;
 
   public Class<?> getDataClass() {
     Class<?> clazz = null;
-    if (CollectionUtils.isNotEmpty(list))
-      clazz = list.get(0).getClass();
+    if (CollectionUtils.isNotEmpty(this.list))
+      clazz = this.list.iterator().next().getClass();
     return clazz;
   };
 

@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
+import java.util.Arrays;
 import java.util.Deque;
 import java.util.Enumeration;
 import java.util.LinkedList;
@@ -71,7 +72,7 @@ public class ZipUtil {
       log.debug("Failed to zip the file. (directory: {}, zip: {}) ", directory.getPath(), zip.getName());
       throw new RuntimeException(String.format("Failed to zip the file. (directory: %s, zip: %s) ", directory.getPath(), zip.getName()), e);
     } finally {
-      IOUtil.closeQuietly(new Closeable[] {zipOutputStream, outputStream});
+      IOUtil.closeQuietly(Arrays.asList(zipOutputStream, outputStream));
     }
   }
 
@@ -96,7 +97,7 @@ public class ZipUtil {
       log.debug("Failed to unzip the file. (directory: {}, zip: {}) ", directory.getPath(), zip.getName());
       throw new RuntimeException(String.format("Failed to unzip the file. (directory: %s, zip: %s) ", directory.getPath(), zip.getName()), e);
     } finally {
-      IOUtil.closeQuietly(new Closeable[] {zipFile, inputStream});
+      IOUtil.closeQuietly(Arrays.asList(zipFile, inputStream));
     }
   }
 
