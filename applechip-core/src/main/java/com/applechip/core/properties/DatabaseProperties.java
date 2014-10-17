@@ -10,7 +10,7 @@ import lombok.Getter;
 import org.apache.commons.dbcp.BasicDataSourceFactory;
 import org.springframework.beans.factory.annotation.Value;
 
-import com.applechip.core.AbstractObject;
+import com.applechip.core.object.AbstractObject;
 import com.applechip.core.util.FieldUtil;
 import com.applechip.core.util.SecurityUtil;
 

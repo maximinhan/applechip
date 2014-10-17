@@ -5,7 +5,7 @@ import javax.xml.bind.annotation.XmlTransient;
 import lombok.Getter;
 import lombok.Setter;
 
-import com.applechip.core.AbstractObject;
+import com.applechip.core.object.AbstractObject;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Getter

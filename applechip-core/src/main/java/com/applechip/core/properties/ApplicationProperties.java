@@ -7,9 +7,9 @@ import lombok.Getter;
 
 import org.springframework.beans.factory.annotation.Value;
 
-import com.applechip.core.AbstractObject;
 import com.applechip.core.constant.ApplicationConstant;
 import com.applechip.core.constant.SystemConstant;
+import com.applechip.core.object.AbstractObject;
 import com.applechip.core.util.StringUtil;
 
 @Getter

@@ -15,8 +15,8 @@ import lombok.ToString;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
-import com.applechip.core.AbstractObject;
 import com.applechip.core.constant.ColumnLengthConstant;
+import com.applechip.core.entity.AbstractEntity;
 import com.applechip.core.entity.GenericUpdatedBy;
 
 @Entity
@@ -50,7 +50,7 @@ public class Detail extends GenericUpdatedBy<Detail.Id> {
   @Embeddable
   @EqualsAndHashCode(callSuper = false, of = {"categoryId", "detailId"})
   @Data
-  public static class Id extends AbstractObject {
+  public static class Id extends AbstractEntity {
     private static final long serialVersionUID = 5793297679481437367L;
     @Column(name = "category_id", length = ColumnLengthConstant.CODE)
     private String categoryId;

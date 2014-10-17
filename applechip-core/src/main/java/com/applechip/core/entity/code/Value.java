@@ -4,14 +4,14 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
-import com.applechip.core.AbstractObject;
+import com.applechip.core.entity.AbstractEntity;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.mysema.query.annotations.QueryProjection;
 
 @Data
 @EqualsAndHashCode(callSuper = false, of = {"code", "value"})
 @NoArgsConstructor
-public class Value extends AbstractObject implements Comparable<Value> {
+public class Value extends AbstractEntity implements Comparable<Value> {
 
   private static final long serialVersionUID = -7016161450074984593L;
 

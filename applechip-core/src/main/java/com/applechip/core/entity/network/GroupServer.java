@@ -17,8 +17,8 @@ import lombok.ToString;
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.RelationTargetAuditMode;
 
-import com.applechip.core.AbstractObject;
 import com.applechip.core.constant.ColumnLengthConstant;
+import com.applechip.core.entity.AbstractEntity;
 import com.applechip.core.entity.GenericUpdatedBy;
 
 @Entity
@@ -63,7 +63,7 @@ public class GroupServer extends GenericUpdatedBy<GroupServer.Id> {
   @Embeddable
   @EqualsAndHashCode(callSuper = false, of = {"groupId", "serverId"})
   @Data
-  public static class Id extends AbstractObject {
+  public static class Id extends AbstractEntity {
 
     private static final long serialVersionUID = 7431143630822624861L;
 

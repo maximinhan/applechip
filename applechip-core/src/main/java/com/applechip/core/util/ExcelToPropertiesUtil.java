@@ -18,8 +18,8 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 
-import com.applechip.core.AbstractObject;
 import com.applechip.core.constant.SystemConstant;
+import com.applechip.core.object.AbstractObject;
 
 @Slf4j
 public class ExcelToPropertiesUtil extends ExcelConvertUtil {

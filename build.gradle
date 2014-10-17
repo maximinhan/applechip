@@ -230,6 +230,7 @@ project(":applechip-android") {
 				classpath.entries.clear()
 			}
 			withXml {
+				new File("${projectDir}/gen").mkdirs()
 				def node = it.asNode()
 				node.appendNode('classpathentry kind="src" path="src"')
 				node.appendNode('classpathentry kind="src" path="gen"')
@@ -240,7 +241,6 @@ project(":applechip-android") {
 		}
 	}
 	eclipse.project {
-		name = 'Applechip Android'
 		natures 'com.android.ide.eclipse.adt.AndroidNature'
 		natures 'org.eclipse.jdt.core.javanature'
 		buildCommand 'com.android.ide.eclipse.adt.ResourceManagerBuilder'

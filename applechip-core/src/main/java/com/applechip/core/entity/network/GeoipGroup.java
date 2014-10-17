@@ -12,8 +12,8 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
-import com.applechip.core.AbstractObject;
 import com.applechip.core.constant.ColumnLengthConstant;
+import com.applechip.core.entity.AbstractEntity;
 import com.applechip.core.entity.GenericCreatedBy;
 
 @Data
@@ -38,7 +38,7 @@ public class GeoipGroup extends GenericCreatedBy<GeoipGroup.Id> {
   @Embeddable
   @EqualsAndHashCode(callSuper = false, of = {"geoipId", "region"})
   @Data
-  public static class Id extends AbstractObject {
+  public static class Id extends AbstractEntity {
     private static final long serialVersionUID = -1717445322232088831L;
 
     @Column(name = "geoip_id", length = ColumnLengthConstant.CODE)

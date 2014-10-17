@@ -16,8 +16,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
-import com.applechip.core.AbstractObject;
 import com.applechip.core.constant.ColumnLengthConstant;
+import com.applechip.core.entity.AbstractEntity;
 import com.applechip.core.entity.GenericUpdatedBy;
 import com.applechip.core.entity.code.Option;
 
@@ -58,7 +58,7 @@ public class UserPreferOption extends GenericUpdatedBy<UserPreferOption.Id> {
   @AllArgsConstructor
   @Embeddable
   @Data
-  public static class Id extends AbstractObject {
+  public static class Id extends AbstractEntity {
     private static final long serialVersionUID = 6640163309533516196L;
     @Column(name = "user_id", length = ColumnLengthConstant.UUID)
     private String userId;
