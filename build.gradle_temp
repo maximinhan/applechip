@@ -1,3 +1,5 @@
+gradle.taskGraph.afterTask {Task task, TaskState state -> if (state.failure) { println "excuting $task Failure" } else { println "excuting $task Done" }}
+
 	tasks.withType(JavaCompile){
 		def warnLogFile = file("${buildDir}/${name}Warnings.log")
 		logging.addStandardErrorListener(new StandardOutputListener(){ void onOutput(CharSequence output){ warnLogFile << output }})

@@ -57,7 +57,7 @@ task settingProperties(type: JavaCompile, group: 'build', description: 'Generate
 	project.ext.dbHibernateDialect = hibernateDialectMap.get(project.properties['dbType'])
 	project.ext.dbHibernateHbm2ddlAuto = hibernateHbm2ddlAutoMap.get(project.properties['dbType'])
 	def configStoragePath = project.properties['configStoragePath']
-	project.ext.configStoragePath = (configStoragePath == null || configStoragePath.trim().isEmpty()) ? new File("${rootProject.projectDir}/storage").getPath().replaceAll("\\\\", "\\\\\\\\") : configStoragePath
+	project.ext.configStoragePath = (configStoragePath == null || configStoragePath.trim().isEmpty()) ? project.properties['storagePath'] : configStoragePath
 	
 	[processResources, processTestResources]*.filter(org.apache.tools.ant.filters.ReplaceTokens,
 		tokens: [
